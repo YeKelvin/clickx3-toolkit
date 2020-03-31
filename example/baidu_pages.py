@@ -11,7 +11,7 @@
 from core import MobileDevice
 from core.element import By
 from core.utils.logger import get_logger
-from pages import BasePage
+from page import BasePage
 
 log = get_logger(__name__)
 
