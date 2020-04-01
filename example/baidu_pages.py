@@ -8,9 +8,9 @@
 简单搜索app demo
 """
 
-from core import MobileDevice
-from core.element import By
-from core.utils.logger import get_logger
+from appuiautomator import MobileDevice
+from appuiautomator.element import By
+from appuiautomator.utils.logger import get_logger
 from page import BasePage
 
 log = get_logger(__name__)
