@@ -41,6 +41,14 @@ LOCATORS = {
 }
 
 
+class PageObject:
+    def __init__(self, driver):
+        self.driver = driver
+
+    def run_adb_shell(self, commond):
+        self.driver.shell(commond)
+
+
 class PageElement:
 
     def __init__(self, timeout=5, desc=None, **kwargs):
