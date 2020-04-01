@@ -12,6 +12,10 @@ class BaseError(Exception):
     pass
 
 
+class PageElementError(Exception):
+    pass
+
+
 class U2ClientError(BaseError):
     """Uiautomator2 Python客户端异常类
     """
