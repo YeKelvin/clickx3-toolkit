@@ -25,6 +25,15 @@ def teardown_module():
     print('teardown_module():每个模块运行后执行')
 
 
+@pytest.fixture(params=[{'keyA': 'valueA'}, {'keyB': 'valueB'}])
+def data(params):
+    return params.param
+
+
+def test_fixture(data):
+    print(data)
+
+
 class TestMethod:
     def setup_class(self):
         print('setup_class(self)：每个类之前执行一次')
