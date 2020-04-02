@@ -5,9 +5,12 @@
 # @Author  : Kelvin.Ye
 from typing import Union
 
+from uiautomator2 import Device, UiObjectNotFoundError
+from uiautomator2.exceptions import XPathElementNotFoundError
 from uiautomator2.session import UiObject
+from uiautomator2.xpath import XPathSelector
 
-from appuiautomator.exceptions import PageElementError
+from appuiautomator.exceptions import PageElementError, PageElementsError
 
 LOCATORS = {
     'text': 'text',
@@ -35,7 +38,6 @@ LOCATORS = {
     'resourceIdMatches': 'resourceIdMatches',
     'index': 'index',
     'instance': 'instance',
-    'xpath': 'xpath',
     'innerElement': 'innerElement',
     'allowScrollSearch': 'allow_scroll_search'
 }
@@ -43,10 +45,285 @@ LOCATORS = {
 
 class PageObject:
     def __init__(self, driver):
-        self.driver = driver
+        self.d: Device = driver
 
-    def run_adb_shell(self, commond):
-        self.driver.shell(commond)
+    def run_adb_shell(self, command, timeout=60):
+        output, exit_code = self.d.shell(command, timeout=timeout)
+        return output, exit_code
+
+
+class Page(PageObject):
+    @property
+    def info(self):
+        """基础信息
+        """
+        return self.d.info
+
+    @property
+    def device_info(self):
+        """设备详细信息
+        """
+        return self.d.device_info
+
+    @property
+    def serial(self):
+        """当前设备号
+        """
+        return self.d.serial
+
+    @property
+    def wlan_ip(self):
+        """wlan地址
+        """
+        return self.d.wlan_ip
+
+    @property
+    def clipboard(self):
+        """剪贴板内容
+        """
+        return self.d.clipboard
+
+    @property
+    def orientation(self):
+        """屏幕方向，可能的值：natural | left | right | upsidedown
+        """
+        return self.d.orientation
+
+    def set_orientation(self, direction):
+        """设置屏幕方向
+
+        Args:
+            direction:屏幕方向，枚举：natural | left | right | upsidedown
+
+        Returns:
+
+        """
+        self.d.set_orientation(direction)
+
+    def freeze_rotation(self):
+        """冻结旋转
+        """
+        self.d.freeze_rotation()
+
+    def unfreeze_rotation(self):
+        """解除冻结旋转
+        """
+        self.d.freeze_rotation(False)
+
+    def set_clipboard(self, text, label=None):
+        """设置剪贴板内容
+        """
+        self.d.set_clipboard(text, label)
+
+    def window_size(self):
+        """窗口大小
+        """
+        return self.d.window_size()
+
+    def app_current(self):
+        """当前前台 app信息
+        """
+        return self.d.app_current()
+
+    def wait_activity(self, activity_name):
+        """等待 activity出现
+        """
+        return self.d.wait_activity(activity_name)
+
+    def app_install(self, url):
+        """安装 app
+        """
+        self.d.app_install(url)
+
+    def app_start(self, package_name):
+        """运行 app
+        """
+        self.d.app_start(package_name)
+
+    def app_stop(self, package_name):
+        """停止 app
+        """
+        self.d.app_stop(package_name)
+
+    def app_clear(self, package_name):
+        """清空 app缓存
+        """
+        self.d.app_clear(package_name)
+
+    def app_stop_all(self, excludes=[]):
+        """停止所有 app
+        """
+        self.d.app_stop_all(excludes)
+
+    def app_info(self, package_name):
+        """app的详细信息"""
+
+        return self.d.app_info(package_name)
+
+    def save_app_icon(self, package_name, path):
+        """保存 app图标
+        """
+        icon = self.d.app_icon(package_name)
+        icon.save(path)
+
+    def app_list_running(self):
+        """获取正在运行的 app
+        """
+        return self.d.app_list_running()
+
+    def app_wait(self, package_name, front=True, timeout=5):
+        """等待应用运行
+        """
+        pid = self.d.app_wait(package_name, front=front, timeout=timeout)
+        return pid
+
+    def push(self, source, destination):
+        """推送文件到设备
+        """
+        self.d.push(source, destination)
+
+    def pull(self, source, destination):
+        """从设备拉文件到本地
+        """
+        self.d.pull(source, destination)
+
+    def screen_on(self):
+        """打开屏幕
+        """
+        self.d.screen_on()
+
+    def screen_off(self):
+        """关闭屏幕
+        """
+        self.d.screen_off()
+
+    def unlock(self):
+        """锁屏
+        """
+        self.d.unlock()
+
+    def press(self, key):
+        """按键
+        """
+        self.d.press(key)
+
+    def fastinput_ime(self, text):
+        self.d.set_fastinput_ime(True)  # 切换成FastInputIME输入法
+        self.d.send_keys(text)  # adb广播输入
+        self.d.set_fastinput_ime(False)  # 切换成正常的输入法
+
+    def clear_text(self):
+        """除输入框所有内容
+        """
+        self.d.clear_text()
+
+    def click(self, x, y):
+        """单击屏幕
+        """
+        self.d.click(x, y)
+
+    def double_click(self, x, y, duration=0.1):
+        """双击屏幕
+        """
+        self.d.double_click(x, y, duration)
+
+    def long_click(self, x, y, duration=0.1):
+        """长按屏幕
+        """
+        self.d.double_click(x, y, duration)
+
+    def swipe(self, sx, sy, ex, ey, duration=1):
+        """滑动屏幕
+        """
+        self.d.swipe(sx, sy, ex, ey, duration)
+
+    def swipe_ext(self, direction: str, scale: float = 0.9, box: Union[None, tuple] = None):
+        """屏幕滑动
+
+        Args:
+            direction:  滑动方向，枚举：left | right | up | down
+            scale:      滑动距离为屏幕宽度的百分比
+            box:        在指定区域内滑动，如：(0,0) -> (100, 100)
+
+        Returns:
+
+        """
+        self.d.swipe_ext(direction, scale, box)
+
+    def drag(self, sx, sy, ex, ey, duration=0.5):
+        """拖动
+        """
+        self.d.drag(sx, sy, ex, ey, duration)
+
+    def save_screenshot(self, destination):
+        """保存截图
+        """
+        image = self.d.screenshot()
+        image.save(destination)
+
+    def defdump_hierarchy(self):
+        """获取UI层次结构
+        """
+        xml = self.d.dump_hierarchy()
+        return xml
+
+    def open_notification(self):
+        """打开通知栏
+        """
+        self.d.open_notification()
+
+    def open_quick_settings(self):
+        """打开设置
+        """
+        self.d.open_quick_settings()
+
+    def watcher(self):
+        return self.d.watcher
+
+    def remove_watcher(self, name):
+        """移除指定名称的监控
+        """
+        self.d.watcher.remove(name)
+
+    def remove_all_watcher(self):
+        """移除所有的监控
+        """
+        self.d.watcher.remove()
+
+    def start_watcher(self, interval: float = 2.0):
+        """开始后台监控
+        """
+        self.d.watcher.start(interval)
+
+    def run_watcher(self):
+        """强制运行所有监控
+        """
+        self.d.watcher.run()
+
+    def stop_watcher(self):
+        """停止监控
+        """
+        self.d.watcher.stop()
+
+    def reset_watcher(self):
+        """停止并移除所有的监控，常用于初始化
+        """
+        self.d.watcher.reset()
+
+    def show_toast(self, text, duration=1.0):
+        """弹出 Toast
+        """
+        self.d.toast.show(text, duration)
+
+    def get_toast(self, wait_timeout=10, cache_timeout=10, default=None):
+        """获取 Toast内容
+        """
+        self.d.toast.get_message(wait_timeout, cache_timeout, default)
+
+    def reset_toast(self):
+        """清除 Toast缓存
+        """
+        self.d.toast.reset()
 
 
 class PageElement:
@@ -55,23 +332,27 @@ class PageElement:
         self.timeout = timeout
         self.description = desc
         if not kwargs:
-            raise ValueError('Please specify a locator')
+            raise ValueError('Please specify a locator.')
         self.kwargs = kwargs
         for locator, value in kwargs.items():
             if locator not in LOCATORS:
                 raise KeyError(f'Element positioning of type {locator} is not supported.')
 
-    def get_element(self, context) -> Union[UiObject]:
-        return context(**self.kwargs)
+    def get_element(self, context) -> Union[UiObject, None]:
+        try:
+            element = context(**self.kwargs)
+        except UiObjectNotFoundError:
+            return None
+        return element
 
     def find(self, context) -> Union[UiObject]:
         element = self.get_element(context)
-        if element.exists(timeout=self.timeout):
+        if element and element.exists(timeout=self.timeout):
             return element
         else:
-            raise PageElementError()
+            raise PageElementError('Element not found.')
 
-    def __get__(self, instance, owner) -> Union[UiObject, None]:
+    def __get__(self, instance, owner) -> Union[UiObject, list, None]:
         if instance is None:
             return None
         context = instance.driver
@@ -80,5 +361,89 @@ class PageElement:
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
         if not element:
-            raise PageElementError("Can't set value, element not found")
+            raise PageElementError('Can not set value, no elements found.')
         element.set_text(value)
+
+
+class PageElements(PageElement):
+    def get_element(self, context) -> Union[UiObject, list]:
+        try:
+            elements = context(**self.kwargs)
+        except UiObjectNotFoundError:
+            return []
+        return elements
+
+    def find(self, context) -> Union[UiObject]:
+        elements = self.get_element(context)
+        if elements and elements.exists(timeout=self.timeout):
+            return elements
+        else:
+            raise PageElementsError('Element not found.')
+
+    def __set__(self, instance, value):
+        elements = self.__get__(instance, instance.__class__)
+        if elements.count == 0:
+            raise PageElementsError('Can not set value, no elements found.')
+        [element.set_text(value) for element in elements]
+
+
+class XPathElement:
+    def __init__(self, xpath, timeout=5, desc=None):
+        self.timeout = timeout
+        self.description = desc
+        if not xpath:
+            raise ValueError('Please specify a xpath locator.')
+        self.xpath = xpath
+
+    def get_element(self, context) -> Union[XPathSelector, None]:
+        try:
+            element = context.xpath(self.xpath)
+        except XPathElementNotFoundError:
+            return None
+        return element
+
+    def find(self, context) -> XPathSelector:
+        element = self.get_element(context)
+        element.wait(timeout=self.timeout)
+        if element and element.exists:
+            return element
+        else:
+            raise PageElementError('Element not found.')
+
+    def __get__(self, instance, owner) -> Union[XPathSelector, list, None]:
+        if instance is None:
+            return None
+        context = instance.driver
+        return self.find(context)
+
+    def __set__(self, instance, value):
+        element = self.__get__(instance, instance.__class__)
+        if not element:
+            raise PageElementError('Can not set value, no elements found.')
+        element.set_text(value)
+
+
+class XPathElements(XPathElement):
+    def get_element(self, context) -> Union[XPathSelector, list]:
+        try:
+            elements = context.xpath(self.xpath)
+        except XPathElementNotFoundError:
+            return []
+        return elements
+
+    def find(self, context) -> list:
+        elements = self.get_element(context)
+        if elements:
+            elements.wait(timeout=self.timeout)
+        else:
+            raise PageElementsError('Element not found.')
+        if elements.exists:
+            return elements.all()
+        else:
+            raise PageElementsError('Element not found.')
+
+    def __set__(self, instance, value):
+        elements = self.__get__(instance, instance.__class__)
+        if len(elements) == 0:
+            raise PageElementsError('Can not set value, no elements found.')
+        [element.set_text(value) for element in elements]

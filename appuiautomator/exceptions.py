@@ -14,3 +14,7 @@ class PageError(Exception):
 
 class PageElementError(Exception):
     pass
+
+
+class PageElementsError(Exception):
+    pass
