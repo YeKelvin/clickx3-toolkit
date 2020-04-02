@@ -14,7 +14,7 @@ from appuiautomator.utils.logger import get_logger
 log = get_logger(__name__)
 
 
-class SimpleSearchApp:
+class SimpleSearchApp(Page):
     """简单搜索app
     """
     package_name = 'com.baidu.searchcraft'
