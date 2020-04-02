@@ -3,6 +3,8 @@
 # @File    : u2_po.py
 # @Time    : 2020/4/1 23:53
 # @Author  : Kelvin.Ye
+import os
+from datetime import datetime
 from typing import Union
 
 from uiautomator2 import Device, UiObjectNotFoundError
@@ -10,7 +12,11 @@ from uiautomator2.exceptions import XPathElementNotFoundError
 from uiautomator2.session import UiObject
 from uiautomator2.xpath import XPathSelector
 
-from appuiautomator.exceptions import PageElementError, PageElementsError
+from appuiautomator.exceptions import PageElementError, PageElementsError, XPathElementsError, XPathElementError
+from appuiautomator.utils import config
+from appuiautomator.utils.logger import get_logger
+
+log = get_logger(__name__)
 
 LOCATORS = {
     'text': 'text',
@@ -325,6 +331,31 @@ class Page(PageObject):
         """
         self.d.toast.reset()
 
+    def adb_input(self, input_content: str) -> None:
+        """通过adb shell input text 进行内容输入，不限于字母、数字、汉字等
+        """
+        log.info(f'input text {input_content}')
+        self.run_adb_shell(f'input text {input_content}')
+
+    def adb_refresh_gallery(self, file_uri: str) -> None:
+        """上传图片至系统图库后，要手动广播通知系统图库刷新
+        """
+        log.info('android.intent.action.MEDIA_SCANNER_SCAN_FILE 广播刷新系统图库')
+        if file_uri.startswith('/'):
+            file_uri = file_uri[1:]
+        self.run_adb_shell(fr'am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///{file_uri}')
+
+    def adb_screencap(self, path: str = None) -> None:
+        """设备本地截图
+        """
+        if path:
+            command = f'screencap -p {path}'
+        else:
+            current_time = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
+            filename = f'Screenshot_{current_time}.png'
+            command = f'screencap -p /sdcard/DCIM/Screenshots/{filename}'
+        self.run_adb_shell(command)
+
 
 class PageElement:
 
@@ -408,7 +439,7 @@ class XPathElement:
         if element and element.exists:
             return element
         else:
-            raise PageElementError('Element not found.')
+            raise XPathElementError('Element not found.')
 
     def __get__(self, instance, owner) -> Union[XPathSelector, list, None]:
         if instance is None:
@@ -419,7 +450,7 @@ class XPathElement:
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
         if not element:
-            raise PageElementError('Can not set value, no elements found.')
+            raise XPathElementError('Can not set value, no elements found.')
         element.set_text(value)
 
 
@@ -436,14 +467,40 @@ class XPathElements(XPathElement):
         if elements:
             elements.wait(timeout=self.timeout)
         else:
-            raise PageElementsError('Element not found.')
+            raise XPathElementsError('Element not found.')
         if elements.exists:
             return elements.all()
         else:
-            raise PageElementsError('Element not found.')
+            raise XPathElementsError('Element not found.')
 
     def __set__(self, instance, value):
         elements = self.__get__(instance, instance.__class__)
         if len(elements) == 0:
             raise PageElementsError('Can not set value, no elements found.')
         [element.set_text(value) for element in elements]
+
+
+class ElementUtil:
+    @staticmethod
+    def screenshot_by_element(driver, element, destination: str = None) -> str:
+        """元素级截图
+        """
+        element_info = element.info
+        bounds = element_info.info.get('bounds')
+        left = bounds.get('left')
+        top = bounds.get('top')
+        right = bounds.get('right')
+        bottom = bounds.get('bottom')
+        # 设备截图
+        image = driver.screenshot()
+        # 截图剪裁
+        cropped = image.crop((left, top, right, bottom))
+        if not destination:
+            destination = os.path.join(
+                config.get_project_path(),
+                'testcase', '.tmp',
+                f'{datetime.now().strftime("%Y%m%d.%H%M%S.%f")}.jpg'
+            )
+        cropped.save(destination)
+        log.info(f'保存元素截图至 {destination}')
+        return destination

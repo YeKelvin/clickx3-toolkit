@@ -18,3 +18,11 @@ class PageElementError(Exception):
 
 class PageElementsError(Exception):
     pass
+
+
+class XPathElementError(Exception):
+    pass
+
+
+class XPathElementsError(Exception):
+    pass
