@@ -19,6 +19,7 @@ class BaiduTest:
         d = u2.connect('GSLDU16823001086')
         baidu_app = SimpleSearchApp(d)
         baidu_app.app_start(baidu_app.package_name)
+        baidu_app.app_wait(baidu_app.package_name)
         home_page = HomePage(d)
         home_page.search('uiautomator2')
         search_result_page = SearchResultPage(d)

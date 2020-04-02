@@ -25,7 +25,10 @@ class HomePage(Page):
     """主页
     """
     search_tip = PageElement(resourceId='com.baidu.searchcraft:id/search_tip')
-    search_input = PageElement(resourceId='com.baidu.searchcraft:id/toolbar_input_box')
+    search_input = PageElement(
+        resourceId='com.baidu.searchcraft:id/toolbar_input_box',
+        timeout=5
+    )
     search_button = PageElement(resourceId='com.baidu.searchcraft:id/toolbar_btn_input_right')
 
     def search(self, text: str) -> None:
