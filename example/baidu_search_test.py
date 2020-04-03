@@ -12,12 +12,12 @@ import uiautomator2 as u2
 from appuiautomator.devices_manager import AndroidDevicesManager
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.logger import get_logger
-from example.baidu_app import SimpleSearchApp
+from example.baidu_search_app import SimpleSearchApp
 
 log = get_logger(__name__)
 
 
-class TestBaidu:
+class TestBaiduSearch:
     def test_search(self):
         d = u2.connect(AndroidDevicesManager().get_device())
         device = Device(d)
@@ -27,4 +27,4 @@ class TestBaidu:
 
 
 if __name__ == '__main__':
-    TestBaidu().test_search()
+    TestBaiduSearch().test_search()

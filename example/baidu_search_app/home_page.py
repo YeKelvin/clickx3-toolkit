@@ -22,14 +22,3 @@ class HomePage(PageObject):
         self.search_tip.click()
         self.search_input = text
         self.search_button.click()
-
-
-class SearchResultPage(PageObject):
-    """搜索结果列表页
-    """
-    head_queryarea = PageElement(resourceId='head-queryarea')
-
-    def get_head_query_text(self):
-        """获取搜索结果列表页中顶部搜索栏的文本
-        """
-        return self.head_queryarea.get_text()

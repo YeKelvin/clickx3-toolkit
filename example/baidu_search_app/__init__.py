@@ -10,7 +10,8 @@
 
 from appuiautomator.u2.app_object import AppObject, Page
 from appuiautomator.utils.logger import get_logger
-from example.baidu_app.pages import HomePage, SearchResultPage
+from example.baidu_search_app.home_page import HomePage
+from example.baidu_search_app.search_result_page import SearchResultPage
 
 log = get_logger(__name__)
 
