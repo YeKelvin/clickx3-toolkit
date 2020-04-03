@@ -34,6 +34,11 @@ class AppObject:
     def clear(self):
         self.device.app_clear(self.package_name)
 
+    def restart(self):
+        self.stop()
+        self.start()
+        self.wait()
+
 
 class Page:
     def __init__(self, clazz):

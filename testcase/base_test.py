@@ -12,7 +12,7 @@ log = get_logger(__name__)
 
 
 class AndroidCase:
-    """PyTest测试基类
+    """Android设备 PyTest测试基类
     """
     serial = None
     device = None
@@ -30,3 +30,8 @@ class AndroidCase:
 
     def teardown_method(self):
         pass
+
+
+class IosCase:
+    """IOS设备 PyTest测试基类
+    """

@@ -22,9 +22,7 @@ class TestBaidu:
         d = u2.connect(AndroidDevicesManager().get_device())
         device = Device(d)
         app = SimpleSearchApp(device)
-        app.stop()
-        app.start()
-        app.wait()
+        app.restart()
         app.home_page.search('uiautomator2')
 
 
