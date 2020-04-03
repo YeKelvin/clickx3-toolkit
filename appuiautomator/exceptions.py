@@ -30,3 +30,7 @@ class XPathElementError(Exception):
 
 class XPathElementsError(Exception):
     pass
+
+
+class PageSelectException(Exception):
+    pass

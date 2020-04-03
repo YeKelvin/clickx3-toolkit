@@ -3,15 +3,15 @@
 # @File    : config.py
 # @Time    : 2019/8/27 12:01
 # @Author  : Kelvin.Ye
-import os
 import configparser
+import os
 
-_CONFIG_PATH = os.path.abspath(
+__CONFIG_PATH__ = os.path.abspath(
     os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, 'config.ini')
 )
 
 
-def get(section, key, filepath=_CONFIG_PATH):
+def get(section, key, filepath=__CONFIG_PATH__):
     """获取配置文件中的属性值，默认读取config.ini。
 
     Args:
@@ -35,6 +35,12 @@ def get_project_path():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
 
 
+def get_resources_path():
+    """返回项目资源目录路径。
+    """
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, 'resources'))
+
+
 def get_screenshot_path():
     """返回截图目录路径
     """
@@ -42,5 +48,6 @@ def get_screenshot_path():
 
 
 if __name__ == '__main__':
-    print(_CONFIG_PATH)
+    print(__CONFIG_PATH__)
     print(get_project_path())
+    print(get_resources_path())
