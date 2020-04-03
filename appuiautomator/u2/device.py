@@ -4,6 +4,7 @@
 # @Time    : 2020/4/3 10:46
 # @Author  : Kelvin.Ye
 from datetime import datetime
+from time import sleep
 from typing import Union
 
 import uiautomator2 as u2
@@ -178,7 +179,9 @@ class Device:
 
     def fastinput_ime(self, text):
         self.driver.set_fastinput_ime(True)  # 切换成FastInputIME输入法
+        sleep(0.5)
         self.driver.send_keys(text)  # adb广播输入
+        sleep(0.5)
         self.driver.set_fastinput_ime(False)  # 切换成正常的输入法
 
     def clear_text(self):

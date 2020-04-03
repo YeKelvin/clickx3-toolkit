@@ -4,16 +4,17 @@
 # @Time    : 2020/4/1 23:53
 # @Author  : Kelvin.Ye
 import os
-import uiautomator2 as u2
 from datetime import datetime
 from typing import Union
 
+import uiautomator2 as u2
 from uiautomator2 import UiObjectNotFoundError
 from uiautomator2.exceptions import XPathElementNotFoundError
 from uiautomator2.session import UiObject
 from uiautomator2.xpath import XPathSelector
 
-from appuiautomator.exceptions import PageElementError, PageElementsError, XPathElementsError, XPathElementError
+from appuiautomator.exceptions import PageElementError, PageElementsError, XPathElementsError, XPathElementError, \
+    PageError
 from appuiautomator.u2.device import Device
 from appuiautomator.utils import config
 from appuiautomator.utils.logger import get_logger
@@ -51,16 +52,35 @@ LOCATORS = {
 }
 
 
-class PageObject:
-    def __init__(self, device):
-        self.device: Device = device
-        self.driver: u2.Device = device.driver
+class Page:
+    def __init__(self, device=None):
+        if device:
+            self.device: Device = device
+            self.driver: u2.Device = device.driver
+
+    def __get__(self, instance, owner):
+        if instance is None:
+            return None
+        pages = instance.pages
+        for page in pages:
+            if isinstance(page, type(self)):
+                return page
+        self.device = instance.device
+        self.driver = instance.device.driver
+        pages.append(self)
+        return self
+
+    def __set__(self, instance, value):
+        raise PageError('Can not set value')
 
 
 class PageElement:
     @property
     def location_info(self):
-        return [k + "=" + v for k, v in self.kwargs.items()]
+        return (
+            f'Location:{[k + "=" + v for k, v in self.kwargs.items()]} '
+            f'{"Description:" + self.description if self.description else ""}'
+        )
 
     def __init__(self, timeout=5, desc='', **kwargs):
         self.timeout = timeout
@@ -81,9 +101,7 @@ class PageElement:
             else:
                 raise PageElementError()
         except (UiObjectNotFoundError, PageElementError):
-            raise PageElementError(
-                f'Element not found. Location:{self.location_info} Description:{self.description}'
-            )
+            raise PageElementError(f'Element not found. {self.location_info}')
 
     def __get__(self, instance, owner) -> Union[UiObject, list, None]:
         if instance is None:
@@ -94,14 +112,12 @@ class PageElement:
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
         if not element:
-            raise PageElementError(
-                f'Can not set value, no elements found. Location:{self.location_info} Description:{self.description}'
-            )
+            raise PageElementError(f'Can not set value, no elements found. {self.location_info}')
         element.set_text(value)
 
 
 class PageElements(PageElement):
-    def find(self, context) -> Union[UiObject]:
+    def find(self, context) -> UiObject:
         try:
             elements = context(**self.kwargs)
             elements.wait(timeout=self.timeout)
@@ -110,20 +126,23 @@ class PageElements(PageElement):
             else:
                 raise PageElementsError()
         except (UiObjectNotFoundError, PageElementsError):
-            raise PageElementsError(
-                f'Element not found. Location:{self.location_info} Description:{self.description}'
-            )
+            raise PageElementsError(f'Element not found. {self.location_info}')
 
     def __set__(self, instance, value):
         elements = self.__get__(instance, instance.__class__)
         if elements.count == 0:
-            raise PageElementsError(
-                f'Can not set value, no elements found. Location:{self.location_info} Description:{self.description}'
-            )
+            raise PageElementsError(f'Can not set value, no elements found. {self.location_info}')
         [element.set_text(value) for element in elements]
 
 
 class XPathElement:
+    @property
+    def location_info(self):
+        return (
+            f'Location:xpath={self.xpath} '
+            f'{"Description:" + self.description if self.description else ""}'
+        )
+
     def __init__(self, xpath, timeout=5, desc=''):
         self.timeout = timeout
         self.description = desc
@@ -140,9 +159,7 @@ class XPathElement:
             else:
                 raise XPathElementError()
         except (XPathElementNotFoundError, XPathElementError):
-            raise XPathElementError(
-                f'Element not found. Location:xpath={self.xpath} Description:{self.description}'
-            )
+            raise XPathElementError(f'Element not found. {self.location_info}')
 
     def __get__(self, instance, owner) -> Union[XPathSelector, list, None]:
         if instance is None:
@@ -153,9 +170,7 @@ class XPathElement:
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
         if not element:
-            raise XPathElementError(
-                f'Can not set value, no elements found. Location:xpath={self.xpath} Description:{self.description}'
-            )
+            raise XPathElementError(f'Can not set value, no elements found. {self.location_info}')
         element.set_text(value)
 
 
@@ -169,16 +184,12 @@ class XPathElements(XPathElement):
             else:
                 raise XPathElementsError()
         except (XPathElementNotFoundError, XPathElementsError):
-            raise XPathElementsError(
-                f'Element not found. Location:xpath={self.xpath} Description:{self.description}'
-            )
+            raise XPathElementsError(f'Element not found. {self.location_info}')
 
     def __set__(self, instance, value):
         elements = self.__get__(instance, instance.__class__)
         if len(elements) == 0:
-            raise PageElementsError(
-                f'Can not set value, no elements found. Location:xpath={self.xpath} Description:{self.description}'
-            )
+            raise PageElementsError(f'Can not set value, no elements found. {self.location_info}')
         [element.set_text(value) for element in elements]
 
 

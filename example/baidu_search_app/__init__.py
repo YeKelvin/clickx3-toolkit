@@ -8,19 +8,18 @@
 简单搜索app demo
 """
 
-from appuiautomator.u2.app_object import AppObject, Page
+from appuiautomator.u2.app import App
 from appuiautomator.utils.logger import get_logger
-from example.baidu_search_app.home_page import HomePage
-from example.baidu_search_app.search_result_page import SearchResultPage
+from example.baidu_search_app.pages import HomePage, SearchResultPage
 
 log = get_logger(__name__)
 
 
-class SimpleSearchApp(AppObject):
+class SimpleSearchApp(App):
     """简单搜索app
     """
     package_name = 'com.baidu.searchcraft'
     bundle_identifier = ''
 
-    home_page = Page(HomePage)
-    search_result_page = Page(SearchResultPage)
+    home_page = HomePage()
+    search_result_page = SearchResultPage()
