@@ -8,21 +8,24 @@
 简单搜索app demo
 """
 import uiautomator2 as u2
+
+from appuiautomator.devices_manager import AndroidDevicesManager
+from appuiautomator.u2.device import Device
 from appuiautomator.utils.logger import get_logger
-from example.baidu_pages import SimpleSearchApp, HomePage, SearchResultPage
+from example.baidu_app import SimpleSearchApp
 
 log = get_logger(__name__)
 
 
 class TestBaidu:
     def test_search(self):
-        d = u2.connect('GSLDU16823001086')
-        app = SimpleSearchApp(d)
-        app.app_stop(app.package_name)
-        app.app_start(app.package_name)
-        app.app_wait(app.package_name)
-        home_page = HomePage(d)
-        home_page.search('uiautomator2')
+        d = u2.connect(AndroidDevicesManager().get_device())
+        device = Device(d)
+        app = SimpleSearchApp(device)
+        app.stop()
+        app.start()
+        app.wait()
+        app.home_page.search('uiautomator2')
 
 
 if __name__ == '__main__':

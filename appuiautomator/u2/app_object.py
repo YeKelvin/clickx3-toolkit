@@ -5,7 +5,7 @@
 # @Author  : Kelvin.Ye
 import uiautomator2 as u2
 
-from appuiautomator.exceptions import PageError
+from appuiautomator.exceptions import PageError, AppError
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.logger import get_logger
 
@@ -16,9 +16,23 @@ class AppObject:
     package_name = None
 
     def __init__(self, device):
+        if not self.package_name:
+            raise AppError('App Package Name can not be empty.')
         self.device: Device = device
         self.driver: u2.Device = device.driver
-        self.pages: []
+        self.pages: list = []
+
+    def start(self):
+        self.device.app_start(self.package_name)
+
+    def stop(self):
+        self.device.app_stop(self.package_name)
+
+    def wait(self):
+        self.device.app_wait(self.package_name)
+
+    def clear(self):
+        self.device.app_clear(self.package_name)
 
 
 class Page:

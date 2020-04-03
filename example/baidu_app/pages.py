@@ -1,31 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @File    : pages.py
-# @Time    : 2019/9/3 10:38
+# @File    : pages
+# @Time    : 2020/4/3 11:22
 # @Author  : Kelvin.Ye
-
-"""
-简单搜索app demo
-"""
-
-from appuiautomator.u2.u2_po import Page, PageElement
+from appuiautomator.u2.page_object import PageObject, PageElement
 from appuiautomator.utils.logger import get_logger
 
 log = get_logger(__name__)
 
 
-class SimpleSearchApp(Page):
-    """简单搜索app
-    """
-    package_name = 'com.baidu.searchcraft'
-    bundle_identifier = ''
-
-
-class HomePage(Page):
+class HomePage(PageObject):
     """主页
     """
     search_tip = PageElement(resourceId='com.baidu.searchcraft:id/search_tip')
-    search_input = PageElement(resourceId='com.baidu.searchcraft:id/toolbar_input_box_layout2', timeout=5)
+    search_input = PageElement(resourceId='com.baidu.searchcraft:id/toolbar_input_box_layout2')
     search_button = PageElement(resourceId='com.baidu.searchcraft:id/toolbar_btn_input_right')
 
     def search(self, text: str) -> None:
@@ -36,7 +24,7 @@ class HomePage(Page):
         self.search_button.click()
 
 
-class SearchResultPage(Page):
+class SearchResultPage(PageObject):
     """搜索结果列表页
     """
     head_queryarea = PageElement(resourceId='head-queryarea')

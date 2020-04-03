@@ -15,47 +15,47 @@ log = get_logger(__name__)
 
 class Device:
     def __init__(self, driver):
-        self.d: u2.Device = driver
+        self.driver: u2.Device = driver
 
     def run_adb_shell(self, command, timeout=60):
-        output, exit_code = self.d.shell(command, timeout=timeout)
+        output, exit_code = self.driver.shell(command, timeout=timeout)
         return output, exit_code
 
     @property
     def info(self):
         """基础信息
         """
-        return self.d.info
+        return self.driver.info
 
     @property
     def device_info(self):
         """设备详细信息
         """
-        return self.d.device_info
+        return self.driver.device_info
 
     @property
     def serial(self):
         """当前设备号
         """
-        return self.d.serial
+        return self.driver.serial
 
     @property
     def wlan_ip(self):
         """wlan地址
         """
-        return self.d.wlan_ip
+        return self.driver.wlan_ip
 
     @property
     def clipboard(self):
         """剪贴板内容
         """
-        return self.d.clipboard
+        return self.driver.clipboard
 
     @property
     def orientation(self):
         """屏幕方向，可能的值：natural | left | right | upsidedown
         """
-        return self.d.orientation
+        return self.driver.orientation
 
     def set_orientation(self, direction):
         """设置屏幕方向
@@ -66,145 +66,145 @@ class Device:
         Returns:
 
         """
-        self.d.set_orientation(direction)
+        self.driver.set_orientation(direction)
 
     def freeze_rotation(self):
         """冻结旋转
         """
-        self.d.freeze_rotation()
+        self.driver.freeze_rotation()
 
     def unfreeze_rotation(self):
         """解除冻结旋转
         """
-        self.d.freeze_rotation(False)
+        self.driver.freeze_rotation(False)
 
     def set_clipboard(self, text, label=None):
         """设置剪贴板内容
         """
-        self.d.set_clipboard(text, label)
+        self.driver.set_clipboard(text, label)
 
     def window_size(self):
         """窗口大小
         """
-        return self.d.window_size()
+        return self.driver.window_size()
 
     def app_current(self):
         """当前前台 app信息
         """
-        return self.d.app_current()
+        return self.driver.app_current()
 
     def wait_activity(self, activity_name):
         """等待 activity出现
         """
-        return self.d.wait_activity(activity_name)
+        return self.driver.wait_activity(activity_name)
 
     def app_install(self, url):
         """安装 app
         """
-        self.d.app_install(url)
+        self.driver.app_install(url)
 
     def app_start(self, package_name):
         """运行 app
         """
         print(f'starting {package_name}')
-        self.d.app_start(package_name)
+        self.driver.app_start(package_name)
 
     def app_stop(self, package_name):
         """停止 app
         """
-        self.d.app_stop(package_name)
+        self.driver.app_stop(package_name)
 
     def app_clear(self, package_name):
         """清空 app缓存
         """
-        self.d.app_clear(package_name)
+        self.driver.app_clear(package_name)
 
     def app_stop_all(self, excludes=[]):
         """停止所有 app
         """
-        self.d.app_stop_all(excludes)
+        self.driver.app_stop_all(excludes)
 
     def app_info(self, package_name):
         """app的详细信息"""
 
-        return self.d.app_info(package_name)
+        return self.driver.app_info(package_name)
 
     def save_app_icon(self, package_name, path):
         """保存 app图标
         """
-        icon = self.d.app_icon(package_name)
+        icon = self.driver.app_icon(package_name)
         icon.save(path)
 
     def app_list_running(self):
         """获取正在运行的 app
         """
-        return self.d.app_list_running()
+        return self.driver.app_list_running()
 
     def app_wait(self, package_name, front=True, timeout=5):
         """等待应用运行
         """
-        pid = self.d.app_wait(package_name, front=front, timeout=timeout)
+        pid = self.driver.app_wait(package_name, front=front, timeout=timeout)
         return pid
 
     def push(self, source, destination):
         """推送文件到设备
         """
-        self.d.push(source, destination)
+        self.driver.push(source, destination)
 
     def pull(self, source, destination):
         """从设备拉文件到本地
         """
-        self.d.pull(source, destination)
+        self.driver.pull(source, destination)
 
     def screen_on(self):
         """打开屏幕
         """
-        self.d.screen_on()
+        self.driver.screen_on()
 
     def screen_off(self):
         """关闭屏幕
         """
-        self.d.screen_off()
+        self.driver.screen_off()
 
     def unlock(self):
         """锁屏
         """
-        self.d.unlock()
+        self.driver.unlock()
 
     def press(self, key):
         """按键
         """
-        self.d.press(key)
+        self.driver.press(key)
 
     def fastinput_ime(self, text):
-        self.d.set_fastinput_ime(True)  # 切换成FastInputIME输入法
-        self.d.send_keys(text)  # adb广播输入
-        self.d.set_fastinput_ime(False)  # 切换成正常的输入法
+        self.driver.set_fastinput_ime(True)  # 切换成FastInputIME输入法
+        self.driver.send_keys(text)  # adb广播输入
+        self.driver.set_fastinput_ime(False)  # 切换成正常的输入法
 
     def clear_text(self):
         """除输入框所有内容
         """
-        self.d.clear_text()
+        self.driver.clear_text()
 
     def click(self, x, y):
         """单击屏幕
         """
-        self.d.click(x, y)
+        self.driver.click(x, y)
 
     def double_click(self, x, y, duration=0.1):
         """双击屏幕
         """
-        self.d.double_click(x, y, duration)
+        self.driver.double_click(x, y, duration)
 
     def long_click(self, x, y, duration=0.1):
         """长按屏幕
         """
-        self.d.double_click(x, y, duration)
+        self.driver.double_click(x, y, duration)
 
     def swipe(self, sx, sy, ex, ey, duration=1):
         """滑动屏幕
         """
-        self.d.swipe(sx, sy, ex, ey, duration)
+        self.driver.swipe(sx, sy, ex, ey, duration)
 
     def swipe_ext(self, direction: str, scale: float = 0.9, box: Union[None, tuple] = None):
         """屏幕滑动
@@ -217,82 +217,82 @@ class Device:
         Returns:
 
         """
-        self.d.swipe_ext(direction, scale, box)
+        self.driver.swipe_ext(direction, scale, box)
 
     def drag(self, sx, sy, ex, ey, duration=0.5):
         """拖动
         """
-        self.d.drag(sx, sy, ex, ey, duration)
+        self.driver.drag(sx, sy, ex, ey, duration)
 
     def save_screenshot(self, destination):
         """保存截图
         """
-        image = self.d.screenshot()
+        image = self.driver.screenshot()
         image.save(destination)
 
     def defdump_hierarchy(self):
         """获取UI层次结构
         """
-        xml = self.d.dump_hierarchy()
+        xml = self.driver.dump_hierarchy()
         return xml
 
     def open_notification(self):
         """打开通知栏
         """
-        self.d.open_notification()
+        self.driver.open_notification()
 
     def open_quick_settings(self):
         """打开设置
         """
-        self.d.open_quick_settings()
+        self.driver.open_quick_settings()
 
     def watcher(self):
-        return self.d.watcher
+        return self.driver.watcher
 
     def remove_watcher(self, name):
         """移除指定名称的监控
         """
-        self.d.watcher.remove(name)
+        self.driver.watcher.remove(name)
 
     def remove_all_watcher(self):
         """移除所有的监控
         """
-        self.d.watcher.remove()
+        self.driver.watcher.remove()
 
     def start_watcher(self, interval: float = 2.0):
         """开始后台监控
         """
-        self.d.watcher.start(interval)
+        self.driver.watcher.start(interval)
 
     def run_watcher(self):
         """强制运行所有监控
         """
-        self.d.watcher.run()
+        self.driver.watcher.run()
 
     def stop_watcher(self):
         """停止监控
         """
-        self.d.watcher.stop()
+        self.driver.watcher.stop()
 
     def reset_watcher(self):
         """停止并移除所有的监控，常用于初始化
         """
-        self.d.watcher.reset()
+        self.driver.watcher.reset()
 
     def show_toast(self, text, duration=1.0):
         """弹出 Toast
         """
-        self.d.toast.show(text, duration)
+        self.driver.toast.show(text, duration)
 
     def get_toast(self, wait_timeout=10, cache_timeout=10, default=None):
         """获取 Toast内容
         """
-        self.d.toast.get_message(wait_timeout, cache_timeout, default)
+        self.driver.toast.get_message(wait_timeout, cache_timeout, default)
 
     def reset_toast(self):
         """清除 Toast缓存
         """
-        self.d.toast.reset()
+        self.driver.toast.reset()
 
     def adb_input(self, input_content: str) -> None:
         """通过adb shell input text 进行内容输入，不限于字母、数字、汉字等
