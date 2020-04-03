@@ -8,7 +8,7 @@
 简单搜索app demo
 """
 
-from appuiautomator.u2_po import Page, PageElement
+from appuiautomator.u2.u2_po import Page, PageElement
 from appuiautomator.utils.logger import get_logger
 
 log = get_logger(__name__)
@@ -25,10 +25,7 @@ class HomePage(Page):
     """主页
     """
     search_tip = PageElement(resourceId='com.baidu.searchcraft:id/search_tip')
-    search_input = PageElement(
-        resourceId='com.baidu.searchcraft:id/toolbar_input_box',
-        timeout=5
-    )
+    search_input = PageElement(resourceId='com.baidu.searchcraft:id/toolbar_input_box_layout2', timeout=5)
     search_button = PageElement(resourceId='com.baidu.searchcraft:id/toolbar_btn_input_right')
 
     def search(self, text: str) -> None:

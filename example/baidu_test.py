@@ -14,17 +14,16 @@ from example.baidu_pages import SimpleSearchApp, HomePage, SearchResultPage
 log = get_logger(__name__)
 
 
-class BaiduTest:
+class TestBaidu:
     def test_search(self):
         d = u2.connect('GSLDU16823001086')
-        baidu_app = SimpleSearchApp(d)
-        baidu_app.app_start(baidu_app.package_name)
-        baidu_app.app_wait(baidu_app.package_name)
+        app = SimpleSearchApp(d)
+        app.app_stop(app.package_name)
+        app.app_start(app.package_name)
+        app.app_wait(app.package_name)
         home_page = HomePage(d)
         home_page.search('uiautomator2')
-        search_result_page = SearchResultPage(d)
-        assert search_result_page.head_queryarea.get_text() == 'uiautomator2'
 
 
 if __name__ == '__main__':
-    BaiduTest().test_search()
+    TestBaidu().test_search()

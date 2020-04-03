@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @File    : manager.py
+# @File    : devices_manager.py
 # @Time    : 2019/10/15 14:46
 # @Author  : Kelvin.Ye
 from queue import Queue

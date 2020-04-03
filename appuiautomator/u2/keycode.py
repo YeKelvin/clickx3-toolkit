@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @File    : keycode
+# @File    : keycode.py
 # @Time    : 2020/4/2 17:48
 # @Author  : Kelvin.Ye
 from enum import unique, Enum
