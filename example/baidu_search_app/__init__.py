@@ -19,7 +19,6 @@ class SimpleSearchApp(App):
     """简单搜索app
     """
     package_name = 'com.baidu.searchcraft'
-    bundle_identifier = ''
 
     home_page = HomePage()
     search_result_page = SearchResultPage()

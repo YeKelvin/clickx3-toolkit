@@ -21,39 +21,40 @@ from appuiautomator.utils.logger import get_logger
 
 log = get_logger(__name__)
 
-LOCATORS = {
-    'text': 'text',
-    'textContains': 'textContains',
-    'textMatches': 'textMatches',
-    'textStartsWith': 'textStartsWith',
-    'className': 'className',
-    'classNameMatches': 'classNameMatches',
-    'description': 'description',
-    'descriptionContains': 'descriptionContains',
-    'descriptionMatches': 'descriptionMatches',
-    'descriptionStartsWit': 'descriptionStartsWit',
-    'checkable': 'checkable',
-    'checked': 'checked',
-    'clickable': 'clickable',
-    'longClickable': 'longClickable',
-    'scrollable': 'scrollable',
-    'enabled': 'enabled',
-    'focusable': 'focusable',
-    'focused': 'focused',
-    'selected': 'selected',
-    'packageName': 'packageName',
-    'packageNameMatches': 'packageNameMatches',
-    'resourceId': 'resourceId',
-    'resourceIdMatches': 'resourceIdMatches',
-    'index': 'index',
-    'instance': 'instance',
-    'innerElement': 'innerElement',
-    'allowScrollSearch': 'allow_scroll_search'
-}
+LOCATORS = [
+    'text',
+    'textContains',
+    'textMatches',
+    'textStartsWith',
+    'className',
+    'classNameMatches',
+    'description',
+    'descriptionContains',
+    'descriptionMatches',
+    'descriptionStartsWit',
+    'checkable',
+    'checked',
+    'clickable',
+    'longClickable',
+    'scrollable',
+    'enabled',
+    'focusable',
+    'focused',
+    'selected',
+    'packageName',
+    'packageNameMatches',
+    'resourceId',
+    'resourceIdMatches',
+    'index',
+    'instance',
+    'innerElement',
+    'allowScrollSearch'
+]
 
 
 class Page:
     def __init__(self, device=None):
+        self.pages = []
         if device:
             self.device: Device = device
             self.driver: u2.Device = device.driver
