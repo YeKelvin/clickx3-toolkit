@@ -25,13 +25,13 @@ def teardown_module():
     print('teardown_module():每个模块运行后执行')
 
 
-@pytest.fixture(params=[{'keyA': 'valueA'}, {'keyB': 'valueB'}])
-def data(params):
-    return params.param
-
-
-def test_fixture(data):
-    print(data)
+# @pytest.fixture(params=[{'keyA': 'valueA'}, {'keyB': 'valueB'}])
+# def data(params):
+#     return params.param
+#
+#
+# def test_fixture(data):
+#     print(data)
 
 
 class TestMethod:
@@ -83,7 +83,7 @@ class TestAllureDemo:
         allure.attach('附加信息')
 
     def test_attach_picture(self):
-        with open(r'filepath.jpg', 'rb') as file:
+        with open(r'baozou.png', 'rb') as file:
             allure.attach(file.read(), name='附加图片', attachment_type=allure.attachment_type.JPG)
 
     @allure.testcase('案例链接', '链接名称')
@@ -102,9 +102,13 @@ class TestAllureDemo:
 if __name__ == '__main__':
     """python代码中运行pytest
     """
-    pytest.main(['-s', f'{os.path.basename(__file__)}::test_parametrize'])
-    pytest.main(['-s', f'{os.path.basename(__file__)}', '--html=./report.html'])
-    pytest.main(['-s', f'{os.path.basename(__file__)}', '--alluredir=./report', '--clean-alluredir'])
+    # pytest.main(['-s', f'{os.path.basename(__file__)}::test_parametrize'])
+    # pytest.main(['-s', f'{os.path.basename(__file__)}', '--html=./report.html'])
+    pytest.main(['-s', f'{os.path.basename(__file__)}', '--alluredir=./.report', '--clean-alluredir'])
+    from subprocess import Popen, PIPE
+
+    p = Popen('allure generate .report -o .html --clean', shell=True, stdout=PIPE, stderr=PIPE)
+    print(''.join([str(line, encoding="utf-8") for line in p.stdout.readlines()]))
 
 """
 生成 Allure HTML报告

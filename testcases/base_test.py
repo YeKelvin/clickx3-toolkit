@@ -32,6 +32,6 @@ class AndroidCase:
         pass
 
 
-class IosCase:
+class IOSCase:
     """IOS设备 PyTest测试基类
     """
