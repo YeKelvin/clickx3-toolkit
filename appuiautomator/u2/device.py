@@ -120,9 +120,11 @@ class Device:
         """
         self.driver.app_clear(package_name)
 
-    def app_stop_all(self, excludes=[]):
+    def app_stop_all(self, excludes=None):
         """停止所有 app
         """
+        if excludes is None:
+            excludes = []
         self.driver.app_stop_all(excludes)
 
     def app_info(self, package_name):

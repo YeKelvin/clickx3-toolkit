@@ -38,9 +38,13 @@ class Device:
     def __init__(self, session):
         self.sesson: wda.Client = session
 
-    def app_launch(self, bundle_id, arguments=[], environment={}, wait_for_quiescence=False):
+    def app_launch(self, bundle_id, arguments=None, environment=None, wait_for_quiescence=False):
         """启动app
         """
+        if environment is None:
+            environment = {}
+        if arguments is None:
+            arguments = []
         self.sesson.app_launch(bundle_id, arguments, environment, wait_for_quiescence)
 
     def app_activate(self, bundle_id):
