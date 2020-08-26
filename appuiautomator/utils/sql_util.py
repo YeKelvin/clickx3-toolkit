@@ -5,7 +5,7 @@
 # @Author  : Kelvin.Ye
 from typing import Tuple
 
-import cx_Oracle
+import cx_Oracle as oracle_engine
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Connection
 from sqlalchemy.engine.result import ResultProxy
@@ -42,7 +42,7 @@ class Oracle:
         self.address = address
 
     def select_all(self, expression: str):
-        db = cx_Oracle.connect(self.username, self.password, self.address)
+        db = oracle_engine.connect(self.username, self.password, self.address)
         cur = db.cursor()
         cur.execute(expression)
         rows = cur.fetchall()
@@ -51,11 +51,11 @@ class Oracle:
         return rows
 
 
-def rownum(number: int, expression: str):
+def rownum(expression: str, number: int):
     """拼接SQL语句，获取指定的rownum数据
 
+    :param expression:  sql
     :param number:      rownum
-    :param expression:  sql语句
     :return:
     """
     return f'select * from ({expression}) where rownum={number}'
