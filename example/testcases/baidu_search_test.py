@@ -7,12 +7,13 @@
 """
 简单搜索app demo
 """
+
 import uiautomator2 as u2
 
 from appuiautomator.devices_manager import AndroidDevicesManager
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.logger import get_logger
-from example.baidu_search_app import SimpleSearchApp
+from example.apps.baidu_search import SimpleSearchApp
 
 log = get_logger(__name__)
 

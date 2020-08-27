@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @File    : pages
-# @Time    : 2020/4/3 18:28
+# @File    : baidu_search.py
+# @Time    : 2020/8/27 20:17
 # @Author  : Kelvin.Ye
 from appuiautomator.u2.page import Page, PageElement, XPathElement
 from appuiautomator.utils.logger import get_logger
