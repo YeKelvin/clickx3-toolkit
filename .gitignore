@@ -1,7 +1,14 @@
 .idea/
+.vscode
 .cache/
 .pytest_cache/
-__pycache__/
-poetry.lock
 .html/
 .report/
+__pycache__/
+poetry.lock
+apps/*.py
+!/apps/__init__.py
+pages/**/*.py
+!/pages/__init__.py
+testcases/*.py
+!testcases/base_test.py

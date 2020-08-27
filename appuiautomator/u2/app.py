@@ -25,6 +25,11 @@ class App:
     def start(self):
         self.device.app_start(self.package_name)
 
+    def start_activity_by_uri(self):
+        """adb shell am start -a android.intent.action.VIEW -d scheme://xxx/xxx
+        """
+        self.device.run_adb_shell(f'am start -a android.intent.action.VIEW -d {self.uri}')
+
     def stop(self):
         self.device.app_stop(self.package_name)
 
