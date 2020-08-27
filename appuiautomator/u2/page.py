@@ -13,8 +13,9 @@ from uiautomator2.exceptions import XPathElementNotFoundError
 from uiautomator2.session import UiObject
 from uiautomator2.xpath import XPathSelector
 
-from appuiautomator.exceptions import PageElementError, PageElementsError, XPathElementsError, XPathElementError, \
-    PageError
+from appuiautomator.exceptions import (
+    PageElementError, PageElementsError, XPathElementsError, XPathElementError, PageError
+)
 from appuiautomator.u2.device import Device
 from appuiautomator.utils import config
 from appuiautomator.utils.logger import get_logger

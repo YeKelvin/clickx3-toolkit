@@ -93,14 +93,14 @@ class PageElement(object):
         self.log = log
         self.describe = describe
         if not kwargs:
-            raise ValueError("Please specify a locator")
+            raise ValueError('Please specify a locator')
         if len(kwargs) > 1:
-            raise ValueError("Please specify only one locator")
+            raise ValueError('Please specify only one locator')
         self.k, self.v = next(iter(kwargs.items()))
         try:
             self.locator = (LOCATORS[self.k], self.v)
         except KeyError:
-            raise PageElementError("Element positioning of type '{}' is not supported. ".format(self.k))
+            raise PageElementError(f'Element positioning of type {self.k} is not supported. ')
         self.has_context = bool(context)
 
     def get_element(self, context):
