@@ -15,12 +15,11 @@ log = get_logger(__name__)
 
 
 class Device:
+    """设备类
+    """
+
     def __init__(self, driver):
         self.driver: u2.Device = driver
-
-    def run_adb_shell(self, command, timeout=60):
-        output, exit_code = self.driver.shell(command, timeout=timeout)
-        return output, exit_code
 
     @property
     def info(self):
@@ -57,6 +56,32 @@ class Device:
         """屏幕方向，可能的值：natural | left | right | upsidedown
         """
         return self.driver.orientation
+
+    def run_adb_shell(self, command, timeout=60):
+        output, exit_code = self.driver.shell(command, timeout=timeout)
+        return output, exit_code
+
+    def app_start(self, package_name):
+        self.driver.app_start(package_name)
+
+    def app_start_activity_by_uri(self):
+        """adb shell am start -a android.intent.action.VIEW -d scheme://xxx/xxx
+        """
+        self.run_adb_shell(f'am start -a android.intent.action.VIEW -d {self.uri}')
+
+    def app_stop(self, package_name):
+        self.driver.app_stop(package_name)
+
+    def app_wait(self, package_name):
+        self.driver.app_wait(package_name)
+
+    def app_clear(self, package_name):
+        self.driver.app_clear(package_name)
+
+    def app_restart(self, package_name):
+        self.driver.stop(package_name)
+        self.driver.start(package_name)
+        self.driver.wait(package_name)
 
     def set_orientation(self, direction):
         """设置屏幕方向

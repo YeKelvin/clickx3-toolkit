@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @File    : baidu_search.py
-# @Time    : 2020/8/27 20:17
+# @File    : home
+# @Time    : 2020/9/1 16:17
 # @Author  : Kelvin.Ye
-from appuiautomator.u2.page import Page, PageElement, XPathElement
+from appuiautomator.u2.page import Page, PageElement
 from appuiautomator.utils.logger import get_logger
 
 log = get_logger(__name__)
@@ -22,10 +22,3 @@ class HomePage(Page):
         self.search_tip.click()
         self.device.fastinput_ime(text)
         self.search_button.click()
-
-
-class SearchResultPage(Page):
-    """搜索结果列表页
-    """
-    head_queryarea = PageElement(className='android.view.View', text='uiautomator2')
-    # head_queryarea = PageElement(className='android.view.View', id='head-queryarea')
