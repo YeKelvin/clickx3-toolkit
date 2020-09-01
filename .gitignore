@@ -10,4 +10,4 @@ pages/**/*.py
 !/pages/__init__.py
 testcases/*.py
 !testcases/base_test.py
-
+config.ini
