@@ -5,9 +5,14 @@
 .html/
 .report/
 __pycache__/
-poetry.lock
-pages/**/*.py
+
+pages/*
 !/pages/__init__.py
-testcases/*.py
+!/pages/via
+
+testcases/*
 !testcases/base_test.py
+!testcases/pytest.ini
+
 config.ini
+poetry.lock
