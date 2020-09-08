@@ -4,27 +4,26 @@
 # @Time    : 2019/9/7 18:05
 # @Author  : Kelvin.Ye
 import orjson
-from typing import Union
 
 from jsonpath import jsonpath
 
 
-def to_json(obj: Union[dict, list]) -> str:
+def to_json(obj):
     """序列化
     """
-    return orjson.dumps(obj)
+    return str(orjson.dumps(obj), encoding='utf-8')
 
 
-def from_json(json_text: str) -> Union[dict, list]:
+def from_json(json: str):
     """反序列化
     """
-    return orjson.loads(json_text)
+    return orjson.loads(json)
 
 
-def extract_json(json_text: str, json_path: str):
+def extract_json(json: str, json_path: str):
     """根据 JsonPath提取字段值
     """
-    result_list = jsonpath(from_json(json_text), json_path)
+    result_list = jsonpath(from_json(json), json_path)
     if len(result_list) == 1:
         return result_list[0]
     return result_list
