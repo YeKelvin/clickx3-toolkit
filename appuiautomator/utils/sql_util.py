@@ -10,11 +10,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Connection
 from sqlalchemy.engine.result import ResultProxy
 
-from appuiautomator.utils import config
-
 
 class SQL:
-    def __init__(self, url: str = config.get('oracle', 'url')):
+    def __init__(self, url: str):
         self.url = url
         self.engine = create_engine(url)
 

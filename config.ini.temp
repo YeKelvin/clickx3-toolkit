@@ -1,15 +1,14 @@
 [public]
 
 [oracle]
-xxx.username = name
-xxx.password = password
-address = ip:port/sid
-url =
+address = ip:port/dbname
+username = name
+password = password
 
 [ssh]
-xxx.address = ip:port
-xxx.username = name
-xxx.password = password
+address = ip:port
+username = name
+password = password
 local.address = ip:port
 remote.address = ip:port
 
