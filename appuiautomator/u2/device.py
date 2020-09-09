@@ -110,15 +110,17 @@ class Device:
     def app_install(self, url):
         """安装 app
         """
+        log.info(f'start installing app from {url}')
         self.driver.app_install(url)
 
     def app_start(self, package_name):
         """运行 app
         """
-        print(f'starting {package_name}')
+        log.info(f'starting app {package_name}')
         self.driver.app_start(package_name)
 
     def app_restart(self, package_name):
+        log.info(f'restarting app {package_name}')
         self.driver.stop(package_name)
         self.driver.start(package_name)
         self.driver.wait(package_name)
@@ -126,11 +128,13 @@ class Device:
     def app_stop(self, package_name):
         """停止 app
         """
+        log.info(f'stopping app {package_name}')
         self.driver.app_stop(package_name)
 
     def app_clear(self, package_name):
         """清空 app缓存
         """
+        log.info(f'clear app cache {package_name}')
         self.driver.app_clear(package_name)
 
     def app_stop_all(self, excludes=None):
