@@ -33,6 +33,7 @@ sshtunnel = "^0.1.5"
 selenium = "^3.141.0"
 flake8 = "^3.8.3"
 yapf = "^0.30.0"
+pycryptodome = "^3.9.8"
 
 [tool.poetry.dev-dependencies]
 
