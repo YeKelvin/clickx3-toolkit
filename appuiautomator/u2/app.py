@@ -14,6 +14,7 @@ log = get_logger(__name__)
 
 class App:
     package_name = None
+    uri = None
 
     def __init__(self, device):
         if not self.package_name:
@@ -25,7 +26,7 @@ class App:
     def start(self):
         self.device.app_start(self.package_name)
 
-    def start_activity_by_uri(self):
+    def start_by_uri(self):
         """adb shell am start -a android.intent.action.VIEW -d scheme://xxx/xxx
         """
         self.device.run_adb_shell(f'am start -a android.intent.action.VIEW -d {self.uri}')

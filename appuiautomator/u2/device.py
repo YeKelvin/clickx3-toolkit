@@ -61,28 +61,6 @@ class Device:
         output, exit_code = self.driver.shell(command, timeout=timeout)
         return output, exit_code
 
-    def app_start(self, package_name):
-        self.driver.app_start(package_name)
-
-    def app_start_activity_by_uri(self):
-        """adb shell am start -a android.intent.action.VIEW -d scheme://xxx/xxx
-        """
-        self.run_adb_shell(f'am start -a android.intent.action.VIEW -d {self.uri}')
-
-    def app_stop(self, package_name):
-        self.driver.app_stop(package_name)
-
-    def app_wait(self, package_name):
-        self.driver.app_wait(package_name)
-
-    def app_clear(self, package_name):
-        self.driver.app_clear(package_name)
-
-    def app_restart(self, package_name):
-        self.driver.stop(package_name)
-        self.driver.start(package_name)
-        self.driver.wait(package_name)
-
     def set_orientation(self, direction):
         """设置屏幕方向
 
@@ -119,6 +97,11 @@ class Device:
         """
         return self.driver.app_current()
 
+    def activity_start_by_uri(self, uri):
+        """adb shell am start -a android.intent.action.VIEW -d scheme://xxx/xxx
+        """
+        self.run_adb_shell(f'am start -a android.intent.action.VIEW -d {uri}')
+
     def wait_activity(self, activity_name):
         """等待 activity出现
         """
@@ -134,6 +117,11 @@ class Device:
         """
         print(f'starting {package_name}')
         self.driver.app_start(package_name)
+
+    def app_restart(self, package_name):
+        self.driver.stop(package_name)
+        self.driver.start(package_name)
+        self.driver.wait(package_name)
 
     def app_stop(self, package_name):
         """停止 app
@@ -152,17 +140,6 @@ class Device:
             excludes = []
         self.driver.app_stop_all(excludes)
 
-    def app_info(self, package_name):
-        """app的详细信息"""
-
-        return self.driver.app_info(package_name)
-
-    def save_app_icon(self, package_name, path):
-        """保存 app图标
-        """
-        icon = self.driver.app_icon(package_name)
-        icon.save(path)
-
     def app_list_running(self):
         """获取正在运行的 app
         """
@@ -173,6 +150,17 @@ class Device:
         """
         pid = self.driver.app_wait(package_name, front=front, timeout=timeout)
         return pid
+
+    def app_info(self, package_name):
+        """app的详细信息
+        """
+        return self.driver.app_info(package_name)
+
+    def save_app_icon(self, package_name, path):
+        """保存 app图标
+        """
+        icon = self.driver.app_icon(package_name)
+        icon.save(path)
 
     def push(self, source, destination):
         """推送文件到设备
