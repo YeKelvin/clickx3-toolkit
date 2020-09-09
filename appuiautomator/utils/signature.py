@@ -3,16 +3,11 @@
 # @File    : http_sign
 # @Time    : 2020/9/8 15:20
 # @Author  : Kelvin.Ye
+from appuiautomator.utils.dict_util import sort_dict
 from appuiautomator.utils.logger import get_logger
 from appuiautomator.utils.md5_util import md5
 
 log = get_logger(__name__)
-
-
-def sort_dict(obj: dict):
-    if not obj:
-        return None
-    return dict(sorted(obj.items(), key=lambda d: d[0]))
 
 
 def traverse(buffer: list, key: str, value: object):
@@ -20,6 +15,10 @@ def traverse(buffer: list, key: str, value: object):
         buffer.append(f'{key}={traverse_dict(value)}&')
     elif isinstance(value, list):
         buffer.append(f'{key}={traverse_list(value)}&')
+    elif isinstance(value, bool):
+        buffer.append(f'{key}={str(value).lower()}&')
+    elif value is None:
+        buffer.append(f'{key}=null&')
     else:
         buffer.append(f'{key}={str(value)}&')
 
