@@ -16,14 +16,16 @@ USER_AGENT_IPHONE_X = (
 )
 
 
-class Firefox:
+class FirefoxDriver:
     def __init__(self, exe_path=None, headless=False, ua=None, lang='zh-CN', page_load_strategy='normal'):
         """
 
         Args:
-            lang: zh-CN | en-US | km-KH
+            exe_path: driver路径
+            headless: 无头模式
             ua: user-agent
-            page_load_strategy: none | eager | normal
+            lang: 浏览器语言，zh-CN | en-US | km-KH
+            page_load_strategy: 页面加载策略，none | eager | normal
 
         """
         self.exe_path = exe_path
@@ -36,11 +38,12 @@ class Firefox:
         if ua:
             self.profile.set_preference('general.useragent.override', ua)
 
-        caps = webdriver.DesiredCapabilities.FIREFOX.copy()
-        caps['pageLoadStrategy'] = page_load_strategy
+        self.capabilities = webdriver.DesiredCapabilities.FIREFOX.copy()
+        self.capabilities['pageLoadStrategy'] = page_load_strategy
 
     def driver(self):
         wd = webdriver.Firefox(executable_path=self.exe_path or last_gecodriver_path(),
                                firefox_profile=self.profile,
-                               options=self.option)
+                               options=self.option,
+                               desired_capabilities=self.capabilities)
         return wd
