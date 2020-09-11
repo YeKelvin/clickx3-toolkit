@@ -6,9 +6,7 @@
 import configparser
 import os
 
-__CONFIG_PATH__ = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, 'config.ini')
-)
+__CONFIG_PATH__ = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, 'config.ini'))
 
 
 def get(section, key, filepath=__CONFIG_PATH__):
@@ -29,25 +27,25 @@ def get(section, key, filepath=__CONFIG_PATH__):
     return config.get(section, key)
 
 
-def get_project_path():
+def project_path():
     """返回项目根目录路径。
     """
     return os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
 
 
-def get_resources_path():
+def resources_path():
     """返回项目资源目录路径。
     """
     return os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, 'resources'))
 
 
-def get_screenshot_path():
+def screenshot_path():
     """返回截图目录路径
     """
-    return os.path.join(get_project_path(), 'testcases', '.tmp')
+    return os.path.join(project_path(), 'testcases', '.tmp')
 
 
 if __name__ == '__main__':
     print(__CONFIG_PATH__)
-    print(get_project_path())
-    print(get_resources_path())
+    print(project_path())
+    print(resources_path())

@@ -60,3 +60,10 @@ poetry env info --path                                  查看虚拟环境的路
 poetry env list                                         列出所有虚拟环境
 poetry env remove <version_no>                          删除虚拟环境
 ```
+
+## Web Driver下载链接
+#### Chrome
+`http://npm.taobao.org/mirrors/chromedriver/`
+
+#### Firefox
+`https://github.com/mozilla/geckodriver/releases`

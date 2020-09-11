@@ -14,5 +14,7 @@ testcases/*
 !testcases/base_test.py
 !testcases/pytest.ini
 
+resources/webdrive/*
+
 config.ini
 poetry.lock

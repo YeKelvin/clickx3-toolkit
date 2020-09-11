@@ -212,7 +212,7 @@ class ElementUtil:
         cropped = image.crop((left, top, right, bottom))
         if not destination:
             destination = os.path.join(
-                config.get_project_path(),
+                config.project_path(),
                 'testcase', '.tmp',
                 f'{datetime.now().strftime("%Y%m%d.%H%M%S.%f")}.jpg'
             )

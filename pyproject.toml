@@ -34,6 +34,7 @@ selenium = "^3.141.0"
 flake8 = "^3.8.3"
 yapf = "^0.30.0"
 pycryptodome = "^3.9.8"
+xlwings = "^0.20.7"
 
 [tool.poetry.dev-dependencies]
 
