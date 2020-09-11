@@ -5,7 +5,7 @@
 # @Author  : Kelvin.Ye
 from selenium import webdriver
 
-from appuiautomator.h5.driver_util import last_gecodriver_path
+from appuiautomator.h5.driver_util import last_gecodriver_path, gecodriver_log_path
 from appuiautomator.utils.logger import get_logger
 
 log = get_logger(__name__)
@@ -45,5 +45,6 @@ class FirefoxDriver:
         wd = webdriver.Firefox(executable_path=self.exe_path or last_gecodriver_path(),
                                firefox_profile=self.profile,
                                options=self.option,
+                               service_log_path=gecodriver_log_path(),
                                desired_capabilities=self.capabilities)
         return wd

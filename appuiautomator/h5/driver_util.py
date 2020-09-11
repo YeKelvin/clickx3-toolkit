@@ -21,3 +21,7 @@ def last_chromedriver_path():
 
 def last_gecodriver_path():
     return os.path.join(last_version_dir('firefox'), 'geckodriver.exe')
+
+
+def gecodriver_log_path():
+    return os.path.join(last_version_dir('firefox'), 'geckodriver.log')
