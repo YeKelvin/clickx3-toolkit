@@ -11,8 +11,8 @@ pages/*
 !/pages/via
 
 testcases/*
-!testcases/base_test.py
 !testcases/pytest.ini
+!testcases/conftest.py
 
 resources/webdrive/*
 
