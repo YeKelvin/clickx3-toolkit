@@ -40,6 +40,11 @@ class App:
     def clear(self):
         self.device.app_clear(self.package_name)
 
+    def clear_and_start(self):
+        self.clear()
+        self.start()
+        self.wait()
+
     def restart(self):
         self.stop()
         self.start()

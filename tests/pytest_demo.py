@@ -25,13 +25,22 @@ def teardown_module():
     print('teardown_module():每个模块运行后执行')
 
 
-# @pytest.fixture(params=[{'keyA': 'valueA'}, {'keyB': 'valueB'}])
-# def data(params):
-#     return params.param
-#
-#
-# def test_fixture(data):
-#     print(data)
+@pytest.fixture
+def fixture_return_data():
+    return 'returned data'
+
+
+def test_fixture_return(fixture_return_data):
+    print(fixture_return_data)
+
+
+@pytest.fixture(params=[{'keyA': 'valueA'}, {'keyB': 'valueB'}])
+def data(request):
+    return request.param
+
+
+def test_fixture_params(data):
+    print(data)
 
 
 class TestMethod:

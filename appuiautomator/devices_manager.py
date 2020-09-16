@@ -45,3 +45,13 @@ class AndroidDevicesManager(Singleton):
         for adb_device in self.__unused_devices:
             unused_queue.put(adb_device)
         return unused_queue
+
+
+class DevicesManager:
+    @staticmethod
+    def android():
+        return AndroidDevicesManager()
+
+    @staticmethod
+    def ios(self):
+        ...

@@ -42,7 +42,7 @@ poetry init                                             将当前 Python项目�
 poetry install                                          根据 pyproject.toml配置安装依赖
 poetry update <dp_name>                                 更新所有/指定的依赖
 poetry add <dp_name>                                    安装指定的依赖
-poetry remove <dp_name>                                 卸载指定的依赖
+poetry remove <dp_name>                                 卸载指定的依赖
 poetry show                                             列出所有依赖
 poetry build                                            构建项目
 poetry publish                                          发布项目
@@ -67,3 +67,10 @@ poetry env remove <version_no>                          删除虚拟环境
 
 #### Firefox
 `https://github.com/mozilla/geckodriver/releases`
+
+## PyCharm pytest配置
+pytest运行参数添加：
+```cli
+-v -s -o log_cli_level=DEBUG --log-date-format="%Y-%m-%d %H:%M:%S" --log-format="[%(asctime)s][%(levelname)s][%(name)s.%(funcName)s] %(message)s"
+```
+
