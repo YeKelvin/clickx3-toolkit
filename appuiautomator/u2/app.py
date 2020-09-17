@@ -21,7 +21,7 @@ class App:
         if not self.package_name:
             raise AppError('App Package Name can not be empty.')
         self.device: Device = device
-        self.driver: u2.Device = device.driver
+        # self.driver: u2.Device = device.driver
         self.pages: list = []
 
     def start(self):
@@ -30,7 +30,7 @@ class App:
     def start_by_uri(self):
         """adb shell am start -a android.intent.action.VIEW -d scheme://xxx/xxx
         """
-        self.device.run_adb_shell(f'am start -a android.intent.action.VIEW -d {self.uri}')
+        self.device.shell(f'am start -a android.intent.action.VIEW -d {self.uri}')
 
     def stop(self):
         self.device.app_stop(self.package_name)
