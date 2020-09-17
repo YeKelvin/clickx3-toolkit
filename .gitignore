@@ -9,10 +9,13 @@ __pycache__/
 pages/*
 !/pages/__init__.py
 !/pages/via
+!/pages/chrome
 
 testcases/*
 !testcases/pytest.ini
 !testcases/conftest.py
+!testcases/chrome_test.py
+!testcases/via_test.py
 
 resources/webdrive/*
 

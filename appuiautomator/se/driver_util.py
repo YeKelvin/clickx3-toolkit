@@ -19,6 +19,10 @@ def last_chromedriver_path():
     return os.path.join(last_version_dir('chrome'), 'chromedriver.exe')
 
 
+def chromedriver_log_path():
+    return os.path.join(last_version_dir('chrome'), 'chromedriver.log')
+
+
 def last_gecodriver_path():
     return os.path.join(last_version_dir('firefox'), 'geckodriver.exe')
 

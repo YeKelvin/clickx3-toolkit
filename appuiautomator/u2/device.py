@@ -113,16 +113,16 @@ class Device:
         log.info(f'start installing app from {url}')
         self.driver.app_install(url)
 
-    def app_start(self, package_name):
+    def app_start(self, package_name, activity=None):
         """运行 app
         """
         log.info(f'starting app {package_name}')
-        self.driver.app_start(package_name)
+        self.driver.app_start(package_name, activity)
 
-    def app_restart(self, package_name):
+    def app_restart(self, package_name, activity=None):
         log.info(f'restarting app {package_name}')
         self.driver.stop(package_name)
-        self.driver.start(package_name)
+        self.driver.start(package_name, activity)
         self.driver.wait(package_name)
 
     def app_stop(self, package_name):

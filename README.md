@@ -66,7 +66,13 @@ poetry env remove <version_no>                          删除虚拟环境
 `http://npm.taobao.org/mirrors/chromedriver/`
 
 #### Firefox
-`https://github.com/mozilla/geckodriver/releases`
+`https://github.com/mozilla/geckodriver/releases/`
+
+#### Edge
+`https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/`
+
+#### Safari
+`https://webkit.org/blog/6900/webdriver-support-in-safari-10/`
 
 ## PyCharm pytest配置
 pytest运行参数添加：
