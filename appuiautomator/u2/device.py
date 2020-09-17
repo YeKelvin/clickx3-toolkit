@@ -58,6 +58,7 @@ class Device:
         return self.driver.orientation
 
     def run_adb_shell(self, command, timeout=60):
+        log.info(f'running adb shell={command}')
         output, exit_code = self.driver.shell(command, timeout=timeout)
         return output, exit_code
 
@@ -98,8 +99,6 @@ class Device:
         return self.driver.app_current()
 
     def activity_start_by_uri(self, uri):
-        """adb shell am start -a android.intent.action.VIEW -d scheme://xxx/xxx
-        """
         self.run_adb_shell(f'am start -a android.intent.action.VIEW -d {uri}')
 
     def wait_activity(self, activity_name):
