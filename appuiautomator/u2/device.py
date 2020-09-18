@@ -76,3 +76,8 @@ class Device(u2.Device):
             filename = f'Screenshot_{current_time}.png'
             command = f'screencap -p /sdcard/DCIM/Screenshots/{filename}'
         self.shell(command)
+
+    def get_toast_message(self):
+        toast_msg = self.toast.get_message(3.0)
+        log.info(f'toast message={toast_msg}')
+        return toast_msg

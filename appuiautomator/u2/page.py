@@ -12,7 +12,6 @@ log = get_logger(__name__)
 
 class Page:
     def __init__(self, device=None):
-        self.pages = []
         if device:
             self.device: Device = device
 
@@ -28,12 +27,8 @@ class Page:
         """
         if instance is None:
             return None
-        pages = instance.pages
-        for page in pages:
-            if isinstance(page, type(self)):
-                return page
+
         self.device = instance.device  # 将App对象的device属性传递给Page对象
-        pages.append(self)
         return self
 
     def __set__(self, instance, value):
