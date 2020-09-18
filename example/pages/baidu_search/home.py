@@ -3,7 +3,8 @@
 # @File    : home
 # @Time    : 2020/9/1 16:17
 # @Author  : Kelvin.Ye
-from appuiautomator.u2.page import Page, PageElement
+from appuiautomator.u2.page import Page
+from appuiautomator.u2.element import PageElement
 from appuiautomator.utils.logger import get_logger
 
 log = get_logger(__name__)

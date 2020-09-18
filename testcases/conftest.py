@@ -6,8 +6,7 @@
 import pytest
 
 from appuiautomator.devices_manager import DevicesManager
-import uiautomator2 as u2
-
+from appuiautomator.u2 import device
 from appuiautomator.u2.device import Device
 
 
@@ -18,7 +17,7 @@ def an_serial():
 
 @pytest.fixture(scope='session')
 def an_device(an_serial):
-    return Device(u2.connect(an_serial))
+    return Device(device.connect(an_serial))
 
 
 @pytest.fixture(scope='session')

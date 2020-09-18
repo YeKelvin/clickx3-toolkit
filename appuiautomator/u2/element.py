@@ -12,9 +12,7 @@ from uiautomator2.exceptions import XPathElementNotFoundError
 from uiautomator2.session import UiObject
 from uiautomator2.xpath import XPathSelector
 
-from appuiautomator.exceptions import (
-    PageElementError, PageElementsError, XPathElementsError, XPathElementError
-)
+from appuiautomator.exceptions import PageElementError, PageElementsError, XPathElementsError, XPathElementError
 from appuiautomator.utils import config
 from appuiautomator.utils.logger import get_logger
 
@@ -55,8 +53,7 @@ class PageElement:
     @property
     def location_info(self):
         return (
-            f'Location:{[k + "=" + v for k, v in self.kwargs.items()]}, '
-            f'Description:{str(self.description)}'
+            f'Location:{[k + "=" + v for k, v in self.kwargs.items()]}, Description:{str(self.description)}'
         )
 
     def __init__(self, timeout=5, desc=None, **kwargs):
@@ -81,9 +78,19 @@ class PageElement:
             raise PageElementError(f'Element not found. {self.location_info}')
 
     def __get__(self, instance, owner) -> Union[UiObject, list, None]:
+        """
+
+        Args:
+            instance:   appuiautomator.u2.page.Page类实例
+            owner:      appuiautomator.u2.page.Page类
+
+        Returns:
+
+        """
         if instance is None:
             return None
-        return self.find(instance)
+        context = instance.device  # 将Page对象的device属性传递给PageElement对象
+        return self.find(context)
 
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
@@ -137,9 +144,19 @@ class XPathElement:
             raise XPathElementError(f'Element not found. {self.location_info}')
 
     def __get__(self, instance, owner) -> Union[XPathSelector, list, None]:
+        """
+
+        Args:
+            instance:   appuiautomator.u2.page.Page类实例
+            owner:      appuiautomator.u2.page.Page类
+
+        Returns:
+
+        """
         if instance is None:
             return None
-        return self.find(instance)
+        context = instance.device  # 将Page对象的device属性传递给PageElement对象
+        return self.find(context)
 
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
