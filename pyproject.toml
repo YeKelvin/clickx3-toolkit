@@ -35,6 +35,13 @@ flake8 = "^3.8.3"
 yapf = "^0.30.0"
 pycryptodome = "^3.9.8"
 xlwings = "^0.20.7"
+pytest-rerunfailures = "^9.1"
+scikit-image = "^0.17.2"
+imutils = "^0.5.3"
+findit = "^0.5.8"
+imageio = "~=2.8.0"
+imageio-ffmpeg = "~=0.4.2"
+websocket_client = "~=0.57.0"
 
 [tool.poetry.dev-dependencies]
 

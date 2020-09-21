@@ -67,6 +67,12 @@ def test_parametrize(key_name):
     print(key_name)
 
 
+@pytest.mark.flaky(reruns=5, reruns_delay=2)
+def test_rerun():
+    print('测试用例失败重跑')
+    assert 1 == 2
+
+
 @allure.feature('标注功能or模块')
 class TestAllureDemo:
     @allure.story("标注子功能or模块")

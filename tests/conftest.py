@@ -3,16 +3,12 @@
 # @File    : conftest
 # @Time    : 2020/4/2 17:15
 # @Author  : Kelvin.Ye
-import os
-
 import allure
 import pytest
 
-# driver = None
-#
-#
+
 # @pytest.mark.hookwrapper
-# def screenshot_on_test_failed(item):
+# def pytest_runtest_makereport(item):
 #     outcome = yield
 #     rep = outcome.get_result()
 #     if rep.when == 'call' and rep.failed:
@@ -27,9 +23,21 @@ import pytest
 #             allure.attach(driver.get_screenshot_as_png(), "失败截图", allure.attachment_type.PNG)
 
 
-# @pytest.fixture(scope='session', autouse=True)
-# def browser():
-#     global driver
-#     if driver is None:
-#         driver = webdriver.Chrome()
-#     return driver
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+def pytest_runtest_makereport(item):
+    outcome = yield
+    result = outcome.get_result()
+    print(f'item.execution_count={item.execution_count}')
+    print(f'result.when={result.when}')
+    print(f'result.failed={result.failed}')
+
+# def pytest_runtest_call(item):
+#     print('pytest_runtest_call')
+#     print(dir(item))
+#     print(f'item.execution_count={item.execution_count}')
+
+
+# def pytest_runtest_teardown(item):
+#     print('pytest_runtest_teardown')
+#     print(dir(item))
+#     print(f'item.outcome={item.reportinfo()}')

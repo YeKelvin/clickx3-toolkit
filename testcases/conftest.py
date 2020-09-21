@@ -10,6 +10,11 @@ from appuiautomator.u2 import device
 from appuiautomator.u2.device import Device
 
 
+# 声明排除测试目录或模块
+# collect_ignore = ['ignore.py']
+# collect_ignore_glob = ['*_ignore.py']
+
+
 @pytest.fixture(scope='session')
 def an_serial():
     return DevicesManager.android().get_device()

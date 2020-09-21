@@ -7,12 +7,15 @@
 """
 Chrome app测试案例
 """
+import pytest
 
 from appuiautomator.se.chromedriver import webview_driver
 from appuiautomator.utils.logger import get_logger
 from pages.chrome import Chrome
 
 log = get_logger(__name__)
+
+pytestmark = [pytest.mark.h5test]
 
 
 class TestChrome:
