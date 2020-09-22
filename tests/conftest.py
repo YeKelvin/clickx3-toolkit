@@ -12,17 +12,9 @@ log = get_logger(__name__)
 
 # @pytest.mark.hookwrapper
 # def pytest_runtest_makereport(item):
-#     pytest_html = item.config.pluginmanager.get_plugin('html')
 #     outcome = yield
 #     result = outcome.get_result()
-#     extra = getattr(result, 'extra', [])
-#     # if result.when == 'call' and result.failed:  # 测试执行阶段且测试失败时执行以下动作
-#     if result.when == 'call':  # 测试执行阶段且测试失败时执行以下动作
-#         # pytest-html添加截图
-#         image_name = result.nodeid.replace('::', '_') + '.png'
-#         # extra.append(pytest_html.extras.image(image_name, mime_type='image/png', extension='png'))
-#         extra.append(pytest_html.extras.png(image_name))
-#         result.extra = extra
+#     if result.when == 'call' and result.failed:  # 测试执行阶段且测试失败时执行以下动作
 #         # with allure.step('添加失败截图...'):
 #         #     allure.attach(driver.get_screenshot_as_png(), '失败截图', allure.attachment_type.PNG)
 
@@ -31,6 +23,9 @@ log = get_logger(__name__)
 def pytest_runtest_makereport(item):
     outcome = yield
     result = outcome.get_result()
+    print(f'item={dir(item)}')
+    # print(f'item.dict={item.__dict__}')
+    print(f'item.funcargs={item.funcargs}')
     print(f'item.config.option.htmlpath={item.config.option.htmlpath}')
     print(f'item.execution_count={item.execution_count}')
     print(f'result.when={result.when}')
