@@ -53,7 +53,7 @@ class PageElement:
     @property
     def location_info(self):
         return (
-            f'Location:{[k + "=" + v for k, v in self.kwargs.items()]}, Description:{str(self.description)}'
+            f'Location:{[str(k) + "=" + str(v) for k, v in self.kwargs.items()]}, Description:{str(self.description)}'
         )
 
     def __init__(self, timeout=5, desc=None, **kwargs):

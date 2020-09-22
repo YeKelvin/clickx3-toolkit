@@ -31,6 +31,7 @@ def an_device(an_serial):
         return __device__
     else:
         __device__ = Device(device.connect(an_serial))
+        return __device__
 
 
 @pytest.fixture(scope='session')
@@ -58,7 +59,7 @@ def _android_screenshot(image_name):
     log.info('开始截图')
     image_path = f'./.screenshots/{image_name}.png'
     __device__.screenshot(image_path)
-    log.info('截图保存路径={image_path}')
+    log.info(f'截图保存路径={image_path}')
     return image_path
 
 

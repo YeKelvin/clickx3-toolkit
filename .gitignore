@@ -6,8 +6,10 @@
 .report/
 __pycache__/
 
+**/.screenrecords/
+**/.screenshots/
+**/assets/
 **/report.html
-**/assets/style.css
 
 pages/*
 !/pages/__init__.py
