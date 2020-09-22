@@ -77,6 +77,6 @@ poetry env remove <version_no>                          删除虚拟环境
 ## PyCharm pytest配置
 pytest运行参数添加：
 ```cli
--v -s -o log_cli_level=DEBUG --log-date-format="%Y-%m-%d %H:%M:%S" --log-format="[%(asctime)s][%(levelname)s][%(name)s.%(funcName)s] %(message)s"
+-v -s --html=report.html
 ```
 

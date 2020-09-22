@@ -24,8 +24,14 @@ class Device(u2.Device):
     def __init__(self, u2d):
         self.__dict__ = u2d.__dict__
 
+    def run_adb_shell(self, command):
+        log.info(f'execute adb shell {command}')
+        output, exit_code = self.shell(command)
+        log.info(f'adb shell output={output}')
+        log.info(f'adb shell exitCode={exit_code}')
+
     def activity_start_by_uri(self, uri):
-        self.shell(f'am start -a android.intent.action.VIEW -d {uri}')
+        self.run_adb_shell(f'am start -a android.intent.action.VIEW -d {uri}')
 
     def app_restart(self, package_name, activity=None):
         log.info(f'restarting app {package_name}')
@@ -46,25 +52,18 @@ class Device(u2.Device):
         sleep(0.5)
         self.set_fastinput_ime(False)  # 切换成正常的输入法
 
-    def save_screenshot(self, destination):
-        """保存截图
-        """
-        image = self.screenshot()
-        image.save(destination)
-
     def adb_input(self, input_content: str) -> None:
         """通过adb shell input text 进行内容输入，不限于字母、数字、汉字等
         """
-        log.info(f'adb input text {input_content}')
-        self.shell(f'input text {input_content}')
+        self.run_adb_shell(f'input text {input_content}')
 
     def adb_refresh_gallery(self, file_uri: str) -> None:
         """上传图片至系统图库后，要手动广播通知系统图库刷新
         """
-        log.info('android.intent.action.MEDIA_SCANNER_SCAN_FILE 广播刷新系统图库')
+        log.info('ADB广播刷新系统图库')
         if file_uri.startswith('/'):
             file_uri = file_uri[1:]
-        self.shell(fr'am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///{file_uri}')
+        self.run_adb_shell(fr'am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///{file_uri}')
 
     def adb_screencap(self, path: str = None) -> None:
         """设备本地截图
@@ -75,9 +74,9 @@ class Device(u2.Device):
             current_time = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
             filename = f'Screenshot_{current_time}.png'
             command = f'screencap -p /sdcard/DCIM/Screenshots/{filename}'
-        self.shell(command)
+        self.run_adb_shell(command)
 
-    def get_toast_message(self):
-        toast_msg = self.toast.get_message(3.0)
+    def get_toast_message(self, wait_timeout=10, cache_timeout=10, default=None):
+        toast_msg = self.toast.get_message(wait_timeout, cache_timeout, default)
         log.info(f'toast message={toast_msg}')
         return toast_msg

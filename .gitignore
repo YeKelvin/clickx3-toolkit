@@ -6,6 +6,9 @@
 .report/
 __pycache__/
 
+**/report.html
+**/assets/style.css
+
 pages/*
 !/pages/__init__.py
 !/pages/via
