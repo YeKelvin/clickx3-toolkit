@@ -48,11 +48,26 @@ def pytest_runtest_makereport(item):
         # if result.when == 'call' and result.failed:  # 测试执行阶段且测试失败时执行以下动作
         if result.when == 'call':  # 测试执行阶段且测试失败时执行以下动作
             # pytest-html添加截图
-            image_name = result.nodeid.replace('::', '_') + '.png'
-            extra.append(pytest_html.extras.png(image_name))
+            image_name = result.nodeid.replace('::', '_')
+            image_path = _android_screenshot(image_name)
+            extra.append(pytest_html.extras.png(image_path))
             result.extra = extra
 
 
-def android_screenshot(image_name):
-    if __device__:
-        __device__.screenshot(image_name)
+def _android_screenshot(image_name):
+    log.info('开始截图')
+    image_path = f'./.screenshots/{image_name}.png'
+    __device__.screenshot(image_path)
+    log.info('截图保存路径={image_path}')
+    return image_path
+
+
+def _android_screenrecord(video_name):
+    log.info('开始录屏')
+    video_path = f'./.screenrecords/{video_name}.mp4'
+    __device__.screenrecord(video_path)
+    yield
+    log.info('结束录屏')
+    __device__.screenrecord.stop()
+    log.info(f'视频保存路径={video_path}')
+    return video_path
