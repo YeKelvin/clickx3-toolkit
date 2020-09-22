@@ -47,18 +47,16 @@ class PageObject:
         self.driver.implicitly_wait(5)
 
     def run_script(self, js=None, *args):
-        """
-        run JavaScript script
+        """run JavaScript script
         """
         if js is None:
-            raise ValueError("Please input js script")
+            raise ValueError('Please input js script')
         else:
             self.driver.execute_script(js, *args)
 
 
 class PageElement(object):
-    """
-    Page Element descriptor.
+    """Page Element descriptor.
     :param css:    `str`
         Use this css locator
     :param id_:    `str`
@@ -119,7 +117,7 @@ class PageElement(object):
     def find(self, context):
         for i in range(1, self.time_out):
             if self.log is True:
-                log.info("{desc}, {n} times search, {element} ".format(desc=self.describe, n=i, element=self.locator))
+                log.info(f'{self.describe}, {i} times search, {self.locator}')
             if self.get_element(context) is not None:
                 return self.get_element(context)
         else:
@@ -139,16 +137,15 @@ class PageElement(object):
 
     def __set__(self, instance, value):
         if self.has_context:
-            raise PageElementError("Sorry, the set descriptor doesn't support elements with context.")
+            raise PageElementError('Sorry, the set descriptor does not support elements with context.')
         element = self.__get__(instance, instance.__class__)
         if not element:
-            raise PageElementError("Can't set value, element not found")
+            raise PageElementError('Can not set value, element not found')
         element.send_keys(value)
 
 
 class PageElements(PageElement):
-    """
-    Like `PageElement` but returns multiple results.
+    """Like `PageElement` but returns multiple results.
     >> from page import Page, PageElements
     >> class MyPage(Page):
             all_table_rows = PageElements(tag='tr')
@@ -164,10 +161,10 @@ class PageElements(PageElement):
 
     def __set__(self, instance, value):
         if self.has_context:
-            raise PageElementError("Sorry, the set descriptor doesn't support elements with context.")
+            raise PageElementError('Sorry, the set descriptor does not support elements with context.')
         elements = self.__get__(instance, instance.__class__)
         if not elements:
-            raise PageElementError("Can't set value, no elements found")
+            raise PageElementError('Can not set value, no elements found')
         [element.send_keys(value) for element in elements]
 
 
@@ -190,13 +187,12 @@ class PageSelect(object):
 class PageWait(object):
 
     def __init__(self, element, timeout=3):
-        """
-        wait webelement display
+        """wait webelement display
         """
         try:
             timeout_int = int(timeout)
         except TypeError:
-            raise ValueError("Type 'timeout' error, must be type int() ")
+            raise ValueError('Type "timeout" error, must be type int()')
 
         for i in range(timeout_int):
             if element is not None:
@@ -207,4 +203,4 @@ class PageWait(object):
             else:
                 sleep(1)
         else:
-            raise TimeoutError("Timeout, element invisible")
+            raise TimeoutError('Timeout, element invisible')
