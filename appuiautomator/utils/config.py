@@ -39,10 +39,16 @@ def resources_path():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, 'resources'))
 
 
+def screenrecord_path():
+    """返回录屏视频目录路径
+    """
+    return os.path.join(project_path(), 'testcases', '.screenrecords')
+
+
 def screenshot_path():
     """返回截图目录路径
     """
-    return os.path.join(project_path(), 'testcases', '.tmp')
+    return os.path.join(project_path(), 'testcases', '.screenshots')
 
 
 if __name__ == '__main__':
