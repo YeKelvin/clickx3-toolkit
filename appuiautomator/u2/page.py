@@ -24,13 +24,13 @@ class Page:
             instance:   appuiautomator.u2.app.App类实例
             owner:      appuiautomator.u2.app.App类
 
-        Returns:
+        Returns:        self
 
         """
-        if instance is None:
-            return None
+        device = getattr(instance, 'device', None)
 
-        self.device = instance.device  # 将App对象的device属性传递给Page对象
+        if device:
+            self.device = instance.device  # 将App对象的device属性传递给Page对象
         return self
 
     def __set__(self, instance, value):
