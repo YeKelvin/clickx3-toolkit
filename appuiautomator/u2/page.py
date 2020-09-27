@@ -35,3 +35,24 @@ class Page:
 
     def __set__(self, instance, value):
         raise PageError('Can not set value')
+
+
+class Base:
+    a = Page()
+    b = 2
+
+    def __new__(cls, name, age):
+        pages = []
+        for attr in cls.__dict__.values():
+            if isinstance(attr, Page):
+                pages.append(attr)
+        print(pages)
+        return super(Base, cls).__new__(cls)
+
+    def __init__(self, name, age):
+        ...
+
+
+if __name__ == '__main__':
+    # print(Base.child)
+    base = Base(1, 2)

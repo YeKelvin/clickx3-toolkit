@@ -7,6 +7,7 @@ from typing import Optional
 
 from appuiautomator.exceptions import AppError
 from appuiautomator.u2.device import Device
+from appuiautomator.u2.page import Page
 from appuiautomator.utils.logger import get_logger
 
 log = get_logger(__name__)
@@ -16,6 +17,12 @@ class App:
     package_name = None  # type: Optional[str]
     activity = None  # type: Optional[str]
     uri = None  # type: Optional[str]
+
+    def __new__(cls, device: Device):
+        for attr in cls.__dict__.values():
+            if isinstance(attr, Page):  # 将App的device赋值给Page
+                attr.device = device
+        return super(App, cls).__new__(cls)
 
     def __init__(self, device: Device):
         if not self.package_name:
