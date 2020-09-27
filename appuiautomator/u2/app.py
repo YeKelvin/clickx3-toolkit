@@ -3,6 +3,8 @@
 # @File    : app_object.py
 # @Time    : 2020/4/3 10:47
 # @Author  : Kelvin.Ye
+from typing import Optional
+
 from appuiautomator.exceptions import AppError
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.logger import get_logger
@@ -11,9 +13,9 @@ log = get_logger(__name__)
 
 
 class App:
-    package_name = None
-    activity = None
-    uri = None
+    package_name = None  # type: Optional[str]
+    activity = None  # type: Optional[str]
+    uri = None  # type: Optional[str]
 
     def __init__(self, device: Device):
         if not self.package_name:

@@ -5,7 +5,7 @@
 # @Author  : Kelvin.Ye
 import os
 from datetime import datetime
-from typing import Union
+from typing import Union, List
 
 from uiautomator2 import UiObjectNotFoundError
 from uiautomator2.exceptions import XPathElementNotFoundError
@@ -77,7 +77,7 @@ class PageElement:
         except (UiObjectNotFoundError, PageElementError):
             raise PageElementError(f'Element not found. {self.location_info}')
 
-    def __get__(self, instance, owner) -> Union[UiObject, list, None]:
+    def __get__(self, instance, owner) -> Union[UiObject, List[UiObject], None]:
         """
 
         Args:
@@ -143,7 +143,7 @@ class XPathElement:
         except (XPathElementNotFoundError, XPathElementError):
             raise XPathElementError(f'Element not found. {self.location_info}')
 
-    def __get__(self, instance, owner) -> Union[XPathSelector, list, None]:
+    def __get__(self, instance, owner) -> Union[XPathSelector, List[XPathSelector], None]:
         """
 
         Args:

@@ -3,6 +3,8 @@
 # @File    : page_object.py
 # @Time    : 2020/4/1 23:53
 # @Author  : Kelvin.Ye
+from typing import Optional
+
 from appuiautomator.exceptions import PageError
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.logger import get_logger
@@ -11,7 +13,7 @@ log = get_logger(__name__)
 
 
 class Page:
-    def __init__(self, device=None):
+    def __init__(self, device: Optional[Device] = None):
         if device:
             self.device: Device = device
 

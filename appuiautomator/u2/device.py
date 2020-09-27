@@ -21,16 +21,16 @@ class Device(u2.Device):
     """安卓设备类
     """
 
-    def __init__(self, u2d):
+    def __init__(self, u2d: u2.Device):
         self.__dict__ = u2d.__dict__
 
-    def run_adb_shell(self, command):
+    def run_adb_shell(self, command: str):
         log.info(f'execute adb shell {command}')
         output, exit_code = self.shell(command)
         log.info(f'adb shell output={output}')
         log.info(f'adb shell exitCode={exit_code}')
 
-    def activity_start_by_uri(self, uri):
+    def activity_start_by_uri(self, uri: str):
         self.run_adb_shell(f'am start -a android.intent.action.VIEW -d {uri}')
 
     def app_restart(self, package_name, activity=None):
@@ -45,7 +45,7 @@ class Device(u2.Device):
         icon = self.app_icon(package_name)
         icon.save(path)
 
-    def fastinput_ime(self, text):
+    def fastinput_ime(self, text: str):
         self.set_fastinput_ime(True)  # 切换成FastInputIME输入法
         sleep(0.5)
         self.send_keys(text)  # adb广播输入
