@@ -12,25 +12,18 @@ log = get_logger(__name__)
 
 
 class Page:
+    @property
+    def device(self):
+        return self.device
+
+    @device.setter
+    def device(self, value):
+        self.device = value
+        if self.device:
+            for attr in self.__dict__.values():
+                if isinstance(attr, self.__class__):
+                    attr.device = value
+
     def __init__(self, device: Optional[Device] = None):
         if device:
             self.device: Device = device
-
-    # def __get__(self, instance, owner):
-    #     """
-    #
-    #     Args:
-    #         instance:   appuiautomator.u2.app.App类实例
-    #         owner:      appuiautomator.u2.app.App类
-    #
-    #     Returns:        self
-    #
-    #     """
-    #     device = getattr(instance, 'device', None)
-    #
-    #     if device:
-    #         self.device = instance.device  # 将App对象的device属性传递给Page对象
-    #     return self
-    #
-    # def __set__(self, instance, value):
-    #     raise PageError('Can not set value')

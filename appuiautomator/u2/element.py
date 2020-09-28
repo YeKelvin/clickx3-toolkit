@@ -49,7 +49,7 @@ LOCATORS = [
 ]
 
 
-class PageElement:
+class Element:
     @property
     def location_info(self):
         return (
@@ -99,7 +99,7 @@ class PageElement:
         element.set_text(value)
 
 
-class PageElements(PageElement):
+class Elements(Element):
     def find(self, context) -> UiObject:
         try:
             elements = context(**self.kwargs)
