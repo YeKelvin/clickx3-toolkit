@@ -27,7 +27,7 @@ LOCATORS = {
 }
 
 
-class PageObject:
+class Page:
     def __init__(self, driver, url=None):
         """
         :param driver: `selenium.webdriver.WebDriver` Selenium webdriver instance
@@ -55,7 +55,7 @@ class PageObject:
             self.driver.execute_script(js, *args)
 
 
-class PageElement(object):
+class Element:
     """Page Element descriptor.
     :param css:    `str`
         Use this css locator
@@ -144,7 +144,7 @@ class PageElement(object):
         element.send_keys(value)
 
 
-class PageElements(PageElement):
+class Elements(Element):
     """Like `PageElement` but returns multiple results.
     >> from page import Page, PageElements
     >> class MyPage(Page):
@@ -168,7 +168,7 @@ class PageElements(PageElement):
         [element.send_keys(value) for element in elements]
 
 
-class PageSelect(object):
+class SelectElement:
     """
     Processing select drop-down selection box
     """
@@ -184,7 +184,7 @@ class PageSelect(object):
             raise PageSelectException('"value" or "text" or "index" options can not be all empty.')
 
 
-class PageWait(object):
+class PageWait:
 
     def __init__(self, element, timeout=3):
         """wait webelement display

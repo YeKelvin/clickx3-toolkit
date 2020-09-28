@@ -26,7 +26,7 @@ LOCATORS = [
 ]
 
 
-class PageElement:
+class Element:
     @property
     def location_info(self):
         return (

@@ -5,10 +5,10 @@ from time import sleep
 from selenium.common.exceptions import NoAlertPresentException, StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
 
-from appuiautomator.se.page import PageObject
+from appuiautomator.se.page import Page
 
 
-class Page(PageObject):
+class Page(Page):
     """Implement the APIs with javascript,and selenium extension APIs.
     """
 
