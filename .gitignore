@@ -1,10 +1,12 @@
 .idea/
-.vscode
+.vscode/
 .cache/
 .pytest_cache/
 .html/
 .report/
 __pycache__/
+
+*.log
 
 **/.screenrecords/
 **/.screenshots/
