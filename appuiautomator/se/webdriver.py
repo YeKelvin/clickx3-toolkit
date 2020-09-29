@@ -3,14 +3,16 @@ import time
 from time import sleep
 
 from selenium.common.exceptions import NoAlertPresentException, StaleElementReferenceException
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 
-from appuiautomator.se.page import Page
 
-
-class Page(Page):
+class Browser:
     """Implement the APIs with javascript,and selenium extension APIs.
     """
+
+    def __init__(self, driver: WebDriver):
+        self.driver = driver
 
     def window_scroll(self, width=None, height=None):
         """
@@ -262,4 +264,3 @@ class Page(Page):
                 sleep(1)
         else:
             raise TimeoutError("stale element reference: element is not attached to the page document.")
-

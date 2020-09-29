@@ -14,6 +14,11 @@ name = "douban"
 url = "https://pypi.douban.com/simple/"
 secondary = true
 
+[[tool.poetry.source]]
+name = "baidu"
+url = "https://mirror.baidu.com/pypi/simple/"
+secondary = true
+
 [tool.poetry.dependencies]
 python = "^3.7"
 uiautomator2 = "^2.6.1"
@@ -42,6 +47,10 @@ findit = "^0.5.8"
 imageio = "~=2.8.0"
 imageio-ffmpeg = "~=0.4.2"
 websocket_client = "~=0.57.0"
+paddlepaddle = "2.0.0b0"
+paddleocr = "^1.0.0"
+PyWavelets = "^1.1.1"
+
 
 [tool.poetry.dev-dependencies]
 
