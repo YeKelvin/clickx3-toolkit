@@ -3,8 +3,10 @@
 # @File    : element
 # @Time    : 2020/9/29 15:47
 # @Author  : Kelvin.Ye
+import time
 from time import sleep
 
+from PIL import Image
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
@@ -176,3 +178,19 @@ class PageWait:
                 sleep(1)
         else:
             raise TimeoutError('Timeout, element invisible')
+
+
+class ElUtil:
+    @staticmethod
+    def screenshot(wd, el, filename):
+        while not bool(el.get_attribute('complete')):
+            time.sleep(0.5)
+
+        wd.save_screenshot('full-screenshot.png')
+        left = el.location['x']
+        top = el.location['y']
+        right = el.location['x'] + el.size['width']
+        bottom = el.location['y'] + el.size['height']
+        im = Image.open('full-screenshot.png')
+        im = im.crop((left, top, right, bottom))
+        im.save(f'{filename}.png')

@@ -34,7 +34,7 @@ def chrome_driver(exe_path=None, device_name=None, headless=False, ua=None, lang
     options.add_argument('--disable-infobars')
     options.add_argument('--disable-popup-blocking')
     options.add_argument(f'--lang={lang}')
-    options.add_argument(f'--user-agent={ua}')
+    options.add_argument(f'--user-agent={ua}') if ua else None
 
     options.add_experimental_option('prefs', {
         'credentials_enable_service': False,

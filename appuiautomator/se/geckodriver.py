@@ -18,31 +18,32 @@ UA_IPHONE_X = (
 )
 
 
-def firefox_driver(exe_path=None, headless=False, ua=None, lang='zh-CN', page_load_strategy='normal'):
+def firefox_driver(exe_path=None, log_path=None, headless=False, ua=None, lang='zh-CN', page_load_strategy='normal'):
     """
 
-    Args:
-        exe_path: driver路径
-        headless: 无头模式
-        ua: user-agent
-        lang: 浏览器语言，zh-CN | en-US | km-KH
-        page_load_strategy: 页面加载策略，none | eager | normal
+    :param exe_path:            driver路径
+    :param log_path:            driver日志路径
+    :param headless:            无头模式
+    :param ua:                  user-agent
+    :param lang:                浏览器语言，zh-CN | en-US | km-KH
+    :param page_load_strategy:  页面加载策略，none | eager | normal
 
+    :return: webdriver
     """
     option = webdriver.FirefoxOptions()
     option.headless = headless
 
     profile = webdriver.FirefoxProfile()
     profile.set_preference('intl.accept_languages', lang)
-    profile.set_preference('general.useragent.override', ua)
+    profile.set_preference('general.useragent.override', ua) if ua else None
 
     capabilities = webdriver.DesiredCapabilities.FIREFOX.copy()
     capabilities['pageLoadStrategy'] = page_load_strategy
 
     wd = webdriver.Firefox(executable_path=exe_path or last_gecodriver_path(),
-                           service_log_path=gecodriver_log_path(),
-                           firefox_profile=profile,
+                           service_log_path=log_path or gecodriver_log_path(),
                            options=option,
+                           firefox_profile=profile,
                            desired_capabilities=capabilities)
 
     atexit.register(wd.quit)  # always quit driver when done
