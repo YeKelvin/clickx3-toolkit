@@ -27,7 +27,7 @@
             ],
             "program": "${file}",
             "console": "integratedTerminal",
-            "pythonPath": "${config:python.pythonPath}",
+            "pythonPath": "${command:python.interpreterPath}",
             "cwd": "${workspaceRoot}",
             "env": {
                 "PYTHONPATH": "${workspaceRoot}"
