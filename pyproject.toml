@@ -8,19 +8,16 @@ authors = ["Kelvin.Ye <testmankelvin@163.com>"]
 name = "aliyun"
 url = "https://mirrors.aliyun.com/pypi/simple/"
 default = true
-
-[[tool.poetry.source]]
-name = "douban"
-url = "https://pypi.douban.com/simple/"
-secondary = true
+#secondary = true
 
 [[tool.poetry.source]]
 name = "baidu"
 url = "https://mirror.baidu.com/pypi/simple/"
+#default = true
 secondary = true
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.6"
 uiautomator2 = "^2.6.1"
 adbutils = "^0.7.1"
 weditor = "^0.4.3"
