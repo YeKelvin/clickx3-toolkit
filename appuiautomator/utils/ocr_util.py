@@ -13,8 +13,7 @@ from appuiautomator.se.geckodriver import firefox_driver
 
 def ocr_demo():
     ocr = PaddleOCR(use_angle_cls=True, lang='en')
-    # img_path = r'E:\GithubProject\PaddleOCR\doc\imgs\11.jpg'
-    img_path = r'C:\Users\Kaiwen.Ye\Desktop\image.jfif'
+    img_path = r'image.png'
     result = ocr.ocr(img_path, cls=True)
     for line in result:
         print(line)
