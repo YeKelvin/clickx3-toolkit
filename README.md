@@ -53,12 +53,17 @@ poetry check                                            pyproject.toml文件的�
 poetry search                                           在pypi源上搜索依赖
 poetry lock                                             锁定依赖
 poetry version                                          显示项目版本
-poetry export -f requirements.txt > requirements.txt    将锁定文件导出为其他格式
+poetry export -f requirements.txt -o requirements.txt   将锁定文件导出为其他格式
 poetry env use <version_no>                             切换 Python版本
 poetry env info                                         查看虚拟环境的具体信息
 poetry env info --path                                  查看虚拟环境的路径
 poetry env list                                         列出所有虚拟环境
 poetry env remove <version_no>                          删除虚拟环境
+```
+
+#### 导出requirements.txt
+```shell
+poetry export --without-hashes -f requirements.txt -o requirements.txt
 ```
 
 ## Web Driver下载链接
