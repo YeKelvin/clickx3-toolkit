@@ -19,7 +19,7 @@ secondary = true
 
 [tool.poetry.dependencies]
 python = "^3.6"
-uiautomator2 = { version = "^2.6.1", extras=["image"] }
+uiautomator2 = { version = "^2.11.5", extras=["image"] }
 adbutils = "^0.7.1"
 weditor = "^0.4.3"
 jsonpath = "^0.82"
@@ -56,4 +56,3 @@ PyWavelets = "^1.1.1"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
-

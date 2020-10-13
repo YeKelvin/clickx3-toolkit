@@ -26,9 +26,8 @@ class App:
 
     def __init__(self, device: Device):
         if not self.package_name:
-            raise AppException('App Package Name can not be empty.')
+            raise AppException('App Package Name cannot be empty')
         self.device = device
-        self.pages = []
 
     def start(self):
         self.device.app_start(self.package_name, self.activity)

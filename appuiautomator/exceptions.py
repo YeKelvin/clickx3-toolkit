@@ -12,6 +12,10 @@ class AppException(Exception):
     pass
 
 
+class WebSiteException(Exception):
+    pass
+
+
 class PageException(Exception):
     pass
 

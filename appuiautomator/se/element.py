@@ -37,24 +37,32 @@ class Element:
         )
 
     def __init__(self, timeout=5, desc=None, **kwargs):
-        self.timeout = timeout
-        self.description = desc
         if not kwargs:
             raise ValueError('Please specify a locator')
-        self.kwargs = kwargs
         if len(kwargs) > 1:
             raise ValueError('Please specify only one locator')
+
+        self.timeout = timeout
+        self.description = desc
+        self.kwargs = kwargs
         self.k, self.v = next(iter(kwargs.items()))
+
         try:
             self.locator = (LOCATORS[self.k], self.v)
         except KeyError:
-            raise ElementException(f'Element positioning of type {self.k} is not supported. ')
+            raise ElementException(f'Element positioning of type {self.k} is not supported')
 
-    def __find_element(self, context):
-        """
+    def __find(self, context):
+        """查找元素
 
-        :param context: WebDriver
-        :return:
+        Args:
+            context ([type]): WebDriver
+
+        Raises:
+            ElementNotFoundException: [description]
+
+        Returns:
+            [type]: [description]
         """
         try:
             if self.timeout:
@@ -77,7 +85,7 @@ class Element:
 
 
 class Elements(Element):
-    def find(self, context):
+    def __find(self, context):
         try:
             return context.find_elements(*self.locator)
         except NoSuchElementException:
@@ -101,7 +109,7 @@ class SelectElement:
         elif index is not None:
             Select(select_element).select_by_index(index)
         else:
-            raise SelectElementException('"value" or "text" or "index" options can not be all empty.')
+            raise SelectElementException('"value" or "text" or "index" options cannot be empty at the same time')
 
 
 class ElUtil:
