@@ -6,11 +6,13 @@
 import time
 
 from PIL import Image
-from selenium.common.exceptions import NoSuchElementException, WebDriverException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.wait import WebDriverWait
 
-from appuiautomator.exceptions import PageElementError, PageSelectException
+from appuiautomator.exceptions import ElementException, SelectElementException, ElementNotFoundException
 from appuiautomator.utils.logger import get_logger
 
 log = get_logger(__name__)
@@ -46,36 +48,31 @@ class Element:
         try:
             self.locator = (LOCATORS[self.k], self.v)
         except KeyError:
-            raise PageElementError(f'Element positioning of type {self.k} is not supported. ')
+            raise ElementException(f'Element positioning of type {self.k} is not supported. ')
 
-    def get_element(self, context):
+    def __find_element(self, context):
+        """
+
+        :param context: WebDriver
+        :return:
+        """
         try:
-            element = context.find_element(*self.locator)
-        except NoSuchElementException:
-            return None
-        else:
-            try:
-                style_red = 'arguments[0].style.border="2px solid red"'
-                context.execute_script(style_red, element)
-            except WebDriverException:
-                return element
-            return element
+            if self.timeout:
+                element = WebDriverWait(context, self.timeout).until(EC.visibility_of_element_located(self.locator))
+                if element:
+                    return element
+        except TimeoutException:
+            raise ElementNotFoundException(f'Element not found. {self.location_info}')
 
-    def find(self, context):
-        for i in range(1, self.timeout):
-            element = self.get_element(context)
-            if element is not None:
-                return element
-        raise NoSuchElementException()
-
-    def __get__(self, instance, owner, context=None):
+    def __get__(self, instance, owner):
         if instance is None:
             return None
-        context = instance.driver
-        return self.find(context)
+        return self.__find_element(instance.driver)
 
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
+        if not element:
+            raise ElementNotFoundException(f'Cannot set value, element not found. {self.location_info}')
         element.send_keys(value)
 
 
@@ -104,7 +101,7 @@ class SelectElement:
         elif index is not None:
             Select(select_element).select_by_index(index)
         else:
-            raise PageSelectException('"value" or "text" or "index" options can not be all empty.')
+            raise SelectElementException('"value" or "text" or "index" options can not be all empty.')
 
 
 class ElUtil:

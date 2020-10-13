@@ -5,7 +5,7 @@
 # @Author  : Kelvin.Ye
 from typing import Optional
 
-from appuiautomator.exceptions import AppError
+from appuiautomator.exceptions import AppException
 from appuiautomator.u2.device import Device
 from appuiautomator.u2.page import Page
 from appuiautomator.utils.logger import get_logger
@@ -26,7 +26,7 @@ class App:
 
     def __init__(self, device: Device):
         if not self.package_name:
-            raise AppError('App Package Name can not be empty.')
+            raise AppException('App Package Name can not be empty.')
         self.device = device
         self.pages = []
 

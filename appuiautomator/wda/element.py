@@ -7,7 +7,7 @@ from typing import Union
 
 import wda
 
-from appuiautomator.exceptions import PageElementError
+from appuiautomator.exceptions import ElementException
 
 LOCATORS = [
     'id',
@@ -50,9 +50,9 @@ class Element:
             if element.exists():
                 return element
             else:
-                raise PageElementError()
-        except (wda.WDAElementNotFoundError, PageElementError):
-            raise PageElementError(f'Element not found. {self.location_info}')
+                raise ElementException()
+        except (wda.WDAElementNotFoundError, ElementException):
+            raise ElementException(f'Element not found. {self.location_info}')
 
     def __get__(self, instance, owner) -> Union[wda.Selector, wda.Element, None]:
         if instance is None:
@@ -63,5 +63,5 @@ class Element:
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
         if not element:
-            raise PageElementError(f'Can not set value, no elements found. {self.location_info}')
+            raise ElementException(f'Can not set value, no elements found. {self.location_info}')
         element.set_text(value)

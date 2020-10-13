@@ -8,29 +8,33 @@ from appuiautomator.utils.logger import get_logger
 log = get_logger(__name__)
 
 
-class AppError(Exception):
+class AppException(Exception):
     pass
 
 
-class PageError(Exception):
+class PageException(Exception):
     pass
 
 
-class PageElementError(Exception):
+class ElementException(Exception):
     pass
 
 
-class PageElementsError(Exception):
+class ElementNotFoundException(Exception):
     pass
 
 
-class XPathElementError(Exception):
+class ElementsException(Exception):
     pass
 
 
-class XPathElementsError(Exception):
+class XPathElementException(Exception):
     pass
 
 
-class PageSelectException(Exception):
+class XPathElementsException(Exception):
+    pass
+
+
+class SelectElementException(Exception):
     pass
