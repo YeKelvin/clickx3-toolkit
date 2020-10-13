@@ -11,8 +11,32 @@ class Browser:
     """Implement the APIs with javascript,and selenium extension APIs.
     """
 
-    def __init__(self, driver: WebDriver):
+    def __init__(self, driver, url=None):
+        """
+        :param driver: `selenium.webdriver.WebDriver` Selenium webdriver instance
+        :param url: `str`
+        Root URI to base any calls to the ``PageObject.get`` method. If not defined
+        in the constructor it will try and look it from the webdriver object.
+        """
         self.driver = driver
+        self.root_uri = url if url else getattr(self.driver, 'url', None)
+
+    def get(self, uri):
+        """
+        :param uri:  URI to GET, based off of the root_uri attribute.
+        """
+        root_uri = self.root_uri or ''
+        self.driver.get(root_uri + uri)
+        self.driver.implicitly_wait(5)
+
+    def execute_script(self, js=None, *args):
+        """
+        Execute JavaScript scripts.
+        """
+        if js is None:
+            raise ValueError("Please input js script")
+        
+        return self.driver.execute_script(js, *args)
 
     def window_scroll(self, width=None, height=None):
         """
@@ -23,8 +47,8 @@ class Browser:
             width = "0"
         if height is None:
             height = "0"
-        js = "window.scrollTo({w},{h});".format(w=str(width), h=height)
-        self.driver.execute_script(js)
+        js = "window.scrollTo({w},{h});".format(w=str(width), h=(height))
+        self.execute_script(js)
 
     @property
     def get_title(self):
@@ -33,7 +57,7 @@ class Browser:
         Get page title.
         """
         js = 'return document.title;'
-        return self.driver.execute_script(js)
+        return self.execute_script(js)
 
     @property
     def get_url(self):
@@ -42,13 +66,15 @@ class Browser:
         Get page URL.
         """
         js = "return document.URL;"
-        return self.driver.execute_script(js)
+        return self.execute_script(js)
 
     def switch_to_frame(self, frame_reference):
         """
         selenium API
         Switches focus to the specified frame, by id, name, or webelement.
         """
+        warnings.warn("use driver.elem.switch_to_frame() instead",
+                      DeprecationWarning, stacklevel=2)
         self.driver.switch_to.frame(frame_reference)
 
     def switch_to_parent_frame(self):
@@ -158,6 +184,29 @@ class Browser:
         """
         self.driver.delete_all_cookies()
 
+    def switch_to_app(self):
+        """
+        appium API
+        Switch to native app.
+        """
+        self.driver.switch_to.context('NATIVE_APP')
+
+    def switch_to_web(self, context=None):
+        """
+        appium API
+        Switch to web view.
+        """
+        if context is not None:
+            self.driver.switch_to.context(context)
+        else:
+            all_context = self.driver.contexts
+            for context in all_context:
+                if "WEBVIEW" in context:
+                    self.driver.switch_to.context(context)
+                    break
+            else:
+                raise NameError("No WebView found.")
+
     def accept_alert(self):
         """
         selenium API
@@ -197,6 +246,8 @@ class Browser:
         selenium API
         Moving the mouse to the middle of an element
         """
+        warnings.warn("use driver.elem.move_to_element() instead",
+                      DeprecationWarning, stacklevel=2)
         ActionChains(self.driver).move_to_element(elem).perform()
 
     def click_and_hold(self, elem):
@@ -204,7 +255,18 @@ class Browser:
         selenium API
         Holds down the left mouse button on an element.
         """
+        warnings.warn("use driver.elem.click_and_hold() instead",
+                      DeprecationWarning, stacklevel=2)
         ActionChains(self.driver).click_and_hold(elem).perform()
+
+    def double_click(self, elem):
+        """
+        selenium API
+        Double-clicks an element.
+        """
+        warnings.warn("use driver.elem.double_click() instead",
+                      DeprecationWarning, stacklevel=2)
+        ActionChains(self.driver).double_click(elem).perform()
 
     def move_by_offset(self, x, y):
         """
@@ -229,6 +291,8 @@ class Browser:
         selenium API
         Performs a context-click (right click) on an element.
         """
+        warnings.warn("use driver.elem.context_click() instead",
+                      DeprecationWarning, stacklevel=2)
         ActionChains(self.driver).context_click(elem).perform()
 
     def drag_and_drop_by_offset(self, elem, x, y):
@@ -240,6 +304,8 @@ class Browser:
         :param x: X offset to move to.
         :param y: Y offset to move to.
         """
+        warnings.warn("use driver.elem.drag_and_drop_by_offset(x, y) instead",
+                      DeprecationWarning, stacklevel=2)
         ActionChains(self.driver).drag_and_drop_by_offset(elem, xoffset=x, yoffset=y).perform()
 
     def refresh_element(self, elem, timeout=10):
@@ -247,6 +313,8 @@ class Browser:
         selenium API
         Refreshes the current page, retrieve elements.
         """
+        warnings.warn("use driver.elem.refresh_element() instead",
+                      DeprecationWarning, stacklevel=2)
         try:
             timeout_int = int(timeout)
         except TypeError:
@@ -264,3 +332,34 @@ class Browser:
                 sleep(1)
         else:
             raise TimeoutError("stale element reference: element is not attached to the page document.")
+
+    def top(self, elem, x, y, count):
+        """
+        appium API
+        Perform a tap action on the element
+        """
+        action = MobileTouchAction(self.driver)
+        action.tap(elem, x, y, count).perform()
+
+    def press(self, elem, x, y, pressure):
+        """
+        appium API
+        Begin a chain with a press down action at a particular element or point
+        """
+        action = MobileTouchAction(self.driver)
+        action.press(elem, x, y, pressure).perform()
+
+    def long_press(self, elem, x, y, duration):
+        """
+        appium API
+        Begin a chain with a press down that lasts `duration` milliseconds
+        """
+        action = MobileTouchAction(self.driver)
+        action.long_press(elem, x, y, duration).perform()
+
+    def swipe(self, start_x, start_y, end_x, end_y, duration=None):
+        """
+        appium API
+        Swipe from one point to another point, for an optional duration.
+        """
+        self.driver.swipe(start_x, start_y, end_x, end_y, duration)

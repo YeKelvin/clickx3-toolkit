@@ -80,12 +80,9 @@ class Element:
     def __get__(self, instance, owner) -> Union[UiObject, List[UiObject], None]:
         """
 
-        Args:
-            instance:   appuiautomator.u2.page.Page类实例
-            owner:      appuiautomator.u2.page.Page类
-
-        Returns:
-
+        :param instance:    appuiautomator.u2.page.Page类实例
+        :param owner:       appuiautomator.u2.page.Page类
+        :return:
         """
         if instance is None:
             return None
