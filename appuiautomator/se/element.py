@@ -4,10 +4,9 @@
 # @Time    : 2020/9/29 15:47
 # @Author  : Kelvin.Ye
 import time
-from time import sleep
 
 from PIL import Image
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
@@ -17,55 +16,30 @@ from appuiautomator.utils.logger import get_logger
 log = get_logger(__name__)
 
 LOCATORS = {
-    # selenium
-    'css': By.CSS_SELECTOR,
-    'id_': By.ID,
+    'id': By.ID,
+    'class_name': By.CLASS_NAME,
     'name': By.NAME,
+    'css': By.CSS_SELECTOR,
     'xpath': By.XPATH,
     'link_text': By.LINK_TEXT,
     'partial_link_text': By.PARTIAL_LINK_TEXT,
-    'tag': By.TAG_NAME,
-    'class_name': By.CLASS_NAME
+    'tag': By.TAG_NAME
 }
 
 
 class Element:
-    """Page Element descriptor.
-    :param css:    `str`
-        Use this css locator
-    :param id_:    `str`
-        Use this element ID locator
-    :param name:    `str`
-        Use this element name locator
-    :param xpath:    `str`
-        Use this xpath locator
-    :param link_text:    `str`
-        Use this link text locator
-    :param partial_link_text:    `str`
-        Use this partial link text locator
-    :param tag:    `str`
-        Use this tag name locator
-    :param class_name:    `str`
-        Use this class locator
-    :param context: `bool`
-        This element is expected to be called with context
-    Page Elements are used to access elements on a page. The are constructed
-    using this factory method to specify the locator for the element.
-        >> from poium import Page, PageElement
-        >> class MyPage(Page):
-                elem1 = PageElement(css='div.myclass')
-                elem2 = PageElement(id_='foo')
-                elem_with_context = PageElement(name='bar', context=True)
-    Page Elements act as property descriptors for their Page Object, you can get
-    and set them as normal attributes.
-    """
+    @property
+    def location_info(self):
+        return (
+            f'Location:{[str(k) + "=" + str(v) for k, v in self.kwargs.items()]}, Description:{str(self.description)}'
+        )
 
-    def __init__(self, context=False, timeout=4, log=False, describe="", **kwargs):
-        self.time_out = timeout
-        self.log = log
-        self.describe = describe
+    def __init__(self, timeout=5, desc=None, **kwargs):
+        self.timeout = timeout
+        self.description = desc
         if not kwargs:
             raise ValueError('Please specify a locator')
+        self.kwargs = kwargs
         if len(kwargs) > 1:
             raise ValueError('Please specify only one locator')
         self.k, self.v = next(iter(kwargs.items()))
@@ -73,7 +47,6 @@ class Element:
             self.locator = (LOCATORS[self.k], self.v)
         except KeyError:
             raise PageElementError(f'Element positioning of type {self.k} is not supported. ')
-        self.has_context = bool(context)
 
     def get_element(self, context):
         try:
@@ -84,49 +57,29 @@ class Element:
             try:
                 style_red = 'arguments[0].style.border="2px solid red"'
                 context.execute_script(style_red, element)
-            except BaseException:
+            except WebDriverException:
                 return element
             return element
 
     def find(self, context):
-        for i in range(1, self.time_out):
-            if self.log is True:
-                log.info(f'{self.describe}, {i} times search, {self.locator}')
-            if self.get_element(context) is not None:
-                return self.get_element(context)
-        else:
-            return self.get_element(context)
+        for i in range(1, self.timeout):
+            element = self.get_element(context)
+            if element is not None:
+                return element
+        raise NoSuchElementException()
 
     def __get__(self, instance, owner, context=None):
-        if not instance:
+        if instance is None:
             return None
-
-        if not context and self.has_context:
-            return lambda ctx: self.__get__(instance, owner, context=ctx)
-
-        if not context:
-            context = instance.driver
-
+        context = instance.driver
         return self.find(context)
 
     def __set__(self, instance, value):
-        if self.has_context:
-            raise PageElementError('Sorry, the set descriptor does not support elements with context.')
         element = self.__get__(instance, instance.__class__)
-        if not element:
-            raise PageElementError('Can not set value, element not found')
         element.send_keys(value)
 
 
 class Elements(Element):
-    """Like `PageElement` but returns multiple results.
-    >> from page import Page, PageElements
-    >> class MyPage(Page):
-            all_table_rows = PageElements(tag='tr')
-            elem2 = PageElement(id_='foo')
-            elem_with_context = PageElement(tag='tr', context=True)
-    """
-
     def find(self, context):
         try:
             return context.find_elements(*self.locator)
@@ -134,11 +87,7 @@ class Elements(Element):
             return []
 
     def __set__(self, instance, value):
-        if self.has_context:
-            raise PageElementError('Sorry, the set descriptor does not support elements with context.')
         elements = self.__get__(instance, instance.__class__)
-        if not elements:
-            raise PageElementError('Can not set value, no elements found')
         [element.send_keys(value) for element in elements]
 
 
@@ -156,28 +105,6 @@ class SelectElement:
             Select(select_element).select_by_index(index)
         else:
             raise PageSelectException('"value" or "text" or "index" options can not be all empty.')
-
-
-class PageWait:
-
-    def __init__(self, element, timeout=3):
-        """wait webelement display
-        """
-        try:
-            timeout_int = int(timeout)
-        except TypeError:
-            raise ValueError('Type "timeout" error, must be type int()')
-
-        for i in range(timeout_int):
-            if element is not None:
-                if element.is_displayed() is True:
-                    break
-                else:
-                    sleep(1)
-            else:
-                sleep(1)
-        else:
-            raise TimeoutError('Timeout, element invisible')
 
 
 class ElUtil:
