@@ -25,6 +25,7 @@ testcases/*
 !testcases/via_test.py
 
 resources/webdrive/*
+resources/paddleocr/*
 
 config.ini
 poetry.lock

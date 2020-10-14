@@ -3,6 +3,11 @@
 # @File    : page_object
 # @Time    : 2020/4/3 11:56
 # @Author  : Kelvin.Ye
+from typing import Union
+
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from appuiautomator.se.webdriver import Browser
 from appuiautomator.utils.logger import get_logger
 
 log = get_logger(__name__)
@@ -12,7 +17,7 @@ class Page:
     url = None
 
     @property
-    def driver(self):
+    def driver(self) -> Union[Browser, WebDriver]:
         return self._driver
 
     @driver.setter

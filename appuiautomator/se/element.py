@@ -72,6 +72,9 @@ class Element:
     def __get__(self, instance, owner) -> Union[List[WebElement], WebElement, None]:
         if instance is None:
             return None
+        if not hasattr(instance, 'driver'):
+            raise ElementException(f'The owner instance {instance} must have the driver attribute')
+
         return self.__find(instance.driver)
 
     def __set__(self, instance, value):
@@ -79,21 +82,6 @@ class Element:
         if not element:
             raise ElementNotFoundException(f'Cannot set value, element not found. {self.location_info}')
         element.send_keys(value)
-
-    # def move_to_element(self, elem):
-    #     ActionChains(self.driver).move_to_element(elem).perform()
-    #
-    # def click_and_hold(self, elem):
-    #     ActionChains(self.driver).click_and_hold(elem).perform()
-    #
-    # def double_click(self, elem):
-    #     ActionChains(self.driver).double_click(elem).perform()
-    #
-    # def context_click(self, elem):
-    #     ActionChains(self.driver).context_click(elem).perform()
-    #
-    # def drag_and_drop_by_offset(self, elem, x, y):
-    #     ActionChains(self.driver).drag_and_drop_by_offset(elem, xoffset=x, yoffset=y).perform()
 
 
 class Elements(Element):
@@ -124,9 +112,9 @@ class SelectElement:
             raise SelectElementException('"value" or "text" or "index" options cannot be empty at the same time')
 
 
-class ElUtil:
+class ElementUtil:
     @staticmethod
-    def screenshot(wd, el, filename):
+    def screenshot(wd, el, path):
         while not bool(el.get_attribute('complete')):
             time.sleep(0.5)
 
@@ -137,4 +125,4 @@ class ElUtil:
         bottom = el.location['y'] + el.size['height']
         im = Image.open('full-screenshot.png')
         im = im.crop((left, top, right, bottom))
-        im.save(f'{filename}.png')
+        im.save(f'{path}.png')
