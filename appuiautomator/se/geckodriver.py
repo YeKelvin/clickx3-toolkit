@@ -18,7 +18,8 @@ UA_IPHONE_X = (
 )
 
 
-def firefox_driver(exe_path=None, log_path=None, headless=False, ua=None, lang='zh-CN', page_load_strategy='normal'):
+def firefox_driver(exe_path=None, log_path=None, headless=False, ua=None, lang='zh-CN', page_load_strategy='normal',
+                   maximize=False):
     """
 
     :param exe_path:            driver路径
@@ -27,8 +28,9 @@ def firefox_driver(exe_path=None, log_path=None, headless=False, ua=None, lang='
     :param ua:                  user-agent
     :param lang:                浏览器语言，zh-CN | en-US | km-KH
     :param page_load_strategy:  页面加载策略，none | eager | normal
+    :param maximize:            是否最大化窗口
 
-    :return: webdriver
+    :return: WebDriver
     """
     option = webdriver.FirefoxOptions()
     option.headless = headless
@@ -45,6 +47,9 @@ def firefox_driver(exe_path=None, log_path=None, headless=False, ua=None, lang='
                            options=option,
                            firefox_profile=profile,
                            desired_capabilities=capabilities)
+
+    if maximize:
+        wd.maximize_window()
 
     atexit.register(wd.quit)  # always quit driver when done
     return wd

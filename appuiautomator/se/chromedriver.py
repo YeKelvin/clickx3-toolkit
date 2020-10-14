@@ -13,18 +13,19 @@ from appuiautomator.utils.logger import get_logger
 log = get_logger(__name__)
 
 
-def chrome_driver(exe_path=None, device_name=None, headless=False, ua=None, lang='zh-CN',
-                  page_load_strategy='normal'):
+def chrome_driver(exe_path=None, device_name=None, headless=False, ua=None, lang='zh-CN', page_load_strategy='normal',
+                  maximize=False):
     """
 
-    Args:
-        exe_path: driver路径
-        device_name: uiautomator2实例
-        headless: 无头模式
-        ua: user-agent
-        lang: 浏览器语言，zh-CN | en-US | km-KH
-        page_load_strategy: 页面加载策略，none | eager | normal
+    :param exe_path:            driver路径
+    :param device_name:         uiautomator2实例
+    :param headless:            无头模式
+    :param ua:                  user-agent
+    :param lang:                浏览器语言，zh-CN | en-US | km-KH
+    :param page_load_strategy:  页面加载策略，none | eager | normal
+    :param maximize:            是否最大化窗口
 
+    :return: WebDriver
     """
     options = webdriver.ChromeOptions()
     options.headless = headless
@@ -49,6 +50,9 @@ def chrome_driver(exe_path=None, device_name=None, headless=False, ua=None, lang
                           service_log_path=chromedriver_log_path(),
                           chrome_options=exe_path,
                           desired_capabilities=capabilities)
+
+    if maximize:
+        wd.maximize_window()
 
     atexit.register(wd.quit)  # always quit driver when done
     return wd

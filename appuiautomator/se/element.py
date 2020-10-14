@@ -4,12 +4,15 @@
 # @Time    : 2020/9/29 15:47
 # @Author  : Kelvin.Ye
 import time
+from typing import Optional, Union, List
 
 from PIL import Image
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 
 from appuiautomator.exceptions import ElementException, SelectElementException, ElementNotFoundException
@@ -19,13 +22,13 @@ log = get_logger(__name__)
 
 LOCATORS = {
     'id': By.ID,
-    'class_name': By.CLASS_NAME,
     'name': By.NAME,
-    'css': By.CSS_SELECTOR,
-    'xpath': By.XPATH,
+    'class_name': By.CLASS_NAME,
+    'tag_name': By.TAG_NAME,
     'link_text': By.LINK_TEXT,
     'partial_link_text': By.PARTIAL_LINK_TEXT,
-    'tag': By.TAG_NAME
+    'css_selector': By.CSS_SELECTOR,
+    'xpath': By.XPATH
 }
 
 
@@ -38,9 +41,9 @@ class Element:
 
     def __init__(self, timeout=5, desc=None, **kwargs):
         if not kwargs:
-            raise ValueError('Please specify a locator')
+            raise ValueError('❌ Please specify a locator')
         if len(kwargs) > 1:
-            raise ValueError('Please specify only one locator')
+            raise ValueError('❌ Please specify only one locator')
 
         self.timeout = timeout
         self.description = desc
@@ -50,19 +53,13 @@ class Element:
         try:
             self.locator = (LOCATORS[self.k], self.v)
         except KeyError:
-            raise ElementException(f'Element positioning of type {self.k} is not supported')
+            raise ElementException(f'❌ Element positioning of type {self.k} is not supported')
 
-    def __find(self, context):
-        """查找元素
+    def __find(self, context) -> Optional[WebElement]:
+        """
 
-        Args:
-            context ([type]): WebDriver
-
-        Raises:
-            ElementNotFoundException: [description]
-
-        Returns:
-            [type]: [description]
+        :param context: selenium.webdriver.remote.webdriver.WebDriver
+        :return:
         """
         try:
             if self.timeout:
@@ -72,10 +69,10 @@ class Element:
         except TimeoutException:
             raise ElementNotFoundException(f'Element not found. {self.location_info}')
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance, owner) -> Union[List[WebElement], WebElement, None]:
         if instance is None:
             return None
-        return self.__find_element(instance.driver)
+        return self.__find(instance.driver)
 
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
@@ -83,9 +80,24 @@ class Element:
             raise ElementNotFoundException(f'Cannot set value, element not found. {self.location_info}')
         element.send_keys(value)
 
+    # def move_to_element(self, elem):
+    #     ActionChains(self.driver).move_to_element(elem).perform()
+    #
+    # def click_and_hold(self, elem):
+    #     ActionChains(self.driver).click_and_hold(elem).perform()
+    #
+    # def double_click(self, elem):
+    #     ActionChains(self.driver).double_click(elem).perform()
+    #
+    # def context_click(self, elem):
+    #     ActionChains(self.driver).context_click(elem).perform()
+    #
+    # def drag_and_drop_by_offset(self, elem, x, y):
+    #     ActionChains(self.driver).drag_and_drop_by_offset(elem, xoffset=x, yoffset=y).perform()
+
 
 class Elements(Element):
-    def __find(self, context):
+    def __find(self, context) -> List[WebElement]:
         try:
             return context.find_elements(*self.locator)
         except NoSuchElementException:

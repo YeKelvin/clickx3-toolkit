@@ -1,9 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @File    : webdriver.py
+# @Time    : 2020/10/14 12:24
+# @Author  : Kelvin.Ye
 import os
 import time
-from time import sleep
 
-from selenium.common.exceptions import NoAlertPresentException, StaleElementReferenceException
-from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.common.exceptions import NoAlertPresentException
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 
 
@@ -11,7 +15,7 @@ class Browser:
     """Implement the APIs with javascript,and selenium extension APIs.
     """
 
-    def __init__(self, driver, url=None):
+    def __init__(self, driver: WebDriver, url=None):
         """
         :param driver: `selenium.webdriver.WebDriver` Selenium webdriver instance
         :param url: `str`
@@ -35,7 +39,7 @@ class Browser:
         """
         if js is None:
             raise ValueError("Please input js script")
-        
+
         return self.driver.execute_script(js, *args)
 
     def window_scroll(self, width=None, height=None):
@@ -73,8 +77,6 @@ class Browser:
         selenium API
         Switches focus to the specified frame, by id, name, or webelement.
         """
-        warnings.warn("use driver.elem.switch_to_frame() instead",
-                      DeprecationWarning, stacklevel=2)
         self.driver.switch_to.frame(frame_reference)
 
     def switch_to_parent_frame(self):
@@ -184,29 +186,6 @@ class Browser:
         """
         self.driver.delete_all_cookies()
 
-    def switch_to_app(self):
-        """
-        appium API
-        Switch to native app.
-        """
-        self.driver.switch_to.context('NATIVE_APP')
-
-    def switch_to_web(self, context=None):
-        """
-        appium API
-        Switch to web view.
-        """
-        if context is not None:
-            self.driver.switch_to.context(context)
-        else:
-            all_context = self.driver.contexts
-            for context in all_context:
-                if "WEBVIEW" in context:
-                    self.driver.switch_to.context(context)
-                    break
-            else:
-                raise NameError("No WebView found.")
-
     def accept_alert(self):
         """
         selenium API
@@ -241,33 +220,6 @@ class Browser:
         """
         return self.driver.switch_to.alert.text
 
-    def move_to_element(self, elem):
-        """
-        selenium API
-        Moving the mouse to the middle of an element
-        """
-        warnings.warn("use driver.elem.move_to_element() instead",
-                      DeprecationWarning, stacklevel=2)
-        ActionChains(self.driver).move_to_element(elem).perform()
-
-    def click_and_hold(self, elem):
-        """
-        selenium API
-        Holds down the left mouse button on an element.
-        """
-        warnings.warn("use driver.elem.click_and_hold() instead",
-                      DeprecationWarning, stacklevel=2)
-        ActionChains(self.driver).click_and_hold(elem).perform()
-
-    def double_click(self, elem):
-        """
-        selenium API
-        Double-clicks an element.
-        """
-        warnings.warn("use driver.elem.double_click() instead",
-                      DeprecationWarning, stacklevel=2)
-        ActionChains(self.driver).double_click(elem).perform()
-
     def move_by_offset(self, x, y):
         """
         selenium API
@@ -285,81 +237,3 @@ class Browser:
         Releasing a held mouse button on an element.
         """
         ActionChains(self.driver).release().perform()
-
-    def context_click(self, elem):
-        """
-        selenium API
-        Performs a context-click (right click) on an element.
-        """
-        warnings.warn("use driver.elem.context_click() instead",
-                      DeprecationWarning, stacklevel=2)
-        ActionChains(self.driver).context_click(elem).perform()
-
-    def drag_and_drop_by_offset(self, elem, x, y):
-        """
-        selenium API
-        Holds down the left mouse button on the source element,
-           then moves to the target offset and releases the mouse button.
-        :param elem: The element to mouse down.
-        :param x: X offset to move to.
-        :param y: Y offset to move to.
-        """
-        warnings.warn("use driver.elem.drag_and_drop_by_offset(x, y) instead",
-                      DeprecationWarning, stacklevel=2)
-        ActionChains(self.driver).drag_and_drop_by_offset(elem, xoffset=x, yoffset=y).perform()
-
-    def refresh_element(self, elem, timeout=10):
-        """
-        selenium API
-        Refreshes the current page, retrieve elements.
-        """
-        warnings.warn("use driver.elem.refresh_element() instead",
-                      DeprecationWarning, stacklevel=2)
-        try:
-            timeout_int = int(timeout)
-        except TypeError:
-            raise ValueError("Type 'timeout' error, must be type int() ")
-
-        for i in range(timeout_int):
-            if elem is not None:
-                try:
-                    elem
-                except StaleElementReferenceException:
-                    self.driver.refresh()
-                else:
-                    break
-            else:
-                sleep(1)
-        else:
-            raise TimeoutError("stale element reference: element is not attached to the page document.")
-
-    def top(self, elem, x, y, count):
-        """
-        appium API
-        Perform a tap action on the element
-        """
-        action = MobileTouchAction(self.driver)
-        action.tap(elem, x, y, count).perform()
-
-    def press(self, elem, x, y, pressure):
-        """
-        appium API
-        Begin a chain with a press down action at a particular element or point
-        """
-        action = MobileTouchAction(self.driver)
-        action.press(elem, x, y, pressure).perform()
-
-    def long_press(self, elem, x, y, duration):
-        """
-        appium API
-        Begin a chain with a press down that lasts `duration` milliseconds
-        """
-        action = MobileTouchAction(self.driver)
-        action.long_press(elem, x, y, duration).perform()
-
-    def swipe(self, start_x, start_y, end_x, end_y, duration=None):
-        """
-        appium API
-        Swipe from one point to another point, for an optional duration.
-        """
-        self.driver.swipe(start_x, start_y, end_x, end_y, duration)
