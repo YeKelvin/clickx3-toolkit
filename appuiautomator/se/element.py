@@ -12,7 +12,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 
 from appuiautomator.exceptions import ElementException, SelectElementException, ElementNotFoundException
@@ -72,10 +71,10 @@ class Element:
     def __get__(self, instance, owner) -> Union[List[WebElement], WebElement, None]:
         if instance is None:
             return None
-        if not hasattr(instance, 'driver'):
-            raise ElementException(f'The owner instance {instance} must have the driver attribute')
+        if not hasattr(instance, 'browser'):
+            raise ElementException(f'The owner instance {instance} must have the browser attribute')
 
-        return self.__find(instance.driver)
+        return self.__find(instance.browser.driver)
 
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)

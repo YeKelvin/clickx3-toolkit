@@ -3,10 +3,6 @@
 # @File    : page_object
 # @Time    : 2020/4/3 11:56
 # @Author  : Kelvin.Ye
-from typing import Union
-
-from selenium.webdriver.remote.webdriver import WebDriver
-
 from appuiautomator.se.webdriver import Browser
 from appuiautomator.utils.logger import get_logger
 
@@ -17,16 +13,16 @@ class Page:
     url = None
 
     @property
-    def driver(self) -> Union[Browser, WebDriver]:
-        return self._driver
+    def browser(self) -> Browser:
+        return self._browser
 
-    @driver.setter
-    def driver(self, value):
-        self._driver = value
-        if self._driver:
+    @browser.setter
+    def browser(self, value):
+        self._browser = value
+        if self._browser:
             for attr in self.__dict__.values():
                 if isinstance(attr, self.__class__):
-                    attr.device = value
+                    attr.browser = value
 
     @property
     def hostname(self):
@@ -40,12 +36,12 @@ class Page:
                 if isinstance(attr, self.__class__):
                     attr.hostname = value
 
-    def __init__(self, driver=None, hostname=None):
-        if driver:
-            self._driver = driver
+    def __init__(self, browser=None, hostname=None):
+        if browser:
+            self._browser = browser
         if hostname:
             self._hostname = hostname
 
     def get(self):
         if self.hostname and self.url:
-            self.driver.get(self.hostname + self.url)
+            self.browser.driver.get(self.hostname + self.url)

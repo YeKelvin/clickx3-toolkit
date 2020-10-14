@@ -13,7 +13,7 @@ class OCR:
                    rec_model_dir=None,
                    rec_image_shape='3,32,320',
                    rec_char_type='en'):
-        ocr = PaddleOCR(use_gpu=use_gpu,
-                        rec_model_dir=rec_model_dir, rec_image_shape=rec_image_shape, rec_char_type=rec_char_type)
-        results = ocr.ocr(img_path, det=False)
+        paddle = PaddleOCR(use_gpu=use_gpu,
+                           rec_model_dir=rec_model_dir, rec_image_shape=rec_image_shape, rec_char_type=rec_char_type)
+        results = paddle.ocr(img_path, det=False)
         return results

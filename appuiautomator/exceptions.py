@@ -42,3 +42,11 @@ class XPathElementsException(Exception):
 
 class SelectElementException(Exception):
     pass
+
+
+class OCRException(Exception):
+    pass
+
+
+class OCRRetriesExceededException(Exception):
+    pass

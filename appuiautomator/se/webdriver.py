@@ -3,13 +3,12 @@
 # @File    : webdriver.py
 # @Time    : 2020/10/14 12:24
 # @Author  : Kelvin.Ye
+import io
 import os
 import time
 
 from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxWebDriver
-from selenium.webdriver.chrome.webdriver import WebDriver as ChromeWebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 from PIL import Image
 
@@ -134,27 +133,16 @@ class Browser:
     def drag_and_drop_by_offset(self, element, x, y, index=None):
         ActionChains(self.driver).drag_and_drop_by_offset(element, xoffset=x, yoffset=y).perform()
 
-    def screenshot_element(self, element, path, index=None):
+    def screenshot_element(self, element, path:str, index=None):
         while not bool(element.get_attribute('complete')):
             time.sleep(0.5)
 
         full_screenshot_png = self.driver.get_screenshot_as_png()
+        buff = io.BytesIO(full_screenshot_png)
         left = element.location['x']
         top = element.location['y']
         right = element.location['x'] + element.size['width']
         bottom = element.location['y'] + element.size['height']
-        im = Image.open(full_screenshot_png)
-        im = im.crop((left, top, right, bottom))
-        im.save(f'{path}.png')
-
-
-class FirefoxBrowser(Browser, FirefoxWebDriver):
-    def __init__(self, driver: WebDriver):
-        super().__init__(driver)
-        self.__dict__ = driver.__dict__
-
-
-class ChromeBrowser(Browser, ChromeWebDriver):
-    def __init__(self, driver: WebDriver):
-        super().__init__(driver)
-        self.__dict__ = driver.__dict__
+        image = Image.open(buff)
+        image = image.crop((left, top, right, bottom))
+        image.save(path)
