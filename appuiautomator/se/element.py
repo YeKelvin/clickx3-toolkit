@@ -58,7 +58,7 @@ class Element:
         self.by, self.value = next(iter(kwargs.items()))
 
     def __get_element(self) -> WebElement:
-        elements = self.driver.find_elements(self.by, self.value)
+        elements = self.driver.find_elements(LOCATORS[self.by], self.value)
         if elements:
             try:
                 element = WebDriverWait(self.driver, self.timeout).until(EC.visibility_of(elements[self.index]))
