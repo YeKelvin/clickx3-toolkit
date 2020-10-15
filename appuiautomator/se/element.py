@@ -124,6 +124,13 @@ class Element:
         """Selenium API"""
         return self.__get_element().rect
 
+    def raw(self) -> WebElement:
+        """
+
+        :return: selenium.webdriver.remote.webelement.WebElement
+        """
+        return self.__get_element()
+
     def send_keys(self, *value):
         """Selenium API"""
         self.__get_element().send_keys(*value)
