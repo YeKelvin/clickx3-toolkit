@@ -15,6 +15,18 @@ class Browser:
     def __init__(self, driver: WebDriver):
         self.driver = driver
 
+    @staticmethod
+    def chrome(**kwargs):
+        from appuiautomator.se.chromedriver import chrome_driver
+        wd = chrome_driver(**kwargs)
+        return Browser(wd)
+
+    @staticmethod
+    def firefox(**kwargs):
+        from appuiautomator.se.geckodriver import firefox_driver
+        wd = firefox_driver(**kwargs)
+        return Browser(wd)
+
     def execute_script(self, js=None, *args):
         """Execute JavaScript scripts.
         """
