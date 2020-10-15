@@ -3,14 +3,12 @@
 # @File    : webdriver.py
 # @Time    : 2020/10/14 12:24
 # @Author  : Kelvin.Ye
-import io
 import os
 import time
 
 from selenium.common.exceptions import NoAlertPresentException
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
-from PIL import Image
+from selenium.webdriver.remote.webdriver import WebDriver
 
 
 class Browser:
@@ -118,31 +116,15 @@ class Browser:
         """
         ActionChains(self.driver).release().perform()
 
-    def move_to_element(self, element, index=None):
-        ActionChains(self.driver).move_to_element(element).perform()
-
-    def click_and_hold(self, element, index=None):
-        ActionChains(self.driver).click_and_hold(element).perform()
-
-    def double_click(self, element, index=None):
-        ActionChains(self.driver).double_click(element).perform()
-
-    def context_click(self, element, index=None):
-        ActionChains(self.driver).context_click(element).perform()
-
-    def drag_and_drop_by_offset(self, element, x, y, index=None):
-        ActionChains(self.driver).drag_and_drop_by_offset(element, xoffset=x, yoffset=y).perform()
-
-    def screenshot_element(self, element, path:str, index=None):
-        while not bool(element.get_attribute('complete')):
-            time.sleep(0.5)
-
-        full_screenshot_png = self.driver.get_screenshot_as_png()
-        buff = io.BytesIO(full_screenshot_png)
-        left = element.location['x']
-        top = element.location['y']
-        right = element.location['x'] + element.size['width']
-        bottom = element.location['y'] + element.size['height']
-        image = Image.open(buff)
-        image = image.crop((left, top, right, bottom))
-        image.save(path)
+    # def screenshot_element(self, element, path: str):
+    #     while not bool(element.get_attribute('complete')):
+    #         time.sleep(0.5)
+    #
+    #     full_screenshot_buff = io.BytesIO(self.driver.get_screenshot_as_png())
+    #     left = element.location['x']
+    #     top = element.location['y']
+    #     right = left + element.size['width']
+    #     bottom = top + element.size['height']
+    #     image = Image.open(full_screenshot_buff)
+    #     image = image.crop((left, top, right, bottom))
+    #     image.save(path)
