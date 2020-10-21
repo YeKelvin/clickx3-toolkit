@@ -6,6 +6,8 @@
 .report/
 __pycache__/
 
+config.ini
+*.lock
 *.log
 
 **/.screenrecords/
@@ -26,6 +28,3 @@ testcases/*
 
 resources/webdrive/*
 resources/paddleocr/*
-
-config.ini
-poetry.lock
