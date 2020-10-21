@@ -35,6 +35,11 @@ poetry config virtualenvs.path "{cache-dir}\\virtualenvs" --local
 poetry install
 ```
 
+### 虚拟环境添加pythonpath.pth
+```text
+path/to/project/root
+```
+
 ### 包管理
 ```shell
 poetry new <package_name>                               创建 Poetry管理的 Python项目
@@ -79,7 +84,7 @@ poetry export --without-hashes -f requirements.txt -o requirements.txt
 #### Safari
 `https://webkit.org/blog/6900/webdriver-support-in-safari-10/`
 
-## PyCharm pytest配置
+## pytest配置
 pytest运行参数添加：
 ```cli
 -v -s --html=report.html

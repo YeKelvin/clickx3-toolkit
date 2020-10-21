@@ -6,7 +6,7 @@
 import os
 
 import pytest
-from py._xmlgen import html
+# from py._xmlgen import html
 
 from appuiautomator.devices_manager import DevicesManager
 from appuiautomator.u2 import device
@@ -37,16 +37,16 @@ def ios_serial():
     ...
 
 
-def pytest_html_report_title(report):
-    report.title = 'APP UI自动化测试报告'
+# def pytest_html_report_title(report):
+#     report.title = 'APP UI自动化测试报告'
 
 
-def pytest_html_results_table_header(cells):
-    cells.insert(1, html.th('Description'))
+# def pytest_html_results_table_header(cells):
+#     cells.insert(1, html.th('Description'))
 
 
-def pytest_html_results_table_row(report, cells):
-    cells.insert(1, html.td(report.description))
+# def pytest_html_results_table_row(report, cells):
+#     cells.insert(1, html.td(report.description))
 
 
 def pytest_runtest_call(item):

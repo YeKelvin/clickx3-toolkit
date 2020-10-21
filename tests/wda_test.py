@@ -5,5 +5,7 @@
 # @Author  : Kelvin.Ye
 import wda
 
-s = wda.Client().session()
 
+def test_wda():
+    s = wda.Client().session()
+    print(s)
