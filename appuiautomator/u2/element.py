@@ -7,9 +7,8 @@ import os
 from datetime import datetime
 from typing import Union, List
 
-from uiautomator2 import UiObjectNotFoundError
+from uiautomator2 import UiObjectNotFoundError, UiObject
 from uiautomator2.exceptions import XPathElementNotFoundError
-from uiautomator2.session import UiObject
 from uiautomator2.xpath import XPathSelector
 
 from appuiautomator.exceptions import ElementNotFoundException, ElementException, ElementsException, XPathElementsException, XPathElementException
