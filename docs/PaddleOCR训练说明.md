@@ -40,6 +40,7 @@ pip3 install PaddleOCR
 |-train_data
     |-ic15_data
         |- rec_gt_train.txt
+        |- rec_gt_test.txt
         |- train
             |- train_001.png
             |- train_002.jpg
@@ -64,6 +65,14 @@ train_data/ic15_data/train_0002.jpg   用科技让复杂的世界更简单
 
 ```yaml
 use_gpu: false
+image_shape: [高度, 宽度, 通道数]
+```
+
+image_shape可以通过cv2模块获取：
+```python
+import cv2
+image = cv2.imread('path/to/image')
+print(f'image_shape: {image.shape}')
 ```
 
 3.1.3、开始训练
