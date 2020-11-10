@@ -81,10 +81,18 @@ print(f'image_shape: {image.shape}')
 set CPU_NUM=2
 python3 tools/train.py -c configs/rec/rec_icdar15_train.yml 2>&1 | tee train_rec.log
 ```
-
 训练结束后，训练模型输入在 `output/rec_CRNN`
 
-3.1.4、预测
+3.1.4、训练名词解释
+
+- epoch：使用训练集的全部数据对模型进行一次完整训练，称之为“一代训练”
+- batch：使用训练集的部分样本对模型权重进行一次反向传播的参数更新，这部分样本称为“一批数据”
+- iteration：使用一个Batch数据对模型进行一次参数更新的过程，称为“一次训练”
+- lr：学习率
+- loss：误差值
+- accuracy：准确率
+
+3.1.5、预测
 
 ```python
 python3 tools/infer_rec.py -c configs/rec/rec_icdar15_train.yml -o Global.checkpoints=output/rec_CRNN/best_accuracy Global.infer_img=train_data/ic15_data/train/captcha-image-0.png
