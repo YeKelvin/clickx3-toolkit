@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": true,
+            "console": "internalConsole",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "PyTest",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": false,
+            "console": "internalConsole",
+            "module": "pytest",
+            "args": [
+                "-sv",
+                "--disable-pytest-warnings",
+                "--html=report.html"
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        }
+    ]
+}
