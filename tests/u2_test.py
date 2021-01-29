@@ -5,7 +5,9 @@
 # @Author  : Kelvin.Ye
 import uiautomator2 as u2
 
-from appuiautomator.devices_manager import AndroidDevicesManager
+from appuiautomator.devices_manager import DevicesManager
 
 if __name__ == '__main__':
-    ...
+    serial = DevicesManager.android().get_device()
+    d = u2.connect(serial)
+    el = d(resourceId='')
