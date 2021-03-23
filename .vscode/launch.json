@@ -7,8 +7,8 @@
             "request": "launch",
             "program": "${file}",
             "cwd": "${workspaceFolder}",
-            "stopOnEntry": true,
             "console": "internalConsole",
+            "justMyCode": false,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
             }
@@ -18,9 +18,9 @@
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "stopOnEntry": false,
             "console": "internalConsole",
             "module": "pytest",
+            "justMyCode": false,
             "args": [
                 "-sv",
                 "--disable-pytest-warnings",
