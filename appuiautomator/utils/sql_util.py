@@ -8,7 +8,7 @@ from typing import Tuple
 import cx_Oracle as oracle_engine
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Connection
-from sqlalchemy.engine.result import ResultProxy
+from sqlalchemy.engine.result import Result
 
 
 class SQL:
@@ -16,19 +16,19 @@ class SQL:
         self.url = url
         self.engine = create_engine(url)
 
-    def execute(self, expression: str) -> Tuple[Connection, ResultProxy]:
+    def execute(self, expression: str) -> Tuple[Connection, Result]:
         """执行 sql
 
         :param expression:  sql
         :return:            sql结果集
         """
         connection = self.engine.connect()
-        result_proxy = connection.execute(expression)
-        return connection, result_proxy
+        result = connection.execute(expression)
+        return connection, result
 
     def select_first(self, expression: str):
-        connection, result_proxy = self.execute(expression)
-        rows = result_proxy.first()
+        connection, result = self.execute(expression)
+        rows = result.first()
         connection.close()
         return rows
 
