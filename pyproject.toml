@@ -20,10 +20,11 @@ secondary = true
 [tool.poetry.dependencies]
 python = "^3.6"
 uiautomator2 = { version = "^2.13.2", extras=["image"] }
+tidevice = { version = "^0.3.3", extras=["openssl"] }
 weditor = "^0.6.3"
 jsonpath = "^0.82"
 orjson = "^3.5.1"
-pytest = "^6.2.2"
+pytest = "^5.4.3"
 pytest-html = "^3.1.1"
 pytest-dependency = "^0.5.1"
 pytest-ordering = "^0.6"
