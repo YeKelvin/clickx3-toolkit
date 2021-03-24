@@ -1,11 +1,11 @@
 {
     "files.insertFinalNewline": true,
-
     /* Python PATH */
-    "python.venvFolders": ["virtualenvs"],
+    "python.venvFolders": [
+        "virtualenvs"
+    ],
     "python.venvPath": "${workspaceFolder}/.cache",
     // "python.pythonPath": "path/to/your/python",
-
     /* Python Lint */
     "python.linting.flake8Enabled": true,
     "python.linting.pylintEnabled": false,
@@ -19,22 +19,25 @@
         "--style",
         "{based_on_style: pep8, indent_width: 4}"
     ],
-
     /* Python Test Framework */
     "python.testing.cwd": "${workspaceFolder}",
     "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "-s",
+        "-v",
+        "--disable-warnings",
+        "--pyargs",
+        "--html=report.html"
+    ],
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
-
     "python.languageServer": "Pylance",
-
     /* Code Runner */
     "code-runner.executorMap": {
         "python": "$pythonPath -u $fullFileName",
     },
     "code-runner.saveFileBeforeRun": true,
     "code-runner.runInTerminal": true,
-
     /* 将项目路径添加到python path中 */
     "terminal.integrated.env.windows": {
         "PYTHONPATH": "${workspaceFolder}"

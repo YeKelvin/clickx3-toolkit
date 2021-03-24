@@ -24,7 +24,7 @@
             "args": [
                 "-s",
                 "-v",
-                "--disable-pytest-warnings",
+                "--disable-warnings",
                 "--html=report.html"
             ],
             "env": {
