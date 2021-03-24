@@ -21,12 +21,6 @@
             "console": "internalConsole",
             "module": "pytest",
             "justMyCode": false,
-            "args": [
-                "-s",
-                "-v",
-                "--disable-warnings",
-                "--html=report.html"
-            ],
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
             }
