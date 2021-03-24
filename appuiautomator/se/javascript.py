@@ -3,7 +3,7 @@
 # @File    : javascript.py
 # @Time    : 2020/4/3 11:56
 # @Author  : Kelvin.Ye
-from appuiautomator.utils.logger import get_logger
+from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
 

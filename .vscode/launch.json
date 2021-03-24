@@ -22,7 +22,8 @@
             "module": "pytest",
             "justMyCode": false,
             "args": [
-                "-sv",
+                "-s",
+                "-v",
                 "--disable-pytest-warnings",
                 "--html=report.html"
             ],

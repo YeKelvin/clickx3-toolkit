@@ -8,7 +8,7 @@ import atexit
 from selenium import webdriver
 
 from appuiautomator.se.driver_util import last_chromedriver_path, chromedriver_log_path
-from appuiautomator.utils.logger import get_logger
+from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
 

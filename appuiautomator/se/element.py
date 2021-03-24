@@ -18,7 +18,7 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 from appuiautomator.exceptions import ElementException, ElementNotFoundException
-from appuiautomator.utils.logger import get_logger
+from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
 

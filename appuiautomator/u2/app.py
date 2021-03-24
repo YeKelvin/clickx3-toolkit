@@ -8,7 +8,7 @@ from typing import Optional
 from appuiautomator.exceptions import AppException
 from appuiautomator.u2.device import Device
 from appuiautomator.u2.page import Page
-from appuiautomator.utils.logger import get_logger
+from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
 

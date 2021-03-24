@@ -8,7 +8,7 @@ from typing import Union
 from appuiautomator.exceptions import WebSiteException
 from appuiautomator.se.page import Page
 from appuiautomator.se.webdriver import Browser
-from appuiautomator.utils.logger import get_logger
+from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
 

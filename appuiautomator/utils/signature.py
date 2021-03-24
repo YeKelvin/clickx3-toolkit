@@ -4,7 +4,7 @@
 # @Time    : 2020/9/8 15:20
 # @Author  : Kelvin.Ye
 from appuiautomator.utils.dict_util import sort_dict
-from appuiautomator.utils.logger import get_logger
+from appuiautomator.utils.log_util import get_logger
 from appuiautomator.utils.md5_util import md5
 
 log = get_logger(__name__)

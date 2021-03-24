@@ -13,5 +13,6 @@ local.address = ip:port
 remote.address = ip:port
 
 [log]
+name = test
 level = INFO
 path =

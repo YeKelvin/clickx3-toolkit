@@ -6,7 +6,7 @@
 from typing import Optional
 
 from appuiautomator.u2.device import Device
-from appuiautomator.utils.logger import get_logger
+from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
 

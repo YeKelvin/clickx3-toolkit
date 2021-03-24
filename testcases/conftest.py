@@ -12,7 +12,7 @@ from appuiautomator.devices_manager import DevicesManager
 from appuiautomator.u2 import device
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.config import screenrecord_path, screenshot_path
-from appuiautomator.utils.logger import get_logger
+from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
 
@@ -75,14 +75,15 @@ def pytest_runtest_makereport(item):
 def _actions_after_failed_test(item, result, pytest_html, an_device):
     execution_count = getattr(item, 'execution_count', 1)
     extra = getattr(result, 'extra', [])
-    nodeid = item.nodeid.replace('::', '_')
+    formatted_nodeid = item.nodeid.replace('py', '').replace('::', '.')
+    media_name = formatted_nodeid.split(os.sep)[-1]
     if execution_count == 1:  # 测试用例首次失败时，pytest-html添加截图
         if result.failed:
-            image_path = _android_screenshot(an_device, nodeid)
+            image_path = _android_screenshot(an_device, media_name)
             extra.append(pytest_html.extras.png(image_path))
             result.extra = extra
     elif execution_count > 1:  # 测试用例重跑时，pytest-html添加录屏视频
-        video_path = _android_stop_screenrecord(an_device, nodeid)
+        video_path = _android_stop_screenrecord(an_device, media_name)
         if result.failed:
             extra.append(pytest_html.extras.mp4(video_path))
             result.extra = extra

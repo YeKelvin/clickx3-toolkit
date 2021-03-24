@@ -8,7 +8,7 @@ from time import sleep
 
 import uiautomator2 as u2
 
-from appuiautomator.utils.logger import get_logger
+from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
 

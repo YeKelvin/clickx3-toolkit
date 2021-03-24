@@ -10,7 +10,7 @@ Via app测试案例
 import pytest
 
 from appuiautomator.se.chromedriver import webview_driver
-from appuiautomator.utils.logger import get_logger
+from appuiautomator.utils.log_util import get_logger
 from pages.via import Via
 
 log = get_logger(__name__)

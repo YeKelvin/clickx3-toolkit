@@ -10,7 +10,7 @@
 
 from appuiautomator.devices_manager import DevicesManager
 from appuiautomator.u2.device import Device
-from appuiautomator.utils.logger import get_logger
+from appuiautomator.utils.log_util import get_logger
 from example.pages.baidu_search import SimpleSearchApp
 
 log = get_logger(__name__)
