@@ -1,13 +1,17 @@
 # App UI自动化测试
 
 ## Poetry包管理
-```bash
+```shell
 pip install poetry
 ```
 
 ### 安装依赖
 ```shell
 poetry install
+```
+poetry安装报错的话就用pip老大哥吧，毕竟poetry还有很多bug
+```
+python3 -m pip install -r requirements.txt
 ```
 
 ### 虚拟环境添加pyproject.pth
@@ -17,7 +21,7 @@ path/to/project/root
 
 #### 导出requirements.txt
 ```shell
-poetry export --without-hashes -f requirements.txt -o requirements.txt
+poetry export -f requirements.txt -o requirements.txt --without-hashes
 ```
 
 ## Web Driver下载链接
@@ -32,9 +36,3 @@ poetry export --without-hashes -f requirements.txt -o requirements.txt
 
 #### Safari
 `https://webkit.org/blog/6900/webdriver-support-in-safari-10/`
-
-## pytest配置
-pytest运行参数添加：
-```bash
--v -s --html=report.html
-```

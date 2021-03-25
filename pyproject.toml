@@ -19,7 +19,6 @@ secondary = true
 
 [tool.poetry.dependencies]
 python = "^3.6"
-pywin32 = { version = "^300", markers="platform_system == 'Windows'" }
 uiautomator2 = { version = "^2.13.2", extras=["image"] }
 weditor = "^0.6.3"
 tidevice = { version = "^0.3.3", extras=["openssl"] }
