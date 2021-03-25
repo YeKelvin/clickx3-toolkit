@@ -9,7 +9,7 @@ from appuiautomator.utils import config
 
 
 # 日志格式
-LOG_FORMAT = '[%(asctime)s][%(levelname)s][%(threadName)s][%(name)s.%(funcName)s %(lineno)d] %(message)s'
+LOG_FORMAT = '[%(asctime)s][%(levelname)s][%(name)s.%(funcName)s %(lineno)d] %(message)s'
 
 # 日志级别
 LEVEL = config.get('log', 'level')

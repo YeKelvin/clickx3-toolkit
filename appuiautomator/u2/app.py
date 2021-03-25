@@ -30,18 +30,23 @@ class App:
         self.device = device
 
     def start(self):
+        log.info('启动APP')
         self.device.app_start(self.package_name, self.activity)
 
     def start_by_uri(self):
+        log.info(f'打开APP LINK:[ {self.uri} ]')
         self.device.activity_start_by_uri(self.uri)
 
     def stop(self):
+        log.info('停止APP')
         self.device.app_stop(self.package_name)
 
     def wait(self):
+        log.info('等待APP启动')
         self.device.app_wait(self.package_name)
 
     def clear(self):
+        log.info('清空APP缓存')
         self.device.app_clear(self.package_name)
 
     def clear_and_start(self):
@@ -50,6 +55,8 @@ class App:
         self.wait()
 
     def restart(self):
+        log.info('重启APP')
         self.stop()
         self.start()
         self.wait()
+        self.device.wait_a_moment()

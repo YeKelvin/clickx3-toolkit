@@ -14,11 +14,11 @@ log = get_logger(__name__)
 class Page:
     @property
     def device(self):
-        return self._device
+        return self.__device
 
     @device.setter
     def device(self, value):
-        self._device = value
+        self.__device = value
         if self.device:
             for attr in self.__dict__.values():
                 if isinstance(attr, self.__class__):
@@ -26,4 +26,4 @@ class Page:
 
     def __init__(self, device: Optional[Device] = None):
         if device:
-            self._device: Device = device
+            self.__device: Device = device

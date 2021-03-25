@@ -7,13 +7,13 @@ from paddleocr import PaddleOCR
 
 
 class OCR:
+    def __init__(self, use_gpu=False, rec_model_dir=None, rec_image_shape='3,32,320', rec_char_type='en') -> None:
+        self.paddle_ocr = PaddleOCR(use_gpu=use_gpu,
+                                    rec_model_dir=rec_model_dir,
+                                    rec_image_shape=rec_image_shape,
+                                    rec_char_type=rec_char_type)
+
     @staticmethod
-    def paddle_ocr(img_path,
-                   use_gpu=False,
-                   rec_model_dir=None,
-                   rec_image_shape='3,32,320',
-                   rec_char_type='en'):
-        paddle = PaddleOCR(use_gpu=use_gpu,
-                           rec_model_dir=rec_model_dir, rec_image_shape=rec_image_shape, rec_char_type=rec_char_type)
-        results = paddle.ocr(img_path, det=False)
+    def ocr(self, image_path):
+        results = self.paddle_ocr.ocr(image_path, det=False)
         return results

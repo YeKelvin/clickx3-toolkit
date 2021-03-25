@@ -54,9 +54,9 @@ def pytest_runtest_call(item):
     if execution_count > 1:  # 测试用例重跑时，开始录屏
         an_device = item.funcargs.get('an_device')
         if an_device:
-            video_name = item.nodeid.replace('::', '_')
-            video_path = _android_screenshot(an_device, video_name)
-            _android_start_screenrecord(an_device, video_path)
+            video_name = __get_node_name(item.nodeid)
+            video_path = __android_screenshot(an_device, video_name)
+            __android_start_screenrecord(an_device, video_path)
 
 
 @pytest.mark.hookwrapper
@@ -69,27 +69,34 @@ def pytest_runtest_makereport(item):
         pytest_html = item.config.pluginmanager.get_plugin('html')
         an_device = item.funcargs.get('an_device')
         if pytest_html and an_device:
-            _actions_after_failed_test(item, result, pytest_html, an_device)
+            __actions_after_failed_test(item, result, pytest_html, an_device)
 
 
-def _actions_after_failed_test(item, result, pytest_html, an_device):
+def __actions_after_failed_test(item, result, pytest_html, an_device):
     execution_count = getattr(item, 'execution_count', 1)
     extra = getattr(result, 'extra', [])
-    formatted_nodeid = item.nodeid.replace('py', '').replace('::', '.')
-    media_name = formatted_nodeid.split(os.sep)[-1]
+    media_name = __get_node_name(item.nodeid)
     if execution_count == 1:  # 测试用例首次失败时，pytest-html添加截图
         if result.failed:
-            image_path = _android_screenshot(an_device, media_name)
+            image_path = __android_screenshot(an_device, media_name)
             extra.append(pytest_html.extras.png(image_path))
             result.extra = extra
     elif execution_count > 1:  # 测试用例重跑时，pytest-html添加录屏视频
-        video_path = _android_stop_screenrecord(an_device, media_name)
+        video_path = __android_stop_screenrecord(an_device, media_name)
         if result.failed:
             extra.append(pytest_html.extras.mp4(video_path))
             result.extra = extra
 
 
-def _android_screenshot(an_device, image_name):
+def __get_node_name(nodeid):
+    formatted_nodeid = nodeid.replace('.py', '').replace('::', '.')
+    if os.sep in formatted_nodeid:
+        return formatted_nodeid.split(os.sep)[-1]
+    else:
+        return formatted_nodeid.split('/')[-1]
+
+
+def __android_screenshot(an_device, image_name):
     log.info('开始截图')
     image_path = os.path.join(screenshot_path(), f'{image_name}.png')
     an_device.screenshot(image_path)
@@ -97,13 +104,13 @@ def _android_screenshot(an_device, image_name):
     return image_path
 
 
-def _android_start_screenrecord(an_device, video_name):
+def __android_start_screenrecord(an_device, video_name):
     log.info('开始录屏')
     video_path = os.path.join(screenrecord_path(), f'{video_name}.mp4')
     an_device.screenrecord(video_path)
 
 
-def _android_stop_screenrecord(an_device, video_name):
+def __android_stop_screenrecord(an_device, video_name):
     log.info('停止录屏')
     an_device.screenrecord.stop()
     video_path = os.path.join(screenrecord_path(), f'{video_name}.mp4')

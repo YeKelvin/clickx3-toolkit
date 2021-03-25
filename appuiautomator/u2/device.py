@@ -24,14 +24,17 @@ class Device(u2.Device):
     def __init__(self, u2d: u2.Device):
         self.__dict__ = u2d.__dict__
 
+    def wait_a_moment(self, secs=0.5):
+        sleep(secs)
+
     def run_adb_shell(self, command: str):
-        log.info(f'execute adb shell {command}')
+        log.info(f'execute adb shell:[ {command} ]')
         output, exit_code = self.shell(command)
-        log.info(f'adb shell output={output}')
-        log.info(f'adb shell exitCode={exit_code}')
+        log.info(f'adb shell output:\n {output}')
+        log.info(f'adb shell exitCode:[ {exit_code} ]')
 
     def activity_start_by_uri(self, uri: str):
-        self.run_adb_shell(f'am start -a android.intent.action.VIEW -d {uri}')
+        self.run_adb_shell(f'am start -a android.intent.action.VIEW -d "{uri}"')
 
     def app_restart(self, package_name, activity=None):
         log.info(f'restarting app {package_name}')
@@ -72,11 +75,11 @@ class Device(u2.Device):
             command = f'screencap -p {path}'
         else:
             current_time = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
-            filename = f'Screenshot_{current_time}.png'
+            filename = f'screenshot_{current_time}.png'
             command = f'screencap -p /sdcard/DCIM/Screenshots/{filename}'
         self.run_adb_shell(command)
 
     def get_toast_message(self, wait_timeout=10, cache_timeout=10, default=None):
         toast_msg = self.toast.get_message(wait_timeout, cache_timeout, default)
-        log.info(f'toast message={toast_msg}')
+        log.info(f'toast message:[ {toast_msg} ]')
         return toast_msg

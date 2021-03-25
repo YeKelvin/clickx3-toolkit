@@ -5,15 +5,18 @@
 # @Author  : Kelvin.Ye
 import os
 from datetime import datetime
-from typing import Union, List
+from typing import List, Union
 
-from uiautomator2 import UiObjectNotFoundError, UiObject
-from uiautomator2.exceptions import XPathElementNotFoundError
-from uiautomator2.xpath import XPathSelector
-
-from appuiautomator.exceptions import ElementNotFoundException, ElementException, ElementsException, XPathElementsException, XPathElementException
+from appuiautomator.exceptions import (ElementException,
+                                       ElementNotFoundException,
+                                       ElementsException,
+                                       XPathElementException,
+                                       XPathElementsException)
 from appuiautomator.utils import config
 from appuiautomator.utils.log_util import get_logger
+from uiautomator2 import UiObject, UiObjectNotFoundError
+from uiautomator2.exceptions import XPathElementNotFoundError
+from uiautomator2.xpath import XPathSelector
 
 log = get_logger(__name__)
 
@@ -52,7 +55,8 @@ class Element:
     @property
     def location_info(self):
         return (
-            f'Location:{[str(k) + "=" + str(v) for k, v in self.kwargs.items()]}, Description:{str(self.description)}'
+            f'Location: {[str(k) + "=" + str(v) for k, v in self.kwargs.items()]} '
+            f'Description:[ {str(self.description)} ]'
         )
 
     def __init__(self, timeout=5, desc=None, **kwargs):
@@ -60,7 +64,7 @@ class Element:
             raise ValueError('Please specify a locator')
         for locator in kwargs.keys():
             if locator not in LOCATORS:
-                raise KeyError(f'Element positioning of type [ {locator} ] is not supported.')
+                raise KeyError(f'Element positioning of type [ {locator} ] is not supported')
         self.timeout = timeout
         self.description = desc
         self.kwargs = kwargs
@@ -74,7 +78,7 @@ class Element:
             else:
                 raise ElementException()
         except (UiObjectNotFoundError, ElementException):
-            raise ElementNotFoundException(f'Element not found. {self.location_info}')
+            raise ElementNotFoundException(f'Element not found {self.location_info}')
 
     def __get__(self, instance, owner) -> Union[UiObject, List[UiObject], None]:
         """
@@ -91,7 +95,7 @@ class Element:
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
         if not element:
-            raise ElementException(f'Can not set value, no elements found. {self.location_info}')
+            raise ElementException(f'Can not set value, no elements found {self.location_info}')
         element.set_text(value)
 
 
@@ -105,21 +109,19 @@ class Elements(Element):
             else:
                 raise ElementsException()
         except (UiObjectNotFoundError, ElementsException):
-            raise ElementNotFoundException(f'Element not found. {self.location_info}')
+            raise ElementNotFoundException(f'Element not found {self.location_info}')
 
     def __set__(self, instance, value):
         elements = self.__get__(instance, instance.__class__)
         if elements.count == 0:
-            raise ElementsException(f'Cannot be set value, elements not found. {self.location_info}')
+            raise ElementsException(f'Cannot be set value, elements not found {self.location_info}')
         [element.set_text(value) for element in elements]
 
 
 class XPathElement:
     @property
     def location_info(self):
-        return (
-            f'Location:xpath={self.xpath}, Description:{str(self.description)}'
-        )
+        return (f'Location:xpath:[ {self.xpath} ] Description:[ {str(self.description)} ]')
 
     def __init__(self, xpath, timeout=5, desc=''):
         if not xpath:
@@ -138,7 +140,7 @@ class XPathElement:
             else:
                 raise XPathElementException()
         except (XPathElementNotFoundError, XPathElementException):
-            raise ElementNotFoundException(f'Element not found. {self.location_info}')
+            raise ElementNotFoundException(f'Element not found {self.location_info}')
 
     def __get__(self, instance, owner) -> Union[XPathSelector, List[XPathSelector], None]:
         """
@@ -158,7 +160,7 @@ class XPathElement:
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
         if not element:
-            raise XPathElementException(f'Can not set value, no elements found. {self.location_info}')
+            raise XPathElementException(f'Can not set value, no elements found {self.location_info}')
         element.set_text(value)
 
 
@@ -172,12 +174,12 @@ class XPathElements(XPathElement):
             else:
                 raise XPathElementsException()
         except (XPathElementNotFoundError, XPathElementsException):
-            raise ElementNotFoundException(f'Element not found. {self.location_info}')
+            raise ElementNotFoundException(f'Element not found {self.location_info}')
 
     def __set__(self, instance, value):
         elements = self.__get__(instance, instance.__class__)
         if len(elements) == 0:
-            raise ElementsException(f'Cannot be set value, elements not found. {self.location_info}')
+            raise ElementsException(f'Cannot be set value, elements not found {self.location_info}')
         [element.set_text(value) for element in elements]
 
 
@@ -203,5 +205,5 @@ class ElementUtil:
                 f'{datetime.now().strftime("%Y%m%d.%H%M%S.%f")}.jpg'
             )
         cropped.save(destination)
-        log.info(f'保存元素截图至 {destination}')
+        log.info(f'保存元素截图至:[ {destination} ]')
         return destination
