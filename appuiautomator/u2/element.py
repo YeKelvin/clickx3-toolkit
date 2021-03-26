@@ -61,10 +61,10 @@ class Element:
 
     def __init__(self, timeout=5, desc=None, **kwargs):
         if not kwargs:
-            raise ValueError('Please specify a locator')
+            raise ValueError('请指定元素定位信息')
         for locator in kwargs.keys():
             if locator not in LOCATORS:
-                raise KeyError(f'Element positioning of type [ {locator} ] is not supported')
+                raise KeyError(f'不支持的元素定位类型:[ {locator} ]，请输入正确的元素定位类型')
         self.timeout = timeout
         self.description = desc
         self.kwargs = kwargs
@@ -78,7 +78,7 @@ class Element:
             else:
                 raise ElementException()
         except (UiObjectNotFoundError, ElementException):
-            raise ElementNotFoundException(f'Element not found {self.location_info}')
+            raise ElementNotFoundException(f'找不到元素 {self.location_info}')
 
     def __get__(self, instance, owner) -> Union[UiObject, List[UiObject], None]:
         """
@@ -95,7 +95,7 @@ class Element:
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
         if not element:
-            raise ElementException(f'Can not set value, no elements found {self.location_info}')
+            raise ElementException(f'赋值失败，找不到元素 {self.location_info}')
         element.set_text(value)
 
 
@@ -109,12 +109,12 @@ class Elements(Element):
             else:
                 raise ElementsException()
         except (UiObjectNotFoundError, ElementsException):
-            raise ElementNotFoundException(f'Element not found {self.location_info}')
+            raise ElementNotFoundException(f'找不到元素 {self.location_info}')
 
     def __set__(self, instance, value):
         elements = self.__get__(instance, instance.__class__)
         if elements.count == 0:
-            raise ElementsException(f'Cannot be set value, elements not found {self.location_info}')
+            raise ElementsException(f'赋值失败，找不到元素 {self.location_info}')
         [element.set_text(value) for element in elements]
 
 
@@ -125,7 +125,7 @@ class XPathElement:
 
     def __init__(self, xpath, timeout=5, desc=''):
         if not xpath:
-            raise ValueError('Please specify a xpath locator')
+            raise ValueError('请指定元素xpath的定位信息')
 
         self.timeout = timeout
         self.description = desc
@@ -140,7 +140,7 @@ class XPathElement:
             else:
                 raise XPathElementException()
         except (XPathElementNotFoundError, XPathElementException):
-            raise ElementNotFoundException(f'Element not found {self.location_info}')
+            raise ElementNotFoundException(f'找不到元素 {self.location_info}')
 
     def __get__(self, instance, owner) -> Union[XPathSelector, List[XPathSelector], None]:
         """
@@ -160,7 +160,7 @@ class XPathElement:
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
         if not element:
-            raise XPathElementException(f'Can not set value, no elements found {self.location_info}')
+            raise XPathElementException(f'赋值失败，找不到元素 {self.location_info}')
         element.set_text(value)
 
 
@@ -174,7 +174,7 @@ class XPathElements(XPathElement):
             else:
                 raise XPathElementsException()
         except (XPathElementNotFoundError, XPathElementsException):
-            raise ElementNotFoundException(f'Element not found {self.location_info}')
+            raise ElementNotFoundException(f'找不到元素 {self.location_info}')
 
     def __set__(self, instance, value):
         elements = self.__get__(instance, instance.__class__)

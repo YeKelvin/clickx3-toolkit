@@ -19,6 +19,7 @@ class App:
     uri = None  # type: Optional[str]
 
     def __new__(cls, device: Device):
+        # App实例化时遍历App实例的属性，如果含有Page类，则把device赋值给page
         for attr in cls.__dict__.values():
             if isinstance(attr, Page):  # 将App的device赋值给Page
                 attr.device = device
@@ -26,7 +27,7 @@ class App:
 
     def __init__(self, device: Device):
         if not self.package_name:
-            raise AppException('App Package Name cannot be empty')
+            raise AppException('PackageName不允许为空')
         self.device = device
 
     def start(self):
