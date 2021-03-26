@@ -18,11 +18,13 @@ class Page:
 
     @device.setter
     def device(self, value):
+        if (not value) or (not isinstance(value, Device)):
+            raise TypeError('不允许赋值为非Device类')
+
         self.__device = value
-        if self.device:
-            for attr in self.__dict__.values():
-                if isinstance(attr, self.__class__):
-                    attr.device = value
+        for attr in self.__dict__.values():
+            if isinstance(attr, self.__class__):
+                attr.device = value
 
     def __init__(self, device: Optional[Device] = None):
         if device:
