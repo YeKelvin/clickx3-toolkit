@@ -1,9 +1,13 @@
 # PaddleOCR
+
 ## 1、目的
+
 利用PaddleOCR识别登录验证码，通过训练后提高识别准确率
 
 ## 2、下载和安装
+
 根据官方教程逐步执行即可。`https://github.com/PaddlePaddle/PaddleOCR/blob/develop/doc/doc_ch/installation.md`
+
 ### 2.1、安装PaddlePaddle Fluid
 
 ```shell
@@ -34,13 +38,21 @@ pip3 install PaddleOCR
 
 ### 3.1、文字识别
 
-3.1.1、创建如下结构的目录、文件和用于训练的图片
+#### 3.1.1、下载MobileNetV3的预训练模型
 
+```shell
+https://paddleocr.bj.bcebos.com/dygraph_v2.0/en/rec_mv3_none_bilstm_ctc_v2.0_train.tar
 ```
+
+下载完成解压至`PaddleOCR/pretrain_models`目录下
+
+#### 3.1.2、创建如下结构的目录、文件和用于训练的图片
+
+```shell
 |-train_data
-    |-ic15_data
-        |- rec_gt_train.txt
-        |- rec_gt_test.txt
+    |-rec_data
+        |- rec_train.txt
+        |- rec_test.txt
         |- train
             |- train_001.png
             |- train_002.jpg
@@ -48,42 +60,57 @@ pip3 install PaddleOCR
             | ...
 ```
 
-rec_gt_train.txt文件格式如下：
+rec_train.txt文件格式如下：
 
 ```txt
 图像文件名	图像标注信息
 
-train_data/ic15_data/train_0001.jpg   简单可依赖
-train_data/ic15_data/train_0002.jpg   用科技让复杂的世界更简单
+train/train_0001.jpg	AAAA
+train/train_0002.jpg	BBBB
 ```
 
 **注意：** 默认请将图片路径和图片标签用 \t 分割，如用其他方式分割将造成训练报错。
 
-3.1.2、修改配置文件
+#### 3.1.3、创建配置文件
 
-修改configs/rec/rec_icdar15_train.yml配置文件：
+复制`configs/rec/rec_icdar15_reader.yml`副本并改名`rec_xxx_reader.yml`：
 
 ```yaml
+# rec_xxx_reader.yml
+# 将一下两个配置改为你本地的路径
+img_set_dir: ./train_data/rec_data
+label_file_path: ./train_data/rec_data/rec_train.txt
+```
+
+复制`configs/rec/rec_icdar15_train.yml`副本并改名`rec_xxx_train.yml`：
+
+```yaml
+# rec_xxx_train.yml
 use_gpu: false
-image_shape: [高度, 宽度, 通道数]
+save_model_dir: ./output/rec_xxx
+image_shape: [通道数, 高度, 宽度]
+reader_yml: ./configs/rec/rec_xxx_reader.yml
+pretrain_weights: ./pretrain_models/rec_mv3_none_bilstm_ctc_v2.0_train/best_accuracy
 ```
 
 image_shape可以通过cv2模块获取：
+
 ```python
 import cv2
 image = cv2.imread('path/to/image')
 print(f'image_shape: {image.shape}')
 ```
 
-3.1.3、开始训练
+#### 3.1.4、开始训练
 
 ```shell
 set CPU_NUM=2
-python3 tools/train.py -c configs/rec/rec_icdar15_train.yml 2>&1 | tee train_rec.log
+python3 tools/train.py -c configs/rec/rec_xxx_train.yml 2>&1 | tee train_rec.log
 ```
-训练结束后，训练模型输入在 `output/rec_CRNN`
 
-3.1.4、训练名词解释
+训练结束后，训练模型输入在 `output/rec_xxx`
+
+#### 3.1.5、训练名词解释
 
 - epoch：使用训练集的全部数据对模型进行一次完整训练，称之为“一代训练”
 - batch：使用训练集的部分样本对模型权重进行一次反向传播的参数更新，这部分样本称为“一批数据”
@@ -92,10 +119,10 @@ python3 tools/train.py -c configs/rec/rec_icdar15_train.yml 2>&1 | tee train_rec
 - loss：误差值
 - accuracy：准确率
 
-3.1.5、预测
+#### 3.1.6、预测
 
-```python
-python3 tools/infer_rec.py -c configs/rec/rec_icdar15_train.yml -o Global.checkpoints=output/rec_CRNN/best_accuracy Global.infer_img=train_data/ic15_data/train/captcha-image-0.png
+```shell
+python3 tools/infer_rec.py -c configs/rec/rec_xxx_train.yml -o Global.checkpoints=output/rec_xxx/best_accuracy Global.infer_img=train_data/rec_data/train/train_0001.png
 ```
 
 ## 4、训练模型转inference模型
@@ -103,7 +130,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_icdar15_train.yml -o Global.checkp
 ### 4.1、文字识别模型转inference模型
 
 ```shell
-python3 tools/export_model.py -c configs/rec/rec_icdar15_train.yml -o Global.checkpoints=output/rec_CRNN/best_accuracy Global.save_inference_dir=inference/rec_crnn/
+python3 tools/export_model.py -c configs/rec/rec_xxx_train.yml -o Global.checkpoints=output/rec_xxx/best_accuracy Global.save_inference_dir=inference/rec_crnn/
 ```
 
 ## 5、PaddleOCR Package使用说明
@@ -142,8 +169,6 @@ for line in result:
     print(line)
 ```
 
-
-
 ### 5.3、通过命令行使用
 
 ```shell
@@ -181,4 +206,3 @@ paddleocr --image_dir PaddleOCR/doc/imgs/11.jpg --det_model_dir {your_det_model_
 | enable_mkldnn         | 是否启用mkldnn                                               | FALSE                           |
 | det                   | 前向时使用启动检测                                           | TRUE                            |
 | rec                   | 前向时是否启动识别                                           | TRUE                            |
-

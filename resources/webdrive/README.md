@@ -1,15 +1,23 @@
 # webdriver
+
 ## 说明
+
 `resources/webdrive/`用于存放浏览器驱动。
 
-## 下载地址
-### 谷歌
-ChromeDriver:`https://npm.taobao.org/mirrors/chromedriver`
+## Web Driver下载链接
 
-### 火狐
-Browser:`http://ftp.mozilla.org/pub/firefox/releases/`
-Geckodriver:`https://github.com/mozilla/geckodriver/releases`
-Version correspondence:`https://firefox-source-docs.mozilla.org/testing/geckodriver/geckodriver/Support.html`
+### Chrome
 
-### 苹果
-Safaridriver:``
+`http://npm.taobao.org/mirrors/chromedriver/`
+
+### Firefox
+
+`https://github.com/mozilla/geckodriver/releases/`
+
+### Edge
+
+`https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/`
+
+### Safari
+
+`https://webkit.org/blog/6900/webdriver-support-in-safari-10/`
