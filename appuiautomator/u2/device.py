@@ -25,7 +25,7 @@ class Device(u2.Device):
         # 直接把u2的属性字典拿过来
         self.__dict__ = u2d.__dict__
 
-    def wait_a_moment(self, secs=0.5):
+    def wait(self, secs=0.5):
         sleep(secs)
 
     def run_adb_shell(self, command: str):

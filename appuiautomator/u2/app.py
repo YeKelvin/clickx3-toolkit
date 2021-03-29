@@ -60,4 +60,4 @@ class App:
         self.stop()
         self.start()
         self.wait()
-        self.device.wait_a_moment()
+        self.device.wait()

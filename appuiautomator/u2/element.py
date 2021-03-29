@@ -4,6 +4,7 @@
 # @Time    : 2020/9/17 21:29
 # @Author  : Kelvin.Ye
 import os
+from time import sleep
 from datetime import datetime
 from typing import List, Union
 
@@ -59,26 +60,23 @@ class Element:
             f'Description:[ {str(self.description)} ]'
         )
 
-    def __init__(self, timeout=5, desc=None, **kwargs):
+    def __init__(self, delay=0.5, timeout=10, desc=None, **kwargs):
         if not kwargs:
             raise ValueError('请指定元素定位信息')
         for locator in kwargs.keys():
             if locator not in LOCATORS:
                 raise KeyError(f'不支持的元素定位类型:[ {locator} ]，请输入正确的元素定位类型')
+        self.delay = delay
         self.timeout = timeout
         self.description = desc
         self.kwargs = kwargs
 
     def find(self, context) -> UiObject:
-        try:
-            element = context(**self.kwargs)
-            element.wait(timeout=self.timeout)
-            if element.exists():
-                return element
-            else:
-                raise ElementException()
-        except (UiObjectNotFoundError, ElementException):
-            raise ElementNotFoundException(f'找不到元素 {self.location_info}')
+        if self.delay:
+            sleep(self.delay)
+        element = context(**self.kwargs)
+        element.must_wait(timeout=self.timeout)  # timeout后找不到元素会直接抛异常UiObjectNotFoundError
+        return element
 
     def __get__(self, instance, owner) -> Union[UiObject, List[UiObject], None]:
         """
@@ -101,15 +99,11 @@ class Element:
 
 class Elements(Element):
     def find(self, context) -> UiObject:
-        try:
-            elements = context(**self.kwargs)
-            elements.wait(timeout=self.timeout)
-            if elements.exists():
-                return elements
-            else:
-                raise ElementsException()
-        except (UiObjectNotFoundError, ElementsException):
-            raise ElementNotFoundException(f'找不到元素 {self.location_info}')
+        if self.delay:
+            sleep(self.delay)
+        elements = context(**self.kwargs)
+        elements.must_wait(timeout=self.timeout)  # timeout后找不到元素会直接抛异常UiObjectNotFoundError
+        return elements
 
     def __set__(self, instance, value):
         elements = self.__get__(instance, instance.__class__)
@@ -123,24 +117,21 @@ class XPathElement:
     def location_info(self):
         return (f'Location:xpath:[ {self.xpath} ] Description:[ {str(self.description)} ]')
 
-    def __init__(self, xpath, timeout=5, desc=''):
+    def __init__(self, xpath, delay=0.5, timeout=5, desc=''):
         if not xpath:
             raise ValueError('请指定元素xpath的定位信息')
 
+        self.delay = delay
         self.timeout = timeout
         self.description = desc
         self.xpath = xpath
 
     def find(self, context) -> XPathSelector:
-        try:
-            element = context.xpath(self.xpath)
-            element.wait(timeout=self.timeout)
-            if element and element.exists:
-                return element
-            else:
-                raise XPathElementException()
-        except (XPathElementNotFoundError, XPathElementException):
-            raise ElementNotFoundException(f'找不到元素 {self.location_info}')
+        if self.delay:
+            sleep(self.delay)
+        element = context.xpath(self.xpath)
+        element.must_wait(timeout=self.timeout)  # timeout后找不到元素会直接抛异常UiObjectNotFoundError
+        return element
 
     def __get__(self, instance, owner) -> Union[XPathSelector, List[XPathSelector], None]:
         """
@@ -166,15 +157,11 @@ class XPathElement:
 
 class XPathElements(XPathElement):
     def find(self, context) -> list:
-        try:
-            elements = context.xpath(self.xpath)
-            elements.wait(timeout=self.timeout)
-            if elements.exists:
-                return elements.all()
-            else:
-                raise XPathElementsException()
-        except (XPathElementNotFoundError, XPathElementsException):
-            raise ElementNotFoundException(f'找不到元素 {self.location_info}')
+        if self.delay:
+            sleep(self.delay)
+        elements = context.xpath(self.xpath)
+        elements.must_wait(timeout=self.timeout)  # timeout后找不到元素会直接抛异常UiObjectNotFoundError
+        return elements.all()
 
     def __set__(self, instance, value):
         elements = self.__get__(instance, instance.__class__)

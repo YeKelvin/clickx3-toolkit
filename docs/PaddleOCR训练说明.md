@@ -78,6 +78,7 @@ train/train_0002.jpg	BBBB
 ```yaml
 # rec_xxx_reader.yml
 # 将一下两个配置改为你本地的路径
+num_workers: 4  # 机器性能较差时适当调低
 img_set_dir: ./train_data/rec_data
 label_file_path: ./train_data/rec_data/rec_train.txt
 ```
@@ -91,6 +92,8 @@ save_model_dir: ./output/rec_xxx
 image_shape: [通道数, 高度, 宽度]
 reader_yml: ./configs/rec/rec_xxx_reader.yml
 pretrain_weights: ./pretrain_models/rec_mv3_none_bilstm_ctc_v2.0_train/best_accuracy
+train_batch_size_per_card: 128  # 机器性能较差时适当调低
+test_batch_size_per_card: 128  # 机器性能较差时适当调低
 ```
 
 image_shape可以通过cv2模块获取：
@@ -130,7 +133,7 @@ python3 tools/infer_rec.py -c configs/rec/rec_xxx_train.yml -o Global.checkpoint
 ### 4.1、文字识别模型转inference模型
 
 ```shell
-python3 tools/export_model.py -c configs/rec/rec_xxx_train.yml -o Global.checkpoints=output/rec_xxx/best_accuracy Global.save_inference_dir=inference/rec_crnn/
+python3 tools/export_model.py -c configs/rec/rec_xxx_train.yml -o Global.checkpoints=output/rec_xxx/best_accuracy Global.save_inference_dir=inference/rec_crnn_xxx/
 ```
 
 ## 5、PaddleOCR Package使用说明
