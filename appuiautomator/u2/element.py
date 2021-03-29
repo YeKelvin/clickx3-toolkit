@@ -4,19 +4,15 @@
 # @Time    : 2020/9/17 21:29
 # @Author  : Kelvin.Ye
 import os
-from time import sleep
 from datetime import datetime
+from time import sleep
 from typing import List, Union
 
-from appuiautomator.exceptions import (ElementException,
-                                       ElementNotFoundException,
-                                       ElementsException,
-                                       XPathElementException,
-                                       XPathElementsException)
+from appuiautomator.exceptions import ElementsException, XPathElementException
+from appuiautomator.u2.device import Device
 from appuiautomator.utils import config
 from appuiautomator.utils.log_util import get_logger
 from uiautomator2 import UiObject, UiObjectNotFoundError
-from uiautomator2.exceptions import XPathElementNotFoundError
 from uiautomator2.xpath import XPathSelector
 
 log = get_logger(__name__)
@@ -52,53 +48,63 @@ LOCATORS = [
 ]
 
 
-class Element:
-    @property
-    def location_info(self):
-        return (
-            f'Location: {[str(k) + "=" + str(v) for k, v in self.kwargs.items()]} '
-            f'Description:[ {str(self.description)} ]'
-        )
+class Element(UiObject):
+    def __init__(self, ui_obj: UiObject = None,
+                 delay=0.5, timeout=10, interval=0.5, **kwargs):
+        if ui_obj:
+            # 直接把UiObject的属性字典复制过来
+            self.__dict__ = ui_obj.__dict__
 
-    def __init__(self, delay=0.5, timeout=10, desc=None, **kwargs):
-        if not kwargs:
-            raise ValueError('请指定元素定位信息')
-        for locator in kwargs.keys():
-            if locator not in LOCATORS:
-                raise KeyError(f'不支持的元素定位类型:[ {locator} ]，请输入正确的元素定位类型')
         self.delay = delay
         self.timeout = timeout
-        self.description = desc
+        self.interval = interval
         self.kwargs = kwargs
 
-    def find(self, context) -> UiObject:
+    def __find(self, device: Device):
+        # 计算重试次数
+        retry_count = int(int(self.timeout) / int(self.interval))
+        # 延迟查找元素
         if self.delay:
             sleep(self.delay)
-        element = context(**self.kwargs)
-        element.must_wait(timeout=self.timeout)  # timeout后找不到元素会直接抛异常UiObjectNotFoundError
-        return element
 
-    def __get__(self, instance, owner) -> Union[UiObject, List[UiObject], None]:
+        # 重试次数小于1时，不重试，找不到直接抛异常
+        if retry_count < 1:
+            element = device(**self.kwargs)
+            if element.exists:
+                self.__dict__.update(element.__dict__)
+                return self
+            else:
+                raise UiObjectNotFoundError(str(element.selector))
+
+        # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
+        for i in range(retry_count):
+            if i > 0:
+                sleep(self.interval)
+            element = device(**self.kwargs)
+            if element.exists:
+                self.__dict__.update(element.__dict__)
+                return self
+        raise UiObjectNotFoundError(str(element.selector))
+
+    def __get__(self, instance, owner):
         """
 
-        :param instance:    appuiautomator.u2.page.Page类实例
-        :param owner:       appuiautomator.u2.page.Page类
+        :param instance:    持有该类的父类实例（appuiautomator.u2.page.Page）
+        :param owner:       持有该类的父类实例（appuiautomator.u2.page.Page）
         :return:
         """
         if instance is None:
-            return None
-        context = instance.device  # 将Page对象的device属性传递给PageElement对象
-        return self.find(context)
+            return
+        return self.__find(instance.device)  # 将Page对象的device属性传递给PageElement对象
 
     def __set__(self, instance, value):
         element = self.__get__(instance, instance.__class__)
-        if not element:
-            raise ElementException(f'赋值失败，找不到元素 {self.location_info}')
-        element.set_text(value)
+        if element:
+            element.set_text(value)
 
 
 class Elements(Element):
-    def find(self, context) -> UiObject:
+    def __find(self, context) -> UiObject:
         if self.delay:
             sleep(self.delay)
         elements = context(**self.kwargs)
@@ -107,8 +113,8 @@ class Elements(Element):
 
     def __set__(self, instance, value):
         elements = self.__get__(instance, instance.__class__)
-        if elements.count == 0:
-            raise ElementsException(f'赋值失败，找不到元素 {self.location_info}')
+        # if elements.count == 0:
+        #     raise ElementsException(f'赋值失败，找不到元素 {self.location_info}')
         [element.set_text(value) for element in elements]
 
 

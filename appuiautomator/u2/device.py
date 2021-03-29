@@ -22,7 +22,7 @@ class Device(u2.Device):
     """
 
     def __init__(self, u2d: u2.Device):
-        # 直接把u2的属性字典拿过来
+        # 直接把u2.Device的属性字典复制过来
         self.__dict__ = u2d.__dict__
 
     def wait(self, secs=0.5):
