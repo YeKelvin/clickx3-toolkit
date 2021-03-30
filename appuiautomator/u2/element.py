@@ -24,7 +24,7 @@ class Locator(dict):
     ...
 
 
-def __retry(func):
+def _retry(func):
     @wraps(func)
     def wrapped_function(*args, **kwargs):
         self = args[0]
@@ -101,27 +101,27 @@ class Element(UiObject):
         else:
             raise UiObjectNotFoundError(str(kwargs))
 
-    @__retry
+    @_retry
     def child(self, **kwargs):
         return Element(super().child(**kwargs))
 
-    @__retry
+    @_retry
     def sibling(self, **kwargs):
         return Element(super().sibling(**kwargs))
 
-    @__retry
+    @_retry
     def right(self, **kwargs):
         return Element(super().right(**kwargs))
 
-    @__retry
+    @_retry
     def left(self, **kwargs):
         return Element(super().left(**kwargs))
 
-    @__retry
+    @_retry
     def up(self, **kwargs):
         return Element(super().up(**kwargs))
 
-    @__retry
+    @_retry
     def down(self, **kwargs):
         return Element(super().down(**kwargs))
 

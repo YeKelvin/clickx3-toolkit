@@ -4,6 +4,7 @@
 # @Time    : 2020/9/29 15:47
 # @Author  : Kelvin.Ye
 import io
+from functools import wraps
 from time import sleep, time
 
 from appuiautomator.exceptions import ElementException
@@ -27,15 +28,48 @@ class Locator:
         self.value = value
 
 
+def _retry(func):
+    @wraps(func)
+    def wrapped_function(*args, **kwargs):
+        self = args[0]
+        # 计算重试次数
+        retry_count = int(float(self.timeout) / float(self.interval))
+        # 延迟查找元素
+        if self.delay:
+            sleep(self.delay)
+
+        # 重试次数小于1时，不重试，找不到直接抛异常
+        if retry_count < 1:
+            element = func(*args, **kwargs)
+            return WebDriverWait(self.driver, self.timeout).until(EC.visibility_of(element))
+
+        # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
+        for i in range(retry_count):
+            try:
+                if i > 0:
+                    sleep(self.interval)
+                element = func(*args, **kwargs)
+                return WebDriverWait(self.driver, self.timeout).until(EC.visibility_of(element))
+            except NoSuchElementException:
+                if i == (retry_count - 1):
+                    raise
+                continue
+    return wrapped_function
+
+
 class Element(WebElement):
     def __init__(self,
-                 by: By,
-                 value: str,
+                 by: By = None,
+                 value: str = None,
+                 driver: WebDriver = None,
                  web_element: WebElement = None,
                  delay: float = 0.5,
                  timeout: float = 10,
                  interval: float = 0.5,
                  return_list: bool = False):
+        if driver:
+            self.driver = driver
+
         if web_element:
             # 直接把WebElement的属性字典复制过来
             self.__dict__ = web_element.__dict__
@@ -47,13 +81,16 @@ class Element(WebElement):
         self.interval = interval
         self.return_list = return_list
 
-    def __find(self, driver: WebDriver):
-        if self.return_list:
-            return driver.find_elements(self.by, self.value)
-        else:
-            return driver.find_element(self.by, self.value)
+    def __find(self):
+        if (not self.by) or (not self.value):
+            raise ElementException('元素定位信息不允许为空')
 
-    def __retry_find(self, driver: WebDriver):
+        if self.return_list:
+            return self.driver.find_elements(self.by, self.value)
+        else:
+            return self.driver.find_element(self.by, self.value)
+
+    def __retry_find(self):
         # 计算重试次数
         retry_count = int(float(self.timeout) / float(self.interval))
         # 延迟查找元素
@@ -62,25 +99,25 @@ class Element(WebElement):
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            element = self.__find(driver)
+            element = self.__find()
             self.__dict__.update(element.__dict__)
-            return self.__wait_until(driver)
+            return self.__wait_until_visible()
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
             try:
                 if i > 0:
                     sleep(self.interval)
-                element = self.__find(driver)
+                element = self.__find()
                 self.__dict__.update(element.__dict__)
-                return self.__wait_until(driver)
+                return self.__wait_until_visible()
             except NoSuchElementException:
                 if i == (retry_count - 1):
                     raise
                 continue
 
-    def __wait_until(self, driver: WebDriver):
-        return WebDriverWait(driver, self.timeout).until(EC.visibility_of(self))
+    def __wait_until_visible(self):
+        return WebDriverWait(self.driver, self.timeout).until(EC.visibility_of(self))
 
     def __getitem__(self, index: int):
         return Element(self[index])
@@ -110,15 +147,28 @@ class Element(WebElement):
     def __get__(self, instance, owner):
         if instance is None:
             raise ElementException('持有类没有实例化')
-        if not hasattr(instance, 'browser'):
+
+        browser = getattr(instance, 'browser', None)
+        if browser is None:
             raise ElementException('instance必须包含browser属性')
-        if not hasattr(instance.browser, 'driver'):
+
+        driver = getattr(instance.browser, 'driver', None)
+        if driver is None:
             raise ElementException('instance.browser必须包含driver属性')
 
-        return self.__retry_find(instance.browser.driver)
+        self.driver = driver
+        return self.__retry_find()
 
     def __set__(self, instance, value):
         raise NotImplementedError('老老实实send_keys()吧')
+
+    @_retry
+    def find_element(self, by, value):
+        return Element(super().find_element(by, value))
+
+    @_retry
+    def find_elements(self, by, value):
+        return Element(super().find_elements(by, value))
 
     def save_screenshot(self, filename, frequency=0.5):
         """保存元素截图
