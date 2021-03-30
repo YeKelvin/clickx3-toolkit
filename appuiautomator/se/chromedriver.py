@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @File    : chromedriver
+# @File    : chromedriver.py
 # @Time    : 2020/9/10 11:30
 # @Author  : Kelvin.Ye
 import atexit

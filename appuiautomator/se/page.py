@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @File    : page_object
+# @File    : page.py
 # @Time    : 2020/4/3 11:56
 # @Author  : Kelvin.Ye
 from appuiautomator.se.webdriver import Browser

@@ -3,65 +3,67 @@
 # @File    : element.py
 # @Time    : 2020/9/18 11:17
 # @Author  : Kelvin.Ye
-from typing import Union
-
-import wda
+from time import sleep
 
 from appuiautomator.exceptions import ElementException
+from appuiautomator.utils.log_util import get_logger
 
-LOCATORS = [
-    'id',
-    'name',
-    'text',
-    'label',
-    'labelContains',
-    'nameContains',
-    'className',
-    'visible',
-    'enabled',
-    'xpath',
-    'predicate',
-    'classChain'
+from wda import Selector
+from wda.exceptions import WDAElementNotFoundError
 
-]
+log = get_logger(__name__)
 
 
-class Element:
-    @property
-    def location_info(self):
-        return (
-            f'Location:{[k + "=" + v for k, v in self.kwargs.items()]}, Description:{str(self.description)}'
-        )
+class Locator(dict):
+    ...
 
-    def __init__(self, timeout=5, desc='', **kwargs):
+
+class Element(Selector):
+    def __init__(self,
+                 selector: Selector = None,
+                 delay: float = 0.5,
+                 timeout: float = 10,
+                 interval: float = 0.5,
+                 **kwargs):
+        if selector:
+            # 直接把Selector的属性字典复制过来
+            self.__dict__ = selector.__dict__
+
+        self.delay = delay
         self.timeout = timeout
-        self.description = desc
-        if not kwargs:
-            raise ValueError('Please specify a locator.')
+        self.interval = interval
         self.kwargs = kwargs
-        for locator, value in kwargs.items():
-            if locator not in LOCATORS:
-                raise KeyError(f'Element positioning of type [ {locator} ] is not supported.')
 
-    def find(self, context) -> Union[wda.Selector, wda.Element]:
-        try:
-            element = context(**self.kwargs)
-            element.wait(timeout=self.timeout)
-            if element.exists():
-                return element
+    def __find(self, client):
+        # 计算重试次数
+        retry_count = int(float(self.timeout) / float(self.interval))
+        # 延迟查找元素
+        if self.delay:
+            sleep(self.delay)
+
+        # 重试次数小于1时，不重试，找不到直接抛异常
+        if retry_count < 1:
+            selector = client(**self.kwargs)
+            if selector.exists:
+                self.__dict__.update(selector.__dict__)
+                return self
             else:
-                raise ElementException()
-        except (wda.WDAElementNotFoundError, ElementException):
-            raise ElementException(f'Element not found. {self.location_info}')
+                raise WDAElementNotFoundError(str(self.kwargs))
 
-    def __get__(self, instance, owner) -> Union[wda.Selector, wda.Element, None]:
+        # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
+        for i in range(retry_count):
+            if i > 0:
+                sleep(self.interval)
+            selector = client(**self.kwargs)
+            if selector.exists:
+                self.__dict__.update(selector.__dict__)
+                return self
+        raise WDAElementNotFoundError(str(self.kwargs))
+
+    def __get__(self, instance, owner):
         if instance is None:
-            return None
-        context = instance.session
-        return self.find(context)
+            raise ElementException('持有类没有实例化')
+        return self.__find(instance.client)
 
     def __set__(self, instance, value):
-        element = self.__get__(instance, instance.__class__)
-        if not element:
-            raise ElementException(f'Can not set value, no elements found. {self.location_info}')
-        element.set_text(value)
+        raise NotImplementedError('老老实实set_text()吧')

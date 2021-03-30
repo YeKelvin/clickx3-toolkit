@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @File    : geckodriver
+# @File    : geckodriver.py
 # @Time    : 2020/9/11 15:32
 # @Author  : Kelvin.Ye
 import atexit
@@ -18,7 +18,12 @@ UA_IPHONE_X = (
 )
 
 
-def firefox_driver(exe_path=None, log_path=None, headless=False, ua=None, lang='zh-CN', page_load_strategy='normal',
+def firefox_driver(exe_path=None,
+                   log_path=None,
+                   headless=False,
+                   ua=None,
+                   lang='zh-CN',
+                   page_load_strategy='normal',
                    maximize=False):
     """
 
