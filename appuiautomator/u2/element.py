@@ -39,7 +39,7 @@ def _retry(func):
             if element.exists:
                 return element
             else:
-                raise UiObjectNotFoundError(str(element.selector))
+                raise UiObjectNotFoundError({'code': -32002, 'data': str(element.selector), 'method': '_retry'})
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
             log.info('retry拉!!!')
@@ -48,7 +48,7 @@ def _retry(func):
             element = func(*args, **kwargs)
             if element.exists:
                 return element
-        raise UiObjectNotFoundError(str(element.selector))
+        raise UiObjectNotFoundError({'code': -32002, 'data': str(element.selector), 'method': '_retry'})
     return wrapped_function
 
 
@@ -82,7 +82,7 @@ class Element(UiObject):
                 self.__dict__.update(element.__dict__)
                 return self
             else:
-                raise UiObjectNotFoundError(str(element.selector))
+                raise UiObjectNotFoundError({'code': -32002, 'data': str(element.selector), 'method': '__find'})
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
@@ -92,14 +92,14 @@ class Element(UiObject):
             if element.exists:
                 self.__dict__.update(element.__dict__)
                 return self
-        raise UiObjectNotFoundError(str(element.selector))
+        raise UiObjectNotFoundError({'code': -32002, 'data': str(element.selector), 'method': '__find'})
 
     def scroll_to_child(self, **kwargs):
         """滚动查找元素"""
         if self.scroll.to(**kwargs):
             return self.child(**kwargs)
         else:
-            raise UiObjectNotFoundError(str(kwargs))
+            raise UiObjectNotFoundError({'code': -32002, 'data': str(self.selector), 'method': 'scroll_to_child'})
 
     @_retry
     def child(self, **kwargs):
