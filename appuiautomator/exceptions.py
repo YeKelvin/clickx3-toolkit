@@ -24,26 +24,6 @@ class ElementException(Exception):
     pass
 
 
-class ElementNotFoundException(Exception):
-    pass
-
-
-class ElementsException(Exception):
-    pass
-
-
-class XPathElementException(Exception):
-    pass
-
-
-class XPathElementsException(Exception):
-    pass
-
-
-class SelectElementException(Exception):
-    pass
-
-
 class OCRException(Exception):
     pass
 
