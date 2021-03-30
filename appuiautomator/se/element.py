@@ -4,11 +4,12 @@
 # @Time    : 2020/9/29 15:47
 # @Author  : Kelvin.Ye
 import io
-import time
-from typing import Optional
+from time import sleep, time
 
+from appuiautomator.exceptions import ElementException
+from appuiautomator.utils.log_util import get_logger
 from PIL import Image
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -17,159 +18,107 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
-from appuiautomator.exceptions import ElementException, ElementNotFoundException
-from appuiautomator.utils.log_util import get_logger
-
 log = get_logger(__name__)
 
-LOCATORS = {
-    'id': By.ID,
-    'name': By.NAME,
-    'class_name': By.CLASS_NAME,
-    'tag_name': By.TAG_NAME,
-    'link_text': By.LINK_TEXT,
-    'partial_link_text': By.PARTIAL_LINK_TEXT,
-    'css_selector': By.CSS_SELECTOR,
-    'xpath': By.XPATH
-}
+
+class Locator:
+    def __init__(self, by: By, value: str):
+        self.by = by
+        self.value = value
 
 
-class Element:
-    @property
-    def location_info(self):
-        return (
-            f'Location:{[str(k) + "=" + str(v) for k, v in self.kwargs.items()]}, Description:{str(self.description)}'
-        )
+class Element(WebElement):
+    def __init__(self,
+                 by: By,
+                 value: str,
+                 web_element: WebElement = None,
+                 delay: float = 0.5,
+                 timeout: float = 10,
+                 interval: float = 0.5,
+                 return_list: bool = False):
+        if web_element:
+            # 直接把WebElement的属性字典复制过来
+            self.__dict__ = web_element.__dict__
 
-    def __init__(self, timeout=5, desc=None, index=0, **kwargs):
-        if not kwargs:
-            raise ValueError('CONTENT:Please specify a locator')
-        if len(kwargs) > 1:
-            raise ValueError('CONTENT:Please specify only one locator')
-        for by in kwargs.keys():
-            if by not in LOCATORS:
-                raise KeyError(f'CONTENT:Element positioning of type is not supported, OBJECT(by={by})')
-
-        self.driver = None  # type: Optional[WebDriver]
+        self.by = by
+        self.value = value
+        self.delay = delay
         self.timeout = timeout
-        self.description = desc
-        self.index = index
-        self.kwargs = kwargs
-        self.by, self.value = next(iter(kwargs.items()))
+        self.interval = interval
+        self.return_list = return_list
 
-    def __get_element(self) -> WebElement:
-        elements = self.driver.find_elements(LOCATORS[self.by], self.value)
-        if elements:
+    def __find(self, driver: WebDriver):
+        if self.return_list:
+            return driver.find_elements(self.by, self.value)
+        else:
+            return driver.find_element(self.by, self.value)
+
+    def __retry_find(self, driver: WebDriver):
+        # 计算重试次数
+        retry_count = int(float(self.timeout) / float(self.interval))
+        # 延迟查找元素
+        if self.delay:
+            sleep(self.delay)
+
+        # 重试次数小于1时，不重试，找不到直接抛异常
+        if retry_count < 1:
+            element = self.__find(driver)
+            self.__dict__.update(element.__dict__)
+            return self.__wait_until(driver)
+
+        # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
+        for i in range(retry_count):
             try:
-                element = WebDriverWait(self.driver, self.timeout).until(EC.visibility_of(elements[self.index]))
-                return element
-            except TimeoutException:
-                raise ElementNotFoundException(self.location_info)
-        raise ElementNotFoundException(self.location_info)
+                if i > 0:
+                    sleep(self.interval)
+                element = self.__find(driver)
+                self.__dict__.update(element.__dict__)
+                return self.__wait_until(driver)
+            except NoSuchElementException:
+                if i == (retry_count - 1):
+                    raise
+                continue
+
+    def __wait_until(self, driver: WebDriver):
+        return WebDriverWait(driver, self.timeout).until(EC.visibility_of(self))
+
+    def __getitem__(self, index: int):
+        return Element(self[index])
+
+    @property
+    def count(self):
+        return len(self)
+
+    def __iter__(self):
+        obj, length = self, self.count
+
+        class Iter(object):
+            def __init__(self):
+                self.index = -1
+
+            def next(self):
+                self.index += 1
+                if self.index < length:
+                    return obj[self.index]
+                else:
+                    raise StopIteration()
+
+            __next__ = next
+
+        return Iter()
 
     def __get__(self, instance, owner):
         if instance is None:
-            raise ElementException(f'CONTENT:The instance cannot be None')
+            raise ElementException('持有类没有实例化')
         if not hasattr(instance, 'browser'):
-            raise ElementException(
-                f'CONTENT:The owner instance must have the browser attribute, OBJECT(instance={instance})')
+            raise ElementException('instance必须包含browser属性')
         if not hasattr(instance.browser, 'driver'):
-            raise ElementException(
-                f'CONTENT:The browser must have the driver attribute, OBJECT(browser={instance.browser} )')
+            raise ElementException('instance.browser必须包含driver属性')
 
-        if self.driver is None:
-            self.driver = instance.browser.driver
-        return self
+        return self.__retry_find(instance.browser.driver)
 
     def __set__(self, instance, value):
-        self.__get_element().send_keys(value)
-
-    @property
-    def parent(self):
-        """Selenium API"""
-        return self.__get_element().parent
-
-    @property
-    def id(self):
-        """Selenium API"""
-        return self.__get_element().id
-
-    @property
-    def tag_name(self):
-        """Selenium API"""
-        return self.__get_element().tag_name
-
-    @property
-    def text(self):
-        """Selenium API"""
-        return self.__get_element().text
-
-    @property
-    def size(self):
-        """Selenium API"""
-        return self.__get_element().size
-
-    @property
-    def location(self):
-        """Selenium API"""
-        return self.__get_element().location
-
-    @property
-    def location_once_scrolled_into_view(self):
-        """Selenium API"""
-        return self.__get_element().location_once_scrolled_into_view
-
-    @property
-    def rect(self):
-        """Selenium API"""
-        return self.__get_element().rect
-
-    def raw(self) -> WebElement:
-        """
-
-        :return: selenium.webdriver.remote.webelement.WebElement
-        """
-        return self.__get_element()
-
-    def send_keys(self, *value):
-        """Selenium API"""
-        self.__get_element().send_keys(*value)
-
-    def click(self):
-        """Selenium API"""
-        self.__get_element().click()
-
-    def submit(self):
-        """Selenium API"""
-        self.__get_element().submit()
-
-    def clear(self):
-        """Selenium API"""
-        self.__get_element().clear()
-
-    def get_property(self, name):
-        """Selenium API"""
-        return self.__get_element().get_property(name)
-
-    def get_attribute(self, name):
-        """Selenium API"""
-        return self.__get_element().get_attribute(name)
-
-    def is_selected(self):
-        """Selenium API"""
-        return self.__get_element().is_selected()
-
-    def is_enabled(self):
-        """Selenium API"""
-        return self.__get_element().is_enabled()
-
-    def is_displayed(self):
-        """Selenium API"""
-        return self.__get_element().is_displayed()
-
-    def value_of_css_property(self, property_name):
-        """Selenium API"""
-        return self.__get_element().value_of_css_property(property_name)
+        raise NotImplementedError('老老实实send_keys()吧')
 
     def save_screenshot(self, filename, frequency=0.5):
         """保存元素截图
@@ -178,62 +127,53 @@ class Element:
         :param frequency: 读取图片complete属性的频率
         :return:
         """
-        element = self.__get_element()
-        end_time = time.time() + self.timeout
+        end_time = time() + self.timeout
 
-        while not bool(element.get_attribute('complete')):
-            time.sleep(frequency)
-            if time.time() > end_time:
+        while not bool(self.get_attribute('complete')):
+            sleep(frequency)
+            if time() > end_time:
                 raise TimeoutException('CONTENT:Image loading is not complete')
 
-        return self.__get_element().screenshot(filename)
+        return self.screenshot(filename)
 
     def select_by_value(self, value):
         """Selenium Select API"""
-        element = self.__get_element()
-        Select(element).select_by_value(value)
+        Select(self).select_by_value(value)
 
     def select_by_visible_text(self, text):
         """Selenium Select API"""
-        element = self.__get_element()
-        Select(element).select_by_visible_text(text)
+        Select(self).select_by_visible_text(text)
 
     def select_by_index(self, index):
         """Selenium Select API"""
-        element = self.__get_element()
-        Select(element).select_by_index(index)
+        Select(self).select_by_index(index)
 
     def move_here(self):
         """Selenium ActionChains API"""
-        element = self.__get_element()
-        ActionChains(self.driver).move_to_element(element).perform()
+        ActionChains(self.driver).move_to_element(self).perform()
 
     def click_and_hold(self):
         """Selenium ActionChains API"""
-        element = self.__get_element()
-        ActionChains(self.driver).click_and_hold(element).perform()
+        ActionChains(self.driver).click_and_hold(self).perform()
 
     def double_click(self):
         """Selenium ActionChains API"""
-        element = self.__get_element()
-        ActionChains(self.driver).double_click(element).perform()
+        ActionChains(self.driver).double_click(self).perform()
 
     def context_click(self):
         """Selenium ActionChains API"""
-        element = self.__get_element()
-        ActionChains(self.driver).context_click(element).perform()
+        ActionChains(self.driver).context_click(self).perform()
 
     def drag_and_drop_by_offset(self, x, y):
         """Selenium ActionChains API"""
-        element = self.__get_element()
-        ActionChains(self.driver).drag_and_drop_by_offset(element, xoffset=x, yoffset=y).perform()
+        ActionChains(self.driver).drag_and_drop_by_offset(self, xoffset=x, yoffset=y).perform()
 
 
 class ElementUtil:
     @staticmethod
     def screenshot(wd, el, path):
         while not bool(el.get_attribute('complete')):
-            time.sleep(0.5)
+            sleep(0.5)
 
         full_screenshot_buff = io.BytesIO(wd.driver.get_screenshot_as_png())
         left = el.location['x']
