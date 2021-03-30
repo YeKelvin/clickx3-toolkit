@@ -8,49 +8,28 @@ from datetime import datetime
 from time import sleep
 from typing import List, Union
 
-from appuiautomator.exceptions import ElementsException, XPathElementException
+from appuiautomator.exceptions import ElementException
 from appuiautomator.u2.device import Device
 from appuiautomator.utils import config
 from appuiautomator.utils.log_util import get_logger
-from uiautomator2 import UiObject, UiObjectNotFoundError
+from uiautomator2 import UiObject
+from uiautomator2.exceptions import UiObjectNotFoundError, XPathElementNotFoundError
 from uiautomator2.xpath import XPathSelector
 
 log = get_logger(__name__)
 
-LOCATORS = [
-    'text',
-    'textContains',
-    'textMatches',
-    'textStartsWith',
-    'className',
-    'classNameMatches',
-    'description',
-    'descriptionContains',
-    'descriptionMatches',
-    'descriptionStartsWit',
-    'checkable',
-    'checked',
-    'clickable',
-    'longClickable',
-    'scrollable',
-    'enabled',
-    'focusable',
-    'focused',
-    'selected',
-    'packageName',
-    'packageNameMatches',
-    'resourceId',
-    'resourceIdMatches',
-    'index',
-    'instance',
-    'innerElement',
-    'allowScrollSearch'
-]
+
+class Locator(dict):
+    ...
 
 
 class Element(UiObject):
-    def __init__(self, ui_obj: UiObject = None,
-                 delay=0.5, timeout=10, interval=0.5, **kwargs):
+    def __init__(self,
+                 ui_obj: UiObject = None,
+                 delay: float = 0.5,
+                 timeout: float = 10,
+                 interval: float = 0.5,
+                 **kwargs):
         if ui_obj:
             # 直接把UiObject的属性字典复制过来
             self.__dict__ = ui_obj.__dict__
@@ -62,7 +41,7 @@ class Element(UiObject):
 
     def __find(self, device: Device):
         # 计算重试次数
-        retry_count = int(int(self.timeout) / int(self.interval))
+        retry_count = int(float(self.timeout) / float(self.interval))
         # 延迟查找元素
         if self.delay:
             sleep(self.delay)
@@ -86,94 +65,110 @@ class Element(UiObject):
                 return self
         raise UiObjectNotFoundError(str(element.selector))
 
+    def scroll_to_child(self, **kwargs):
+        """滚动查找元素"""
+        if self.scroll.to(**kwargs):
+            return self.child(**kwargs)
+        else:
+            raise UiObjectNotFoundError(str(kwargs))
+
+    def child(self, **kwargs):
+        return Element(super().child(**kwargs))
+
+    def child_by_text(self, txt, **kwargs):
+        return Element(super().child_by_text(txt, **kwargs))
+
+    def sibling(self, **kwargs):
+        return Element(super().sibling(**kwargs))
+
+    def right(self, **kwargs):
+        return Element(super().right(**kwargs))
+
+    def left(self, **kwargs):
+        return Element(super().left(**kwargs))
+
+    def up(self, **kwargs):
+        return Element(super().up(**kwargs))
+
+    def down(self, **kwargs):
+        return Element(super().down(**kwargs))
+
+    def __getitem__(self, instance: int):
+        return Element(super().__getitem__(instance))
+
     def __get__(self, instance, owner):
         """
-
         :param instance:    持有该类的父类实例（appuiautomator.u2.page.Page）
         :param owner:       持有该类的父类实例（appuiautomator.u2.page.Page）
         :return:
         """
         if instance is None:
-            return
+            raise ElementException('持有类没有实例化')
         return self.__find(instance.device)  # 将Page对象的device属性传递给PageElement对象
 
     def __set__(self, instance, value):
-        element = self.__get__(instance, instance.__class__)
-        if element:
-            element.set_text(value)
+        raise NotImplementedError('老老实实set_text()吧')
 
 
-class Elements(Element):
-    def __find(self, context) -> UiObject:
-        if self.delay:
-            sleep(self.delay)
-        elements = context(**self.kwargs)
-        elements.must_wait(timeout=self.timeout)  # timeout后找不到元素会直接抛异常UiObjectNotFoundError
-        return elements
-
-    def __set__(self, instance, value):
-        elements = self.__get__(instance, instance.__class__)
-        # if elements.count == 0:
-        #     raise ElementsException(f'赋值失败，找不到元素 {self.location_info}')
-        [element.set_text(value) for element in elements]
-
-
-class XPathElement:
-    @property
-    def location_info(self):
-        return (f'Location:xpath:[ {self.xpath} ] Description:[ {str(self.description)} ]')
-
-    def __init__(self, xpath, delay=0.5, timeout=5, desc=''):
+class XPathElement(XPathSelector):
+    def __init__(self,
+                 xpath,
+                 xpath_selector: XPathSelector = None,
+                 delay: float = 0.5,
+                 timeout: float = 10,
+                 interval: float = 0.5):
         if not xpath:
             raise ValueError('请指定元素xpath的定位信息')
+        if xpath_selector:
+            # 直接把XPathSelector的属性字典复制过来
+            self.__dict__ = xpath_selector.__dict__
 
+        self.xpath = xpath
         self.delay = delay
         self.timeout = timeout
-        self.description = desc
-        self.xpath = xpath
+        self.interval = interval
 
-    def find(self, context) -> XPathSelector:
+    def __find(self, device: Device):
+        # 计算重试次数
+        retry_count = int(float(self.timeout) / float(self.interval))
+        # 延迟查找元素
         if self.delay:
             sleep(self.delay)
-        element = context.xpath(self.xpath)
-        element.must_wait(timeout=self.timeout)  # timeout后找不到元素会直接抛异常UiObjectNotFoundError
-        return element
+
+        # 重试次数小于1时，不重试，找不到直接抛异常
+        if retry_count < 1:
+            element = device.xpath(self.xpath)
+            if element.exists:
+                self.__dict__.update(element.__dict__)
+                return self
+            else:
+                raise XPathElementNotFoundError(self._xpath_list)
+
+        # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
+        for i in range(retry_count):
+            if i > 0:
+                sleep(self.interval)
+            element = device.xpath(self.xpath)
+            if element.exists:
+                self.__dict__.update(element.__dict__)
+                return self
+        raise XPathElementNotFoundError(self._xpath_list)
+
+    def child(self, xpath):
+        return Element(super().child(xpath))
 
     def __get__(self, instance, owner) -> Union[XPathSelector, List[XPathSelector], None]:
         """
-
-        Args:
-            instance:   appuiautomator.u2.page.Page类实例
-            owner:      appuiautomator.u2.page.Page类
-
-        Returns:
-
+        :param instance:    持有该类的父类实例（appuiautomator.u2.page.Page）
+        :param owner:       持有该类的父类实例（appuiautomator.u2.page.Page）
+        :return:
         """
         if instance is None:
-            return None
-        context = instance.device  # 将Page对象的device属性传递给PageElement对象
-        return self.find(context)
+            raise ElementException('持有类没有实例化')
+        return self.__find(instance.device)  # 将Page对象的device属性传递给PageElement对象
 
     def __set__(self, instance, value):
-        element = self.__get__(instance, instance.__class__)
-        if not element:
-            raise XPathElementException(f'赋值失败，找不到元素 {self.location_info}')
-        element.set_text(value)
-
-
-class XPathElements(XPathElement):
-    def find(self, context) -> list:
-        if self.delay:
-            sleep(self.delay)
-        elements = context.xpath(self.xpath)
-        elements.must_wait(timeout=self.timeout)  # timeout后找不到元素会直接抛异常UiObjectNotFoundError
-        return elements.all()
-
-    def __set__(self, instance, value):
-        elements = self.__get__(instance, instance.__class__)
-        if len(elements) == 0:
-            raise ElementsException(f'Cannot be set value, elements not found {self.location_info}')
-        [element.set_text(value) for element in elements]
+        raise NotImplementedError('老老实实set_text()吧')
 
 
 class ElementUtil:
