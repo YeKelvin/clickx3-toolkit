@@ -5,6 +5,7 @@
 # @Author  : Kelvin.Ye
 import os
 from datetime import datetime
+from functools import wraps
 from time import sleep
 from typing import List, Union
 
@@ -21,6 +22,34 @@ log = get_logger(__name__)
 
 class Locator(dict):
     ...
+
+
+def __retry(func):
+    @wraps(func)
+    def wrapped_function(*args, **kwargs):
+        self = args[0]
+        # 计算重试次数
+        retry_count = int(float(self.timeout) / float(self.interval))
+        # 延迟查找元素
+        if self.delay:
+            sleep(self.delay)
+        # 重试次数小于1时，不重试，找不到直接抛异常
+        if retry_count < 1:
+            element = func(*args, **kwargs)
+            if element.exists:
+                return element
+            else:
+                raise UiObjectNotFoundError(str(element.selector))
+        # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
+        for i in range(retry_count):
+            log.info('retry拉!!!')
+            if i > 0:
+                sleep(self.interval)
+            element = func(*args, **kwargs)
+            if element.exists:
+                return element
+        raise UiObjectNotFoundError(str(element.selector))
+    return wrapped_function
 
 
 class Element(UiObject):
@@ -72,24 +101,27 @@ class Element(UiObject):
         else:
             raise UiObjectNotFoundError(str(kwargs))
 
+    @__retry
     def child(self, **kwargs):
         return Element(super().child(**kwargs))
 
-    def child_by_text(self, txt, **kwargs):
-        return Element(super().child_by_text(txt, **kwargs))
-
+    @__retry
     def sibling(self, **kwargs):
         return Element(super().sibling(**kwargs))
 
+    @__retry
     def right(self, **kwargs):
         return Element(super().right(**kwargs))
 
+    @__retry
     def left(self, **kwargs):
         return Element(super().left(**kwargs))
 
+    @__retry
     def up(self, **kwargs):
         return Element(super().up(**kwargs))
 
+    @__retry
     def down(self, **kwargs):
         return Element(super().down(**kwargs))
 
