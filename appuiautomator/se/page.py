@@ -10,7 +10,7 @@ log = get_logger(__name__)
 
 
 class Page:
-    url = None
+    uri = None
 
     @property
     def browser(self) -> Browser:

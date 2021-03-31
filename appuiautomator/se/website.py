@@ -3,7 +3,7 @@
 # @File    : website.py
 # @Time    : 2020/10/13 17:02
 # @Author  : Kelvin.Ye
-from typing import Union
+from typing import Optional
 
 from appuiautomator.exceptions import WebSiteException
 from appuiautomator.se.page import Page
@@ -14,22 +14,22 @@ log = get_logger(__name__)
 
 
 class WebSite:
-    hostname = None  # type:Union[dict, str, None]
-    root_url = None  # type:str
+    env_url = None  # type:Optional[dict, str]
+    base_url = None  # type:str
 
     def __new__(cls, browser: Browser, env: str = None):
-        if not cls.hostname:
-            raise WebSiteException('WebSite hostname can not be empty')
+        if not cls.env_url:
+            raise WebSiteException('WebSite env_url can not be empty')
 
         if env:
-            if env not in cls.hostname:
-                raise WebSiteException(f'The environment is not in configuration, env={env}, hostname={cls.hostname}')
-            cls.root_url = cls.hostname.get(env)
+            if env not in cls.env_url:
+                raise WebSiteException(f'The environment is not in configuration, env={env}, env_url={cls.hostname}')
+            cls.base_url = cls.env_url.get(env) if isinstance(cls.env_url, dict) else cls.env_url
 
         for attr in cls.__dict__.values():
             if isinstance(attr, Page):  # 将WebSite的driver赋值给Page
                 attr.browser = browser
-                attr.root_url = cls.root_url
+                attr.base_url = cls.base_url
         return super(WebSite, cls).__new__(cls)
 
     def __init__(self, browser: Browser, env: str = None):
@@ -37,4 +37,4 @@ class WebSite:
         self.env = env
 
     def start(self):
-        self.browser.driver.get(self.root_url)
+        self.browser.driver.get(self.base_url)
