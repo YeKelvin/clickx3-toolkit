@@ -116,11 +116,9 @@ class Element(WebElement):
                  interval: float = 0.5):
         if driver:
             self.driver = driver
-
         if web_element:
             # 直接把WebElement的属性字典复制过来
             self.__dict__.update(web_element.__dict__)
-
         self.by = by
         self.value = value
         self.visible = visible
@@ -274,10 +272,8 @@ class Elements(list):
                  interval: float = 0.5):
         if driver:
             self.driver = driver
-
         if web_elements:
             self.extend(web_elements)
-
         self.by = by
         self.value = value
         self.delay = delay
@@ -343,7 +339,7 @@ class Elements(list):
         elif isinstance(item, WebElement):
             return Element(driver=self.driver, web_element=item)
         else:
-            raise ElementException(f'仅支持se.Element和selenium.WebElement类型 object:[ {item} ]')
+            raise ElementException(f'仅支持Element和selenium.WebElement，object:[ {item} ]')
 
     @property
     def count(self):

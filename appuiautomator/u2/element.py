@@ -62,7 +62,6 @@ class Element(UiObject):
         if ui_obj:
             # 直接把UiObject的属性字典复制过来
             self.__dict__ = ui_obj.__dict__
-
         self.delay = delay
         self.timeout = timeout
         self.interval = interval
@@ -189,7 +188,7 @@ class XPathElement(XPathSelector):
     def child(self, xpath):
         return Element(super().child(xpath))
 
-    def __get__(self, instance, owner) -> Union[XPathSelector, List[XPathSelector], None]:
+    def __get__(self, instance, owner):
         """
         :param instance:    持有该类的父类实例（appuiautomator.u2.page.Page）
         :param owner:       持有该类的父类实例（appuiautomator.u2.page.Page）
