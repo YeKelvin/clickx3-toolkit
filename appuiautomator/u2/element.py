@@ -7,7 +7,6 @@ import os
 from datetime import datetime
 from functools import wraps
 from time import sleep
-from typing import List, Union
 
 from appuiautomator.exceptions import ElementException
 from appuiautomator.u2.device import Device
@@ -42,7 +41,6 @@ def _retry(func):
                 raise UiObjectNotFoundError({'code': -32002, 'data': str(element.selector), 'method': '_retry'})
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
-            log.info('retry拉!!!')
             if i > 0:
                 sleep(self.interval)
             element = func(*args, **kwargs)
