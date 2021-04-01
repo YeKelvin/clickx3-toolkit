@@ -8,6 +8,7 @@ import os
 import pytest
 # from py._xmlgen import html
 
+from appuiautomator.se.webdriver import Browser
 from appuiautomator.devices_manager import DevicesManager
 from appuiautomator.u2 import device
 from appuiautomator.u2.device import Device
@@ -23,13 +24,21 @@ log = get_logger(__name__)
 
 
 @pytest.fixture(scope='session')
-def an_serial():
+def brower():
+    # brower = Browser.firefox()
+    brower = Browser.chrome()
+    brower.driver.maximize_window()
+    return brower
+
+
+@pytest.fixture(scope='session')
+def android_serial():
     return DevicesManager.android().get_device()
 
 
 @pytest.fixture(scope='session')
-def an_device(an_serial):
-    return Device(device.connect(an_serial))
+def android_device(android_serial):
+    return Device(device.connect(android_serial))
 
 
 @pytest.fixture(scope='session')
@@ -52,11 +61,11 @@ def ios_serial():
 def pytest_runtest_call(item):
     execution_count = getattr(item, 'execution_count', 1)
     if execution_count > 1:  # 测试用例重跑时，开始录屏
-        an_device = item.funcargs.get('an_device')
-        if an_device:
+        android_device = item.funcargs.get('android_device')
+        if android_device:
             video_name = __get_node_name(item.nodeid)
-            video_path = __android_screenshot(an_device, video_name)
-            __android_start_screenrecord(an_device, video_path)
+            video_path = __android_screenshot(android_device, video_name)
+            __android_start_screenrecord(android_device, video_path)
 
 
 @pytest.mark.hookwrapper
@@ -67,22 +76,22 @@ def pytest_runtest_makereport(item):
 
     if result.when == 'call':
         pytest_html = item.config.pluginmanager.get_plugin('html')
-        an_device = item.funcargs.get('an_device')
-        if pytest_html and an_device:
-            __actions_after_failed_test(item, result, pytest_html, an_device)
+        android_device = item.funcargs.get('android_device')
+        if pytest_html and android_device:
+            __actions_after_failed_test(item, result, pytest_html, android_device)
 
 
-def __actions_after_failed_test(item, result, pytest_html, an_device):
+def __actions_after_failed_test(item, result, pytest_html, android_device):
     execution_count = getattr(item, 'execution_count', 1)
     extra = getattr(result, 'extra', [])
     media_name = __get_node_name(item.nodeid)
     if execution_count == 1:  # 测试用例首次失败时，pytest-html添加截图
         if result.failed:
-            image_path = __android_screenshot(an_device, media_name)
+            image_path = __android_screenshot(android_device, media_name)
             extra.append(pytest_html.extras.png(image_path))
             result.extra = extra
     elif execution_count > 1:  # 测试用例重跑时，pytest-html添加录屏视频
-        video_path = __android_stop_screenrecord(an_device, media_name)
+        video_path = __android_stop_screenrecord(android_device, media_name)
         if result.failed:
             extra.append(pytest_html.extras.mp4(video_path))
             result.extra = extra
@@ -96,23 +105,23 @@ def __get_node_name(nodeid):
         return formatted_nodeid.split('/')[-1]
 
 
-def __android_screenshot(an_device, image_name):
+def __android_screenshot(android_device, image_name):
     log.info('开始截图')
     image_path = os.path.join(screenshot_path(), f'{image_name}.png')
-    an_device.screenshot(image_path)
+    android_device.screenshot(image_path)
     log.info(f'截图保存路径={image_path}')
     return image_path
 
 
-def __android_start_screenrecord(an_device, video_name):
+def __android_start_screenrecord(android_device, video_name):
     log.info('开始录屏')
     video_path = os.path.join(screenrecord_path(), f'{video_name}.mp4')
-    an_device.screenrecord(video_path)
+    android_device.screenrecord(video_path)
 
 
-def __android_stop_screenrecord(an_device, video_name):
+def __android_stop_screenrecord(android_device, video_name):
     log.info('停止录屏')
-    an_device.screenrecord.stop()
+    android_device.screenrecord.stop()
     video_path = os.path.join(screenrecord_path(), f'{video_name}.mp4')
     log.info(f'视频保存路径={video_path}')
     return video_path
