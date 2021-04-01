@@ -3,8 +3,6 @@
 # @File    : app.py
 # @Time    : 2020/4/3 10:47
 # @Author  : Kelvin.Ye
-from typing import Optional
-
 from appuiautomator.exceptions import AppException
 from appuiautomator.u2.device import Device
 from appuiautomator.u2.page import Page
@@ -14,9 +12,9 @@ log = get_logger(__name__)
 
 
 class App:
-    package_name = None  # type: Optional[str]
-    activity = None  # type: Optional[str]
-    uri = None  # type: Optional[str]
+    package_name = None  # type: str
+    activity = None  # type: str
+    url = None  # type: str
 
     def __new__(cls, device: Device):
         # App实例化时遍历App实例的属性，如果含有Page类，则把device赋值给page
@@ -34,9 +32,9 @@ class App:
         log.info('启动APP')
         self.device.app_start(self.package_name, self.activity)
 
-    def start_by_uri(self):
-        log.info(f'打开APP LINK:[ {self.uri} ]')
-        self.device.activity_start_by_uri(self.uri)
+    def start_by_url(self):
+        log.info(f'打开APP URL:[ {self.url} ]')
+        self.device.open_url(self.url)
 
     def stop(self):
         log.info('停止APP')
