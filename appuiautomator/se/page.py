@@ -25,23 +25,23 @@ class Page:
                     attr.browser = value
 
     @property
-    def root_url(self):
-        return self._root_url
+    def base_url(self):
+        return self._base_url
 
-    @root_url.setter
-    def root_url(self, value):
-        self._root_url = value
-        if self._root_url:
+    @base_url.setter
+    def base_url(self, value):
+        self._base_url = value
+        if self._base_url:
             for attr in self.__dict__.values():
                 if isinstance(attr, self.__class__):
-                    attr.root_url = value
+                    attr.base_url = value
 
-    def __init__(self, browser=None, root_url=None):
+    def __init__(self, browser=None, base_url=None):
         if browser:
             self._browser = browser
-        if root_url:
-            self._root_url = root_url
+        if base_url:
+            self._base_url = base_url
 
     def get(self):
-        if self.root_url and self.url:
-            self.browser.driver.get(self.root_url + self.url)
+        if self.base_url and self.url:
+            self.browser.driver.get(self.base_url + self.url)

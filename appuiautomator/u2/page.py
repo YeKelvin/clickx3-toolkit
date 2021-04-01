@@ -7,11 +7,14 @@ from typing import Optional
 
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.log_util import get_logger
+from appuiautomator.exceptions import PageException
 
 log = get_logger(__name__)
 
 
 class Page:
+    url = None  # type: str
+
     @property
     def device(self):
         return self.__device
@@ -29,3 +32,8 @@ class Page:
     def __init__(self, device: Optional[Device] = None):
         if device:
             self.__device: Device = device
+
+    def to_here(self):
+        if self.url:
+            self.device.open_url(self.url)
+        raise PageException(f'没有提供url page:[ {self} ]')

@@ -34,8 +34,8 @@ class Device(u2.Device):
         log.info(f'adb shell output:\n {output}')
         log.info(f'adb shell exitCode:[ {exit_code} ]')
 
-    def activity_start_by_uri(self, uri: str):
-        self.run_adb_shell(f'am start -a android.intent.action.VIEW -d "{uri}"')
+    def open_url(self, url: str):
+        self.run_adb_shell(f'am start -a android.intent.action.VIEW -d "{url}"')
 
     def app_restart(self, package_name, activity=None):
         log.info(f'重启app:[ {package_name} ]')
