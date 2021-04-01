@@ -8,6 +8,7 @@
 简单搜索app demo
 """
 
+from appuiautomator.action import BaseAction
 from appuiautomator.u2.app import App
 from appuiautomator.utils.log_util import get_logger
 from example.pages.baidu_search.home import HomePage
@@ -16,7 +17,12 @@ from example.pages.baidu_search.search_result import SearchResultPage
 log = get_logger(__name__)
 
 
-class SimpleSearchApp(App):
+class Action(BaseAction):
+    def __init__(self, source: 'SimpleSearch'):
+        self.source = source
+
+
+class SimpleSearch(App):
     """简单搜索app
     """
     package_name = 'com.baidu.searchcraft'
