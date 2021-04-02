@@ -3,14 +3,11 @@
 # @File    : element.py
 # @Time    : 2020/9/17 21:29
 # @Author  : Kelvin.Ye
-import os
-from datetime import datetime
 from functools import wraps
 from time import sleep
 
 from appuiautomator.exceptions import ElementException
 from appuiautomator.u2.device import Device
-from appuiautomator.utils import config
 from appuiautomator.utils.log_util import get_logger
 from uiautomator2 import UiObject
 from uiautomator2.exceptions import UiObjectNotFoundError, XPathElementNotFoundError
@@ -25,7 +22,7 @@ class Locator(dict):
 
 def _retry(func):
     @wraps(func)
-    def wrapped_function(*args, **kwargs):
+    def wrapper(*args, **kwargs):
         self = args[0]
         # 计算重试次数
         retry_count = int(float(self.timeout) / float(self.interval))
@@ -36,7 +33,7 @@ def _retry(func):
         if retry_count < 1:
             element = func(*args, **kwargs)
             if element.exists:
-                return element
+                return Element(ui_object=element)
             else:
                 raise UiObjectNotFoundError({'code': -32002, 'data': str(element.selector), 'method': '_retry'})
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
@@ -45,21 +42,21 @@ def _retry(func):
                 sleep(self.interval)
             element = func(*args, **kwargs)
             if element.exists:
-                return element
+                return Element(ui_object=element)
         raise UiObjectNotFoundError({'code': -32002, 'data': str(element.selector), 'method': '_retry'})
-    return wrapped_function
+    return wrapper
 
 
 class Element(UiObject):
     def __init__(self,
-                 ui_obj: UiObject = None,
+                 ui_object: UiObject = None,
                  delay: float = 0.5,
                  timeout: float = 10,
                  interval: float = 0.5,
                  **kwargs):
-        if ui_obj:
+        if ui_object:
             # 直接把UiObject的属性字典复制过来
-            self.__dict__ = ui_obj.__dict__
+            self.__dict__.update(ui_object.__dict__)
         self.delay = delay
         self.timeout = timeout
         self.interval = interval
@@ -100,30 +97,30 @@ class Element(UiObject):
 
     @_retry
     def child(self, **kwargs):
-        return Element(super().child(**kwargs))
+        return super().child(**kwargs)
 
     @_retry
     def sibling(self, **kwargs):
-        return Element(super().sibling(**kwargs))
+        return super().sibling(**kwargs)
 
     @_retry
     def right(self, **kwargs):
-        return Element(super().right(**kwargs))
+        return super().right(**kwargs)
 
     @_retry
     def left(self, **kwargs):
-        return Element(super().left(**kwargs))
+        return super().left(**kwargs)
 
     @_retry
     def up(self, **kwargs):
-        return Element(super().up(**kwargs))
+        return super().up(**kwargs)
 
     @_retry
     def down(self, **kwargs):
-        return Element(super().down(**kwargs))
+        return super().down(**kwargs)
 
     def __getitem__(self, instance: int):
-        return Element(super().__getitem__(instance))
+        return Element(ui_object=super().__getitem__(instance))
 
     def __get__(self, instance, owner):
         """
@@ -148,9 +145,10 @@ class XPathElement(XPathSelector):
                  interval: float = 0.5):
         if not xpath:
             raise ValueError('请指定元素xpath的定位信息')
+
         if xpath_selector:
             # 直接把XPathSelector的属性字典复制过来
-            self.__dict__ = xpath_selector.__dict__
+            self.__dict__.update(xpath_selector.__dict__)
 
         self.xpath = xpath
         self.delay = delay
@@ -198,29 +196,3 @@ class XPathElement(XPathSelector):
 
     def __set__(self, instance, value):
         raise NotImplementedError('老老实实set_text()吧')
-
-
-class ElementUtil:
-    @staticmethod
-    def screenshot_by_element(driver, element, destination: str = None) -> str:
-        """元素级截图
-        """
-        element_info = element.info
-        bounds = element_info.info.get('bounds')
-        left = bounds.get('left')
-        top = bounds.get('top')
-        right = bounds.get('right')
-        bottom = bounds.get('bottom')
-        # 设备截图
-        image = driver.screenshot()
-        # 截图剪裁
-        cropped = image.crop((left, top, right, bottom))
-        if not destination:
-            destination = os.path.join(
-                config.project_path(),
-                'testcase', '.tmp',
-                f'{datetime.now().strftime("%Y%m%d.%H%M%S.%f")}.jpg'
-            )
-        cropped.save(destination)
-        log.info(f'保存元素截图至:[ {destination} ]')
-        return destination

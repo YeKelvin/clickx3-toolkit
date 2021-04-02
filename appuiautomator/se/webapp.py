@@ -35,4 +35,5 @@ class WebApp:
         self.env = env
 
     def start(self):
+        log.info('打开地址:[ {base_url} ]')
         self.browser.driver.get(self.base_url)
