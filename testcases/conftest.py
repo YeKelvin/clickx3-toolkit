@@ -26,8 +26,8 @@ log = get_logger(__name__)
 
 @pytest.fixture(scope='session')
 def brower():
-    # brower = Browser.firefox()
-    brower = Browser.chrome()
+    # brower = Browser.chrome()
+    brower = Browser.chrome(headless=True)
     brower.driver.maximize_window()
     return brower
 
