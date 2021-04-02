@@ -31,14 +31,14 @@ class Element(WDAElement):
 
         if element:
             # 直接把Element的属性字典复制过来
-            self.__dict__ = element.__dict__
+            self.__dict__.update(element.__dict__)
 
         self.delay = delay
         self.timeout = timeout
         self.interval = interval
         self.kwargs = kwargs
 
-    def __find(self, client):
+    def __retry_find(self, client):
         # 计算重试次数
         retry_count = int(float(self.timeout) / float(self.interval))
         # 延迟查找元素
@@ -54,8 +54,7 @@ class Element(WDAElement):
                 self.__dict__.update(element.__dict__)
                 return self
             else:
-                raise WDAElementNotFoundError(
-                    ' '.join([f'{k}:[ {v} ]' for k, v in self.kwargs.items()]))
+                raise WDAElementNotFoundError(self.kwargs)
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
@@ -67,13 +66,12 @@ class Element(WDAElement):
                 self.selector = selector
                 self.__dict__.update(element.__dict__)
                 return self
-        raise WDAElementNotFoundError(
-            ' '.join([f'{k}:[ {v} ]' for k, v in self.kwargs.items()]))
+        raise WDAElementNotFoundError(self.kwargs)
 
     def __get__(self, instance, owner):
         if instance is None:
             raise ElementException('持有类没有实例化')
-        return self.__find(instance.client)
+        return self.__retry_find(instance.client)
 
     def __set__(self, instance, value):
         raise NotImplementedError('老老实实set_text()吧')
@@ -97,8 +95,7 @@ class Element(WDAElement):
                 child_element = child_selector.get()
                 return Element(selector=child_selector, element=child_element)
             else:
-                raise WDAElementNotFoundError(
-                    ' '.join([f'{k}:[ {v} ]' for k, v in self.kwargs.items()]))
+                raise WDAElementNotFoundError(self.kwargs)
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
@@ -107,8 +104,7 @@ class Element(WDAElement):
             if child_selector.exists:
                 child_element = child_selector.get()
                 return Element(selector=child_selector, element=child_element)
-        raise WDAElementNotFoundError(
-            ' '.join([f'{k}:[ {v} ]' for k, v in self.kwargs.items()]))
+        raise WDAElementNotFoundError(self.kwargs)
 
     def childs(self):
         ...
@@ -129,7 +125,7 @@ class Elements(list):
         self.timeout = timeout
         self.interval = interval
 
-    def __find(self, client):
+    def __retry_find(self, client):
         # 计算重试次数
         retry_count = int(float(self.timeout) / float(self.interval))
         # 延迟查找元素
@@ -145,8 +141,7 @@ class Elements(list):
                 self.extend(elements)
                 return self
             else:
-                raise WDAElementNotFoundError(
-                    ' '.join([f'{k}:[ {v} ]' for k, v in self.kwargs.items()]))
+                raise WDAElementNotFoundError(self.kwargs)
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
@@ -158,13 +153,12 @@ class Elements(list):
                 self.selector = selector
                 self.extend(elements)
                 return self
-        raise WDAElementNotFoundError(
-            ' '.join([f'{k}:[ {v} ]' for k, v in self.kwargs.items()]))
+        raise WDAElementNotFoundError(self.kwargs)
 
     def __get__(self, instance, owner):
         if instance is None:
             raise ElementException('持有类没有实例化')
-        return self.__find(instance.client)
+        return self.__retry_find(instance.client)
 
     def __set__(self, instance, value):
         raise NotImplementedError('老老实实set_text()吧')

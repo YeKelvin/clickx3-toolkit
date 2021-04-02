@@ -181,7 +181,7 @@ class XPathElement(XMLElement):
                  timeout: float = 10,
                  interval: float = 0.5):
         if not xpath:
-            raise ValueError('请指定元素xpath的定位信息')
+            raise ValueError('xpath不允许为空')
 
         if xpath_selector:
             # 直接把XPathSelector的属性字典复制过来
