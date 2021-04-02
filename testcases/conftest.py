@@ -6,14 +6,15 @@
 import os
 
 import pytest
-# from py._xmlgen import html
-
-from appuiautomator.se.webdriver import Browser
 from appuiautomator.devices_manager import DevicesManager
+from appuiautomator.se.webdriver import Browser
 from appuiautomator.u2 import device
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.config import screenrecord_path, screenshot_path
 from appuiautomator.utils.log_util import get_logger
+
+# from py._xmlgen import html
+
 
 log = get_logger(__name__)
 

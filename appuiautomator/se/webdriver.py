@@ -127,16 +127,3 @@ class Browser:
         Releasing a held mouse button on an element.
         """
         ActionChains(self.driver).release().perform()
-
-    # def screenshot_element(self, element, path: str):
-    #     while not bool(element.get_attribute('complete')):
-    #         time.sleep(0.5)
-    #
-    #     full_screenshot_buff = io.BytesIO(self.driver.get_screenshot_as_png())
-    #     left = element.location['x']
-    #     top = element.location['y']
-    #     right = left + element.size['width']
-    #     bottom = top + element.size['height']
-    #     image = Image.open(full_screenshot_buff)
-    #     image = image.crop((left, top, right, bottom))
-    #     image.save(path)

@@ -4,22 +4,26 @@
 # @Time    : 2019/10/15 14:46
 # @Author  : Kelvin.Ye
 from queue import Queue
+from typing import Dict, List
 
-from adbutils import adb, AdbDevice
+from adbutils import AdbDevice, adb
 
 from appuiautomator.utils.design_patterns import Singleton
+from appuiautomator.utils.log_util import get_logger
+
+log = get_logger(__name__)
 
 
 class AndroidDevicesManager(Singleton):
     def __init__(self):
         # 设备列表
-        self.__unused_devices: [AdbDevice] = adb.device_list()
+        self.__unused_devices = adb.device_list()  #type: List[AdbDevice]
         # 设备总数
-        self.__devices_total: int = len(self.__unused_devices)
+        self.__devices_total = len(self.__unused_devices)  # type: int
         # 空闲设备队列
-        self.__unused_queue: Queue = self.__init_queue()
+        self.__unused_queue = self.__init_queue()  # type: Queue
         # 已使用的设备
-        self.__used_devices: {str: AdbDevice} = {}
+        self.__used_devices = {}  # type: Dict[str, AdbDevice]
 
     def get_device(self) -> str:
         """获取空闲设备的设备号
@@ -30,11 +34,13 @@ class AndroidDevicesManager(Singleton):
         device = self.__unused_queue.get()
         serial = device.serial
         self.__used_devices[serial] = device
+        log.info(f'获取空闲Android设备的设备号:[ {serial} ]')
         return serial
 
     def release_device(self, serial: str) -> None:
         """释放设备
         """
+        log.info(f'释放Android设备:[ {serial} ]')
         device = self.__used_devices.pop(serial)
         self.__unused_queue.put(device)
 

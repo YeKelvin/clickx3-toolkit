@@ -12,6 +12,7 @@ from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
 
+
 UA_IPHONE_X = (
     r'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) '
     r'Version/12.0 Mobile/15A372 Safari/604.1'
@@ -19,7 +20,6 @@ UA_IPHONE_X = (
 
 
 def firefox_driver(exe_path=None,
-                   log_path=None,
                    headless=False,
                    ua=None,
                    lang='zh-CN',
@@ -37,23 +37,31 @@ def firefox_driver(exe_path=None,
 
     :return: WebDriver
     """
-    option = webdriver.FirefoxOptions()
-    option.headless = headless
+    options = webdriver.FirefoxOptions()
+    options.headless = headless
+    options.set_preference('intl.accept_languages', lang)
+    if ua:
+        options.set_preference('general.useragent.override', ua)
 
-    profile = webdriver.FirefoxProfile()
-    profile.set_preference('intl.accept_languages', lang)
-    profile.set_preference('general.useragent.override', ua) if ua else None
+    desired_capabilities = webdriver.DesiredCapabilities.FIREFOX.copy().update({
+        'pageLoadStrategy': page_load_strategy
+    })
 
-    capabilities = webdriver.DesiredCapabilities.FIREFOX.copy()
-    capabilities['pageLoadStrategy'] = page_load_strategy
+    executable_path = exe_path or last_gecodriver_path()
 
-    wd = webdriver.Firefox(executable_path=exe_path or last_gecodriver_path(),
-                           service_log_path=log_path or gecodriver_log_path(),
-                           options=option,
-                           firefox_profile=profile,
-                           desired_capabilities=capabilities)
+    if headless:
+        log.info('无头模式启动firefox driver')
+    else:
+        log.info('启动firefox driver')
+    log.info(f'driver executable path:[ {executable_path} ]')
+
+    wd = webdriver.Firefox(executable_path=executable_path,
+                           service_log_path=gecodriver_log_path(),
+                           options=options,
+                           desired_capabilities=desired_capabilities)
 
     if maximize:
+        log.info('最大化窗口')
         wd.maximize_window()
 
     atexit.register(wd.quit)  # always quit driver when done

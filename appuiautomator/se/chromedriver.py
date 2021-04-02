@@ -13,12 +13,17 @@ from appuiautomator.utils.log_util import get_logger
 log = get_logger(__name__)
 
 
-def chrome_driver(exe_path=None, device_name=None, headless=False, ua=None, lang='zh-CN', page_load_strategy='normal',
+def chrome_driver(exe_path=None,
+                  device_name=None,
+                  headless=False,
+                  ua=None,
+                  lang='zh-CN',
+                  page_load_strategy='normal',
                   maximize=False):
     """
 
     :param exe_path:            driver路径
-    :param device_name:         uiautomator2实例
+    :param device_name:         模拟H5的设备名称
     :param headless:            无头模式
     :param ua:                  user-agent
     :param lang:                浏览器语言，zh-CN | en-US | km-KH
@@ -35,31 +40,50 @@ def chrome_driver(exe_path=None, device_name=None, headless=False, ua=None, lang
     options.add_argument('--disable-infobars')
     options.add_argument('--disable-popup-blocking')
     options.add_argument(f'--lang={lang}')
-    options.add_argument(f'--user-agent={ua}') if ua else None
+    if ua:
+        options.add_argument(f'--user-agent={ua}')
 
     options.add_experimental_option('prefs', {
         'credentials_enable_service': False,
         'profile.password_manager_enabled': False
     })
-    options.add_experimental_option('mobileEmulation', {'deviceName': device_name} if device_name else None)
+    if device_name:
+        options.add_experimental_option('mobileEmulation', {'deviceName': device_name})
 
-    capabilities = webdriver.DesiredCapabilities.CHROME.copy().update({
+    desired_capabilities = webdriver.DesiredCapabilities.CHROME.copy().update({
         'pageLoadStrategy': page_load_strategy
     })
-    wd = webdriver.Chrome(executable_path=exe_path or last_chromedriver_path(),
+
+    executable_path = exe_path or last_chromedriver_path()
+
+    if headless:
+        log.info('无头模式启动chrome driver')
+    else:
+        log.info('启动chrome driver')
+    log.info(f'driver executable path:[ {executable_path} ]')
+
+    wd = webdriver.Chrome(executable_path=executable_path,
                           service_log_path=chromedriver_log_path(),
-                          chrome_options=exe_path,
-                          desired_capabilities=capabilities)
+                          chrome_options=options,
+                          desired_capabilities=desired_capabilities)
 
     if maximize:
+        log.info('最大化窗口')
         wd.maximize_window()
 
     atexit.register(wd.quit)  # always quit driver when done
     return wd
 
 
-def webview_driver(device, exe_path=None, package=None, attach=True, activity=None, process=None, lang='zh-CN',
+def webview_driver(device,
+                   exe_path=None,
+                   package=None,
+                   attach=True,
+                   activity=None,
+                   process=None,
+                   lang='zh-CN',
                    page_load_strategy='normal'):
+
     app = device.app_current()
     options = webdriver.ChromeOptions()
     options.add_argument(f'--lang={lang}')
@@ -69,14 +93,19 @@ def webview_driver(device, exe_path=None, package=None, attach=True, activity=No
     options.add_experimental_option('androidProcess', process or app['package'])
     options.add_experimental_option('androidActivity', activity or app['activity'])
 
-    capabilities = webdriver.DesiredCapabilities.CHROME.copy().update({
+    desired_capabilities = webdriver.DesiredCapabilities.CHROME.copy().update({
         'pageLoadStrategy': page_load_strategy
     })
 
-    wd = webdriver.Chrome(executable_path=exe_path or last_chromedriver_path(),
+    executable_path = exe_path or last_chromedriver_path()
+
+    log.info('启动chrome driver')
+    log.info(f'driver executable path:[ {executable_path} ]')
+
+    wd = webdriver.Chrome(executable_path=executable_path,
                           service_log_path=chromedriver_log_path(),
                           chrome_options=options,
-                          desired_capabilities=capabilities)
+                          desired_capabilities=desired_capabilities)
 
     atexit.register(wd.quit)  # always quit driver when done
     return wd
