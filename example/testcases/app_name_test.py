@@ -11,18 +11,13 @@
 from appuiautomator.devices_manager import DevicesManager
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.log_util import get_logger
-from example.pages.baidu_search import SimpleSearch
+from example.pages.app_name import ApplicationName
 
 log = get_logger(__name__)
 
 
-class TestBaiduSearch:
+class TestApplicationName:
     def test_search(self):
         device = Device(DevicesManager.android().get_device())
-        app = SimpleSearch(device)
-        app.restart()
-        app.home_page.search('uiautomator2')
-
-
-if __name__ == '__main__':
-    TestBaiduSearch().test_search()
+        app = ApplicationName(device)
+        app.action.do_action()
