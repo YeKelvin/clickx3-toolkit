@@ -362,22 +362,4 @@ class Elements(list):
         elif isinstance(item, WebElement):
             return Element(driver=self.driver, web_element=item)
         else:
-            raise ElementException(f'仅支持Element和selenium.WebElement，object:[ {item} ]')
-
-    def __iter__(self):
-        obj, length = self, self.count
-
-        class Iter(object):
-            def __init__(self):
-                self.index = -1
-
-            def next(self):
-                self.index += 1
-                if self.index < length:
-                    return obj[self.index]
-                else:
-                    raise StopIteration()
-
-            __next__ = next
-
-        return Iter()
+            raise ElementException(f'仅支持uitesttoolkit.Element和selenium.WebElement，object:[ {item} ]')

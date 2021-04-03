@@ -157,12 +157,6 @@ class Element(UiObject):
         return Element(ui_object=super().__getitem__(instance))
 
     def __get__(self, instance, owner):
-        """
-        :param instance(appuiautomator.u2.page.Page): 持有类实例
-        :param owner(appuiautomator.u2.page.Page): 持有类
-        :return:
-            Element
-        """
         if instance is None:
             raise ElementException('持有类没有实例化')
         return self.__retry_find(instance.device)
@@ -172,7 +166,6 @@ class Element(UiObject):
 
 
 class XPathElement(XMLElement):
-    """TODO: 待完成"""
     def __init__(self,
                  xpath,
                  xpath_selector: XPathSelector = None,
@@ -184,7 +177,6 @@ class XPathElement(XMLElement):
             raise ValueError('xpath不允许为空')
 
         if xpath_selector:
-            # 直接把XPathSelector的属性字典复制过来
             self.xpath_selector = xpath_selector
 
         if xml_element:
@@ -205,9 +197,11 @@ class XPathElement(XMLElement):
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            element = device.xpath(self.xpath)
-            if element.exists:
-                self.__dict__.update(element.__dict__)
+            xpath_selector = device.xpath(self.xpath)
+            if xpath_selector.exists:
+                xml_element = xpath_selector.get()
+                self.xpath_selector = xpath_selector
+                self.__dict__.update(xml_element.__dict__)
                 return self
             else:
                 raise XPathElementNotFoundError(self._xpath_list)
@@ -216,25 +210,96 @@ class XPathElement(XMLElement):
         for i in range(retry_count):
             if i > 0:
                 sleep(self.interval)
-            element = device.xpath(self.xpath)
-            if element.exists:
-                self.__dict__.update(element.__dict__)
+            xpath_selector = device.xpath(self.xpath)
+            if xpath_selector.exists:
+                xml_element = xpath_selector.get()
+                self.xpath_selector = xpath_selector
+                self.__dict__.update(xml_element.__dict__)
                 return self
         raise XPathElementNotFoundError(self._xpath_list)
 
-    def child(self, xpath):
-        return XPathElement(super().child(xpath))
-
     def __get__(self, instance, owner):
-        """
-        :param instance(appuiautomator.u2.page.Page): 持有类实例
-        :param owner(appuiautomator.u2.page.Page): 持有类
-        :return:
-            XPathElement
-        """
         if instance is None:
             raise ElementException('持有类没有实例化')
         return self.__retry_find(instance.device)
 
     def __set__(self, instance, value):
         raise NotImplementedError('老老实实set_text()吧')
+
+    def child(self, xpath):
+        raise NotImplementedError('用到再写吧')
+
+
+class XPathElements(list):
+
+    @property
+    def count(self):
+        return len(self)
+
+    def __init__(self,
+                 xpath,
+                 xpath_selector: XPathSelector = None,
+                 xml_elements: list = None,
+                 delay: float = 0.5,
+                 timeout: float = 10,
+                 interval: float = 0.5):
+        if not xpath:
+            raise ValueError('xpath不允许为空')
+
+        if xpath_selector:
+            self.xpath_selector = xpath_selector
+
+        if xml_elements:
+            self.extend(xml_elements)
+
+        self.xpath = xpath
+        self.delay = delay
+        self.timeout = timeout
+        self.interval = interval
+
+    def __retry_find(self, device: Device):
+        # 计算重试次数
+        retry_count = int(float(self.timeout) / float(self.interval))
+        # 延迟查找元素
+        if self.delay:
+            sleep(self.delay)
+
+        # 重试次数小于1时，不重试，找不到直接抛异常
+        if retry_count < 1:
+            xpath_selector = device.xpath(self.xpath)
+            if xpath_selector.exists:
+                xml_elements = xpath_selector.all()
+                self.xpath_selector = xpath_selector
+                self.extend(xml_elements)
+                return self
+            else:
+                raise XPathElementNotFoundError(self._xpath_list)
+
+        # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
+        for i in range(retry_count):
+            if i > 0:
+                sleep(self.interval)
+            xpath_selector = device.xpath(self.xpath)
+            if xpath_selector.exists:
+                xml_elements = xpath_selector.all()
+                self.xpath_selector = xpath_selector
+                self.extend(xml_elements)
+                return self
+        raise XPathElementNotFoundError(self._xpath_list)
+
+    def __get__(self, instance, owner):
+        if instance is None:
+            raise ElementException('持有类没有实例化')
+        return self.__retry_find(instance.device)
+
+    def __set__(self, instance, value):
+        raise NotImplementedError('老老实实set_text()吧')
+
+    def __getitem__(self, index: int):
+        item = super().__getitem__(index)
+        if isinstance(item, XPathElement):
+            return item
+        elif isinstance(item, XMLElement):
+            return XPathElement(xpath_selector=self.xpath_selector, xml_element=item)
+        else:
+            raise ElementException(f'仅支持uitesttoolkit.Element和uiautomator2.XMLElement，object:[ {item} ]')
