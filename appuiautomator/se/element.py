@@ -185,12 +185,15 @@ class Element(WebElement):
             raise ElementException('持有类没有实例化')
 
         browser = getattr(instance, 'browser', None)
-        if browser is None:
-            raise ElementException('instance必须包含browser属性')
+        webview = getattr(instance, 'webview', None)
+        if (browser is None) and (webview is None):
+            raise ElementException('instance必须包含browser或webview属性的其中之一')
 
-        driver = getattr(instance.browser, 'driver', None)
+        container = browser or webview
+
+        driver = getattr(container, 'driver', None)
         if driver is None:
-            raise ElementException('instance.browser必须包含driver属性')
+            raise ElementException('browser或webview必须包含driver属性')
 
         self.driver = driver
         return self.__retry_find()
