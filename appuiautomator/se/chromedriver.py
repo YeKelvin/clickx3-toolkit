@@ -7,10 +7,14 @@ import atexit
 
 from selenium import webdriver
 
-from appuiautomator.se.driver_util import last_chromedriver_path, chromedriver_log_path
+from appuiautomator.se.driver_util import chromedriver_last_version_path, chromedriver_log_path
 from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
+
+
+CHROME_DRIVER_LAST_VERSION_PATH = chromedriver_last_version_path()
+CHROME_DRIVER_LOG_PATH = chromedriver_log_path()
 
 
 def chrome_driver(exe_path=None,
@@ -54,7 +58,7 @@ def chrome_driver(exe_path=None,
         'pageLoadStrategy': page_load_strategy
     })
 
-    executable_path = exe_path or last_chromedriver_path()
+    executable_path = exe_path or CHROME_DRIVER_LAST_VERSION_PATH
 
     if headless:
         log.info('无头模式启动chrome driver')
@@ -63,8 +67,8 @@ def chrome_driver(exe_path=None,
     log.info(f'driver executable path:[ {executable_path} ]')
 
     wd = webdriver.Chrome(executable_path=executable_path,
-                          service_log_path=chromedriver_log_path(),
-                          chrome_options=options,
+                          service_log_path=CHROME_DRIVER_LOG_PATH,
+                          options=options,
                           desired_capabilities=desired_capabilities)
 
     if maximize:
@@ -75,36 +79,35 @@ def chrome_driver(exe_path=None,
     return wd
 
 
-def webview_driver(device,
-                   exe_path=None,
-                   package=None,
+def webview_driver(serial,
+                   package,
+                   activity,
+                   process,
                    attach=True,
-                   activity=None,
-                   process=None,
+                   exe_path=None,
                    lang='zh-CN',
                    page_load_strategy='normal'):
 
-    app = device.app_current()
     options = webdriver.ChromeOptions()
     options.add_argument(f'--lang={lang}')
-    options.add_experimental_option('androidDeviceSerial', device.serial)
+    options.add_experimental_option('androidDeviceSerial', serial)
+    options.add_experimental_option('androidPackage', package)
+    options.add_experimental_option('androidProcess', process)
+    options.add_experimental_option('androidActivity', activity)
     options.add_experimental_option('androidUseRunningApp', attach)
-    options.add_experimental_option('androidPackage', package or app['package'])
-    options.add_experimental_option('androidProcess', process or app['package'])
-    options.add_experimental_option('androidActivity', activity or app['activity'])
 
     desired_capabilities = webdriver.DesiredCapabilities.CHROME.copy().update({
         'pageLoadStrategy': page_load_strategy
     })
 
-    executable_path = exe_path or last_chromedriver_path()
+    executable_path = exe_path or CHROME_DRIVER_LAST_VERSION_PATH
 
     log.info('启动chrome driver')
     log.info(f'driver executable path:[ {executable_path} ]')
 
     wd = webdriver.Chrome(executable_path=executable_path,
-                          service_log_path=chromedriver_log_path(),
-                          chrome_options=options,
+                          service_log_path=CHROME_DRIVER_LOG_PATH,
+                          options=options,
                           desired_capabilities=desired_capabilities)
 
     atexit.register(wd.quit)  # always quit driver when done
