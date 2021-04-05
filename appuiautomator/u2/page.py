@@ -17,18 +17,20 @@ class Page:
     url = None  # type: str
 
     def __init__(self):
+        self.initialized = False
         self.device: Device = None
         self.webview: Webview = None
 
     def __get__(self, instance, owner):
-        if instance is None:
-            raise PageException('持有类没有实例化')
+        if not self.initialized:
+            if instance is None:
+                raise PageException('持有类没有实例化')
+            assert owner == App
 
-        assert owner == App
-
-        self.package_name = instance.package_name
-        self.device = instance.device
-        self.webview = instance.webview
+            self.package_name = instance.package_name
+            self.device = instance.device
+            self.webview = instance.webview
+            self.initialized = True
 
         return self
 
