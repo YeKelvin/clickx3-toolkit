@@ -3,9 +3,7 @@
 # @File    : app.py
 # @Time    : 2020/4/3 10:47
 # @Author  : Kelvin.Ye
-from appuiautomator.exceptions import AppException
 from appuiautomator.u2.device import Device
-from appuiautomator.u2.page import Page
 from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
@@ -13,49 +11,65 @@ log = get_logger(__name__)
 
 class App:
     package_name = None  # type: str
-    activity = None  # type: str
+    activity_name = None  # type: str
     url = None  # type: str
 
-    def __new__(cls, device: Device):
-        # App实例化时遍历App实例的属性，如果含有Page类，则把device赋值给page
-        for attr in cls.__dict__.values():
-            if isinstance(attr, Page):  # 将App的device赋值给Page
-                attr.device = device
-        return super(App, cls).__new__(cls)
-
     def __init__(self, device: Device):
-        if not self.package_name:
-            raise AppException('PackageName不允许为空')
         self.device = device
+        self.webview = Webview(self)
 
     def start(self):
-        log.info('启动APP')
-        self.device.app_start(self.package_name, self.activity)
+        log.info(f'启动APP，package:[ {self.package_name} ]')
+        self.device.app_start(self.package_name)
+        self.wait()
+
+    def start_by_activity(self):
+        log.info(f'通过指定Activity启动APP，activity:[ {self.activity_name} ]')
+        self.device.app_start(self.package_name, self.activity_name)
+        self.wait()
 
     def start_by_url(self):
-        log.info(f'打开APP URL:[ {self.url} ]')
+        log.info(f'通过指定URL启动APP，url:[ {self.url} ]')
         self.device.open_url(self.url)
+        self.wait()
 
     def stop(self):
-        log.info('停止APP')
+        log.info(f'停止APP，package:[ {self.package_name} ]')
         self.device.app_stop(self.package_name)
 
     def wait(self):
-        log.info('等待APP启动')
+        log.info(f'等待APP启动，package:[ {self.package_name} ]')
         self.device.app_wait(self.package_name)
 
     def clear(self):
-        log.info('清空APP缓存')
+        log.info(f'清空APP缓存，package:[ {self.package_name} ]')
         self.device.app_clear(self.package_name)
 
     def clear_and_start(self):
         self.clear()
         self.start()
-        self.wait()
 
     def restart(self):
-        log.info('重启APP')
+        log.info(f'重启APP，package:[ {self.package_name} ]')
         self.stop()
         self.start()
-        self.wait()
-        self.device.wait()
+
+
+class Webview:
+    def __init__(self, app):
+        self.driver = None
+        self.app = app
+
+    def connect(self):
+        current_app = self.app.device.current_app()
+        package = current_app['package']
+        if (not package) or (package != self.app.package_name):
+            self.app.start()
+
+        from appuiautomator.se.chromedriver import webview_driver
+        self.driver = webview_driver(
+            serial=self.app.device.serial,
+            package=package,
+            process=package,
+            activity=self.app.activity_name or current_app['activity'])
+        self.app.webview = self
