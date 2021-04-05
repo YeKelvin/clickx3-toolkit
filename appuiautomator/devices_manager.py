@@ -61,3 +61,31 @@ class DevicesManager:
     @staticmethod
     def ios(self):
         ...
+
+
+if __name__ == '__main__':
+    from tidevice import Device, Usbmux
+    from pprint import pprint
+
+    u = Usbmux()
+
+    # List devices
+    devices = u.device_list()
+    pprint(devices)
+
+    buid = u.read_system_BUID()
+    print("BUID:", buid)
+
+    d = Device()
+    dev_pkey = d.get_value("DevicePublicKey", no_session=True)
+    print("DevicePublicKey:", dev_pkey)
+
+    wifi_address = d.get_value("WiFiAddress", no_session=True)
+    print("WiFi Address:", wifi_address)
+
+    with d.create_inner_connection() as s:
+        ret = s.send_recv_packet({
+            "Request": "GetValue",
+            "Label": "example",
+        })
+        pprint(ret['Value'])
