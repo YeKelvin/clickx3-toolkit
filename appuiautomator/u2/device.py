@@ -21,15 +21,26 @@ def connect(addr=None):
 
 
 class Device(u2.Device):
-    """安卓设备类，封装Uiautomator2的Device类
+    """Android设备类，封装Uiautomator2的Device类
     """
+    @staticmethod
+    def connect(source):
+        """连接Android设备
+
+        Args:
+            source (str): address or serial number
+
+        Returns:
+            Device
+        """
+        log.info(f'连接Android设备成功，设备号or地址:[ {source} ]')
+        d = u2.connect(source)
+        log.info(f'设备信息:[ {d.info} ]')
+        return Device(d)
 
     def __init__(self, u2d: u2.Device):
         # 直接把u2.Device的属性字典复制过来
         self.__dict__ = u2d.__dict__
-
-    def wait(self, secs=0.5):
-        sleep(secs)
 
     def run_adb_shell(self, command: str):
         log.info(f'执行adb命令:[ {command} ]')
