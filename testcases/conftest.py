@@ -7,8 +7,7 @@ import os
 
 import pytest
 from appuiautomator.devices_manager import DevicesManager
-from appuiautomator.se.webdriver import Browser
-from appuiautomator.u2 import device
+from appuiautomator.se.driver import Container
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.config import screenrecord_path, screenshot_path
 from appuiautomator.utils.log_util import get_logger
@@ -25,11 +24,11 @@ log = get_logger(__name__)
 
 
 @pytest.fixture(scope='session')
-def brower():
-    # brower = Browser.chrome()
-    brower = Browser.chrome(headless=True)
-    brower.driver.maximize_window()
-    return brower
+def web_container():
+    # container = Container.chrome()
+    container = Container.chrome(headless=True)
+    container.driver.maximize_window()
+    return container
 
 
 @pytest.fixture(scope='session')
@@ -39,7 +38,8 @@ def android_serial():
 
 @pytest.fixture(scope='session')
 def android_device(android_serial):
-    return Device(device.connect(android_serial))
+    # return Device(device.connect(android_serial))
+    return Device.connect(android_serial)
 
 
 @pytest.fixture(scope='session')

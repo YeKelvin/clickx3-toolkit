@@ -29,7 +29,6 @@ class Page:
 
             self.package_name = instance.package_name
             self.device = instance.device
-            self.webview = instance.webview
             self.initialized = True
 
         return self
@@ -38,32 +37,15 @@ class Page:
         raise NotImplementedError('用不着')
 
     def to_here(self):
-        if self.package_name and self.activity_name:
-            self._open_page_by_activity()
-            return
+        if not self.url:
+            raise PageException(f'没有提供url，page:[ {self} ]')
 
-        if self.url:
-            self._open_page_by_url()
-            return
-
-        raise PageException(f'没有提供package、activity或url，page:[ {self} ]')
-
-    def to_here_by_activity(self):
-        if self.package_name and self.activity_name:
-            self._open_page_by_activity()
-
-        raise PageException(f'没有提供package、activity，page:[ {self} ]')
-
-    def to_here_by_url(self):
-        if self.url:
-            self._open_page_by_url()
-
-        raise PageException(f'没有提供url，page:[ {self} ]')
-
-    def _open_page_by_activity(self):
-        log.info(f'通知指定Activity打开页面，activity:[ {self.activity} ]')
-        self.device.app_start(self.package_name, self.activity)
-
-    def _open_page_by_url(self):
-        log.info(f'通知指定URL打开页面，url:[ {self.url} ]')
+        log.info(f'通知指定url打开页面，url:[ {self.url} ]')
         self.device.open_url(self.url)
+
+    def open_activity(self):
+        if (not self.package_name) or (not self.activity_name):
+            raise PageException(f'没有提供package或activity，page:[ {self} ]')
+
+        log.info(f'通知指定activity打开页面，activity:[ {self.activity} ]')
+        self.device.app_start(self.package_name, self.activity)

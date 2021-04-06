@@ -15,7 +15,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 
 
-class Browser:
+class Container:
     def __init__(self, driver: WebDriver):
         self.driver = driver
 
@@ -23,13 +23,13 @@ class Browser:
     def chrome(**kwargs):
         from appuiautomator.se.chromedriver import chrome_driver
         wd = chrome_driver(**kwargs)
-        return Browser(wd)
+        return Container(wd)
 
     @staticmethod
     def firefox(**kwargs):
         from appuiautomator.se.geckodriver import firefox_driver
         wd = firefox_driver(**kwargs)
-        return Browser(wd)
+        return Container(wd)
 
     def execute_script(self, js=None, *args):
         """Execute JavaScript scripts.

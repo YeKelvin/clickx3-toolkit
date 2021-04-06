@@ -19,30 +19,25 @@ class App:
         self.webview = Webview(self)
 
     def start(self):
-        log.info(f'启动APP，package:[ {self.package_name} ]')
+        log.info(f'启动app，package:[ {self.package_name} ]，activity:[ {self.activity_name} ]')
         self.device.app_start(self.package_name)
         self.wait()
 
-    def start_by_activity(self):
-        log.info(f'通过指定Activity启动APP，activity:[ {self.activity_name} ]')
-        self.device.app_start(self.package_name, self.activity_name)
-        self.wait()
-
     def start_by_url(self):
-        log.info(f'通过指定URL启动APP，url:[ {self.url} ]')
+        log.info(f'通过指定url启动app，url:[ {self.url} ]')
         self.device.open_url(self.url)
         self.wait()
 
     def stop(self):
-        log.info(f'停止APP，package:[ {self.package_name} ]')
+        log.info(f'停止app，package:[ {self.package_name} ]')
         self.device.app_stop(self.package_name)
 
     def wait(self):
-        log.info(f'等待APP启动，package:[ {self.package_name} ]')
+        log.info(f'等待app启动，package:[ {self.package_name} ]')
         self.device.app_wait(self.package_name)
 
     def clear(self):
-        log.info(f'清空APP缓存，package:[ {self.package_name} ]')
+        log.info(f'清空app缓存，package:[ {self.package_name} ]')
         self.device.app_clear(self.package_name)
 
     def clear_and_start(self):
@@ -50,7 +45,7 @@ class App:
         self.start()
 
     def restart(self):
-        log.info(f'重启APP，package:[ {self.package_name} ]')
+        log.info(f'重启app，package:[ {self.package_name} ]')
         self.stop()
         self.start()
 
@@ -60,7 +55,7 @@ class Webview:
         self.driver = None
         self.app = app
 
-    def connect(self):
+    def initialize(self):
         current_app = self.app.device.current_app()
         package = current_app['package']
         if (not package) or (package != self.app.package_name):
