@@ -3,7 +3,7 @@
 # @File    : page.py
 # @Time    : 2020/4/1 23:53
 # @Author  : Kelvin.Ye
-from appuiautomator.u2.app import App, Webview
+from appuiautomator.u2.app import AndroidApp, Webview
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.log_util import get_logger
 from appuiautomator.exceptions import PageException
@@ -25,7 +25,7 @@ class Page:
         if not self.initialized:
             if instance is None:
                 raise PageException('持有类没有实例化')
-            assert owner == App
+            assert owner == AndroidApp
 
             self.package_name = instance.package_name
             self.device = instance.device

@@ -9,7 +9,7 @@ from appuiautomator.utils.log_util import get_logger
 log = get_logger(__name__)
 
 
-class App:
+class AndroidApp:
     package_name = None  # type: str
     activity_name = None  # type: str
     url = None  # type: str
