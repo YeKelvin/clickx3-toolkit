@@ -8,12 +8,12 @@
 Chrome App
 """
 
-from appuiautomator.u2.app import App
+from appuiautomator.u2.app import AndroidApp
 from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
 
 
-class Chrome(App):
+class Chrome(AndroidApp):
     package_name = 'com.android.chrome'
-    activity = 'com.google.android.apps.chrome.Main'
+    activity_name = 'com.google.android.apps.chrome.Main'

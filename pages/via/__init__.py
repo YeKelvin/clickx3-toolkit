@@ -8,14 +8,14 @@
 Via App
 """
 
-from appuiautomator.u2.app import App
+from appuiautomator.u2.app import AndroidApp
 from appuiautomator.utils.log_util import get_logger
 from pages.via.home import HomePage
 
 log = get_logger(__name__)
 
 
-class Via(App):
+class Via(AndroidApp):
     package_name = 'mark.via'
 
     home_page = HomePage()
