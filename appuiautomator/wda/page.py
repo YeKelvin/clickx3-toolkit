@@ -20,7 +20,8 @@ class Page:
         if not self.initialized:
             if instance is None:
                 raise PageException('持有类没有实例化')
-            assert owner == IOSApp
+
+            assert not isinstance(owner, IOSApp)
 
             self.client = instance.client
             self.initialized = True

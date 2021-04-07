@@ -25,7 +25,8 @@ class Page:
         if not self.initialized:
             if instance is None:
                 raise PageException('持有类没有实例化')
-            assert owner == AndroidApp
+
+            assert not isinstance(owner, AndroidApp)
 
             self.package_name = instance.package_name
             self.device = instance.device

@@ -22,7 +22,8 @@ class Page:
         if not self.initialized:
             if instance is None:
                 raise PageException('持有类没有实例化')
-            assert owner == WebApp
+
+            assert not isinstance(owner, WebApp)
 
             self.container = instance.container
             self.base_url = instance.base_url
