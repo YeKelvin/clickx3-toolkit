@@ -3,7 +3,6 @@
 # @File    : webdriver.py
 # @Time    : 2020/10/14 12:24
 # @Author  : Kelvin.Ye
-import os
 import threading
 import time
 
@@ -13,6 +12,9 @@ import numpy as np
 from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
+from appuiautomator.utils.log_util import get_logger
+
+log = get_logger(__name__)
 
 
 class Driver(WebDriver):
@@ -31,6 +33,10 @@ class Driver(WebDriver):
         from appuiautomator.se.geckodriver import firefox_driver
         wd = firefox_driver(**kwargs)
         return Driver(wd)
+
+    def sleep(self, secs: float = 1):
+        log.info(f'等待 {secs}s')
+        time.sleep(secs)
 
     def window_scroll(self, width=None, height=None):
         """

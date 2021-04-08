@@ -3,11 +3,10 @@
 # @File    : device.py
 # @Time    : 2020/4/3 10:46
 # @Author  : Kelvin.Ye
+import time
 from datetime import datetime
-from time import sleep
 
 import uiautomator2 as u2
-
 from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
@@ -43,7 +42,8 @@ class Device(u2.Device):
         self.__dict__ = u2d.__dict__
 
     def sleep(self, secs: float = 1):
-        sleep(secs)
+        log.info(f'等待 {secs}s')
+        time.sleep(secs)
 
     def adb_shell(self, command: str):
         log.info(f'执行adb命令:[ {command} ]')
