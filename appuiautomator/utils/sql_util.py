@@ -11,7 +11,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.engine.result import Result
 
 
-class SQL:
+class DBEngine:
     def __init__(self, url: str):
         self.url = url
         self.engine = create_engine(url)
