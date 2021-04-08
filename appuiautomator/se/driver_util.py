@@ -20,7 +20,7 @@ def last_version(driver_name):
     driver_dir = os.path.join(resources_path(), 'webdrive', driver_name)
     if not os.path.exists(driver_dir):
         return None
-    verisons = os.listdir(driver_dir)
+    verisons = [ver for ver in os.listdir(driver_dir) if os.path.isdir(os.path.join(driver_dir, ver))]
     verisons.sort()
     return os.path.join(driver_dir, verisons[-1])
 
