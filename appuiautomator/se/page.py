@@ -15,7 +15,7 @@ class Page:
 
     def __init__(self):
         self.initialized = False
-        self.container = None
+        self.driver = None
         self.base_url = None
 
     def __get__(self, instance, owner):
@@ -25,7 +25,7 @@ class Page:
 
             assert not isinstance(owner, WebApp)
 
-            self.container = instance.container
+            self.driver = instance.driver
             self.base_url = instance.base_url
             self.initialized = True
 
@@ -36,4 +36,4 @@ class Page:
 
     def to_here(self):
         if self.base_url and self.uri:
-            self.container.driver.get(self.base_url + self.uri)
+            self.driver.get(self.base_url + self.uri)

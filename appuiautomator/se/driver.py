@@ -15,29 +15,22 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 
 
-class Container:
-    def __init__(self, driver: WebDriver):
-        self.driver = driver
+class Driver(WebDriver):
+    def __init__(self, web_driver: WebDriver):
+        # 直接把WebDriver的属性字典复制过来
+        self.__dict__ = web_driver.__dict__
 
     @staticmethod
     def chrome(**kwargs):
         from appuiautomator.se.chromedriver import chrome_driver
         wd = chrome_driver(**kwargs)
-        return Container(wd)
+        return Driver(wd)
 
     @staticmethod
     def firefox(**kwargs):
         from appuiautomator.se.geckodriver import firefox_driver
         wd = firefox_driver(**kwargs)
-        return Container(wd)
-
-    def execute_script(self, js=None, *args):
-        """Execute JavaScript scripts.
-        """
-        if js is None:
-            raise ValueError('Please input js script')
-
-        return self.driver.execute_script(js, *args)
+        return Driver(wd)
 
     def window_scroll(self, width=None, height=None):
         """
@@ -67,33 +60,19 @@ class Container:
         js = "return document.URL;"
         return self.execute_script(js)
 
-    def screenshots(self, path=None, filename=None):
-        """
-        selenium API
-        Saves a screenshots of the current window to a PNG image file
-        :param path: The path to save the file
-        :param filename: The file name
-        """
-        if path is None:
-            path = os.getcwd()
-        if filename is None:
-            filename = str(time.time()).split(".")[0] + ".png"
-        file_path = os.path.join(path, filename)
-        self.driver.save_screenshot(file_path)
-
     def accept_alert(self):
         """
         selenium API
         Accept warning box.
         """
-        self.driver.switch_to.alert.accept()
+        self.switch_to.alert.accept()
 
     def dismiss_alert(self):
         """
         selenium API
         Dismisses the alert available.
         """
-        self.driver.switch_to.alert.dismiss()
+        self.switch_to.alert.dismiss()
 
     def alert_is_display(self):
         """
@@ -101,7 +80,7 @@ class Container:
         Determines if alert is displayed
         """
         try:
-            self.driver.switch_to.alert
+            self.switch_to.alert
         except NoAlertPresentException:
             return False
         else:
@@ -112,7 +91,7 @@ class Container:
         selenium API
         Get warning box prompt information.
         """
-        return self.driver.switch_to.alert.text
+        return self.switch_to.alert.text
 
     def move_by_offset(self, x, y):
         """
@@ -123,18 +102,18 @@ class Container:
             x: X offset to move to, as a positive or negative integer.
             y: Y offset to move to, as a positive or negative integer.
         """
-        ActionChains(self.driver).move_by_offset(x, y).perform()
+        ActionChains(self).move_by_offset(x, y).perform()
 
     def release(self):
         """
         selenium API
         Releasing a held mouse button on an element.
         """
-        ActionChains(self.driver).release().perform()
+        ActionChains(self).release().perform()
 
 
 class Screenrecord:
-    def __init__(self, driver: WebDriver):
+    def __init__(self, driver: Driver):
         self._driver = driver
         self._running = False
         self._stop_event = threading.Event()

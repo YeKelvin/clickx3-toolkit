@@ -184,15 +184,7 @@ class Element(WebElement):
         if instance is None:
             raise ElementException('持有类没有实例化')
 
-        container = getattr(instance, 'container', None)
-        if container is None:
-            raise ElementException('instance必须包含container属性')
-
-        driver = getattr(container, 'driver', None)
-        if driver is None:
-            raise ElementException('container必须包含driver属性')
-
-        self.driver = driver
+        self.driver = instance.driver
         return self.__retry_find()
 
     def __set__(self, instance, value):
@@ -341,15 +333,7 @@ class Elements(list):
         if instance is None:
             raise ElementException('持有类没有实例化')
 
-        container = getattr(instance, 'container', None)
-        if container is None:
-            raise ElementException('instance必须包含container属性')
-
-        driver = getattr(instance.container, 'driver', None)
-        if driver is None:
-            raise ElementException('instance.container必须包含driver属性')
-
-        self.driver = driver
+        self.driver = instance.driver
         return self.__retry_find()
 
     def __set__(self, instance, value):

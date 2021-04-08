@@ -7,7 +7,7 @@ import os
 
 import pytest
 from appuiautomator.devices_manager import DevicesManager
-from appuiautomator.se.driver import Container
+from appuiautomator.se.driver import Driver
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.config import screenrecord_path, screenshot_path
 from appuiautomator.utils.log_util import get_logger
@@ -24,11 +24,11 @@ log = get_logger(__name__)
 
 
 @pytest.fixture(scope='session')
-def web_container():
-    # container = Container.chrome()
-    container = Container.chrome(headless=True)
-    container.driver.maximize_window()
-    return container
+def web_driver():
+    # driver = Driver.chrome()
+    driver = Driver.chrome(headless=True)
+    driver.maximize_window()
+    return driver
 
 
 @pytest.fixture(scope='session')
