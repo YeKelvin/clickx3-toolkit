@@ -85,11 +85,9 @@ def webview_driver(serial,
                    process,
                    attach=True,
                    exe_path=None,
-                   lang='zh-CN',
                    page_load_strategy='normal'):
 
     options = webdriver.ChromeOptions()
-    options.add_argument(f'--lang={lang}')
     options.add_experimental_option('androidDeviceSerial', serial)
     options.add_experimental_option('androidPackage', package)
     options.add_experimental_option('androidProcess', process)
