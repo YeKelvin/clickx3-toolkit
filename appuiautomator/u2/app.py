@@ -3,6 +3,7 @@
 # @File    : app.py
 # @Time    : 2020/4/3 10:47
 # @Author  : Kelvin.Ye
+from selenium import webdriver
 from appuiautomator.u2.device import Device
 from appuiautomator.utils.log_util import get_logger
 
@@ -20,7 +21,7 @@ class AndroidApp:
 
     def start(self):
         log.info(f'启动app，package:[ {self.package_name} ]，activity:[ {self.activity_name} ]')
-        self.device.app_start(self.package_name)
+        self.device.app_start(self.package_name, activity=self.activity_name)
         self.wait()
 
     def start_by_url(self):
@@ -52,11 +53,11 @@ class AndroidApp:
 
 class Webview:
     def __init__(self, app):
-        self.driver = None
+        self.driver = None  # type: webdriver
         self.app = app
 
     def initialize(self):
-        current_app = self.app.device.current_app()
+        current_app = self.app.device.app_current()
         package = current_app['package']
         if (not package) or (package != self.app.package_name):
             self.app.start()

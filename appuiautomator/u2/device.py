@@ -70,10 +70,10 @@ class Device(u2.Device):
     def fastinput_ime(self, text: str):
         log.info('切换为FastInputIME输入法')
         self.set_fastinput_ime(True)  # 切换成FastInputIME输入法
-        sleep(0.5)
+        self.sleep(0.5)
         log.info(f'输入:[ {text} ]')
         self.send_keys(text)  # adb广播输入
-        sleep(0.5)
+        self.sleep(0.5)
         self.set_fastinput_ime(False)  # 切换成正常的输入法
         log.info('切换为正常的输入法')
 
