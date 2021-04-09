@@ -36,4 +36,6 @@ class Page:
 
     def to_here(self):
         if self.base_url and self.uri:
-            self.driver.get(self.base_url + self.uri)
+            url = self.base_url + self.uri
+            log.info(f'打开网址，url:[ {url} ]')
+            self.driver.get(url)
