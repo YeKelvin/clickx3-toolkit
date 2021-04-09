@@ -41,8 +41,13 @@ def chrome_driver(exe_path=None,
     options.set_capability('noRetest', True)
 
     options.add_argument('--disable-gpu')
-    options.add_argument('--disable-infobars')
+    options.add_argument('--disable-infobars')  # 防止Chrome显示“Chrome正在被自动化软件控制”的通知
     options.add_argument('--disable-popup-blocking')
+    options.add_argument('--disable-extensions')
+    options.add_argument('--disable-dev-shm-usage')  # overcome limited resource problems
+    options.add_argument('--start-maximized')  # open Browser in maximized mode
+    options.add_argument('--no-sandbox')  # bypass OS security model
+    options.add_argument('--version')  # 打印chrome浏览器版本
     options.add_argument(f'--lang={lang}')
     if ua:
         options.add_argument(f'--user-agent={ua}')
@@ -54,7 +59,7 @@ def chrome_driver(exe_path=None,
     if device_name:
         options.add_experimental_option('mobileEmulation', {'deviceName': device_name})
 
-    desired_capabilities = webdriver.DesiredCapabilities.CHROME.copy().update({
+    caps = webdriver.DesiredCapabilities.CHROME.copy().update({
         'pageLoadStrategy': page_load_strategy
     })
 
@@ -64,12 +69,12 @@ def chrome_driver(exe_path=None,
         log.info('无头模式启动chrome driver')
     else:
         log.info('启动chrome driver')
-    log.info(f'driver executable path:[ {executable_path} ]')
+    log.info(f'driver executable:[ {executable_path} ]')
 
     wd = webdriver.Chrome(executable_path=executable_path,
                           service_log_path=CHROME_DRIVER_LOG_PATH,
                           options=options,
-                          desired_capabilities=desired_capabilities)
+                          desired_capabilities=caps)
 
     if maximize:
         log.info('最大化窗口')
@@ -83,30 +88,40 @@ def webview_driver(serial,
                    package,
                    activity,
                    process,
+                   page_load_strategy='normal',
                    attach=True,
-                   exe_path=None,
-                   page_load_strategy='normal'):
+                   exe_path=None):
 
     options = webdriver.ChromeOptions()
+    options.add_argument('--start-maximized')  # open Browser in maximized mode
+    options.add_argument('--no-sandbox')  # bypass OS security model
+    options.add_argument('--disable-dev-shm-usage')  # overcome limited resource problems
+    options.add_argument('--disable-extensions')
     options.add_experimental_option('androidDeviceSerial', serial)
     options.add_experimental_option('androidPackage', package)
     options.add_experimental_option('androidProcess', process)
     options.add_experimental_option('androidActivity', activity)
     options.add_experimental_option('androidUseRunningApp', attach)
 
-    desired_capabilities = webdriver.DesiredCapabilities.CHROME.copy().update({
-        'pageLoadStrategy': page_load_strategy
+    caps = webdriver.DesiredCapabilities.ANDROID.copy().update({
+        'pageLoadStrategy': page_load_strategy,
+        'unicodeKeyboard': True,  # 使用Unicode编码方式发送字符串
+        'resetKeyboard': True  # 隐藏键盘，这样才能输入中文
     })
 
     executable_path = exe_path or CHROME_DRIVER_LAST_VERSION_PATH
 
     log.info('启动chrome driver')
-    log.info(f'driver executable path:[ {executable_path} ]')
+    log.info(f'driver executable:[ {executable_path} ]')
+    log.info(f'android serial:[ {serial} ]')
+    log.info(f'android package:[ {package} ]')
+    log.info(f'android process:[ {process} ]')
+    log.info(f'android activity:[ {activity} ]')
 
     wd = webdriver.Chrome(executable_path=executable_path,
                           service_log_path=CHROME_DRIVER_LOG_PATH,
                           options=options,
-                          desired_capabilities=desired_capabilities)
+                          desired_capabilities=caps)
 
     atexit.register(wd.quit)  # always quit driver when done
     return wd

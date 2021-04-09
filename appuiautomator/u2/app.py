@@ -57,15 +57,12 @@ class Webview:
         self.app = app
 
     def initialize(self):
-        current_app = self.app.device.app_current()
-        package = current_app['package']
-        if (not package) or (package != self.app.package_name):
-            self.app.start()
+        self.app.start()
 
         from appuiautomator.se.chromedriver import webview_driver
         self.driver = webview_driver(
             serial=self.app.device.serial,
-            package=package,
-            process=package,
-            activity=self.app.activity_name or current_app['activity'])
+            package=self.app.package_name or self.app.device.app_current()['package'],
+            process=self.app.package_name or self.app.device.app_current()['package'],
+            activity=self.app.activity_name or self.app.device.app_current()['activity'])
         self.app.webview = self
