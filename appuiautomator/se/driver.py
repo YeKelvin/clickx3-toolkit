@@ -38,6 +38,11 @@ class Driver(WebDriver):
         log.info(f'等待 {secs}s')
         time.sleep(secs)
 
+    def clear_local_storage(self):
+        log.info('清空localStorage')
+        js = 'window.localStorage.clear();'
+        self.execute_script(js)
+
     def window_scroll(self, width=None, height=None):
         """
         JavaScript API, Only support css positioning
@@ -51,40 +56,20 @@ class Driver(WebDriver):
         self.execute_script(js)
 
     def get_title(self):
-        """
-        JavaScript API
-        Get page title.
-        """
         js = 'return document.title;'
         return self.execute_script(js)
 
     def get_url(self):
-        """
-        JavaScript API
-        Get page URL.
-        """
         js = "return document.URL;"
         return self.execute_script(js)
 
     def accept_alert(self):
-        """
-        selenium API
-        Accept warning box.
-        """
         self.switch_to.alert.accept()
 
     def dismiss_alert(self):
-        """
-        selenium API
-        Dismisses the alert available.
-        """
         self.switch_to.alert.dismiss()
 
     def alert_is_display(self):
-        """
-        selenium API
-        Determines if alert is displayed
-        """
         try:
             self.switch_to.alert
         except NoAlertPresentException:
@@ -93,15 +78,10 @@ class Driver(WebDriver):
             return True
 
     def get_alert_text(self):
-        """
-        selenium API
-        Get warning box prompt information.
-        """
         return self.switch_to.alert.text
 
     def move_by_offset(self, x, y):
-        """
-        selenium API
+        """Selenium API
         Moving the mouse to an offset from current mouse position.
 
         Args:
@@ -111,10 +91,7 @@ class Driver(WebDriver):
         ActionChains(self).move_by_offset(x, y).perform()
 
     def release(self):
-        """
-        selenium API
-        Releasing a held mouse button on an element.
-        """
+        """Selenium API, Releasing a held mouse button on an element"""
         ActionChains(self).release().perform()
 
 
