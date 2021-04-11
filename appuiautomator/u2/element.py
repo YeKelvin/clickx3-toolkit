@@ -124,34 +124,57 @@ class Element(UiObject):
             raise UiObjectNotFoundError(
                 {
                     'code': -32002,
-                    'message': 'retry find element timeout',
+                    'message': 'scrool to target element failed',
                     'data': str(self.selector)
                 },
                 method='Element.scroll_to_child')
 
+    def __scroll_to_find(self, method, **kwargs):
+        scroll_to = kwargs.pop('scroll_to', True)
+        if scroll_to and self.info['scrollable']:
+            log.info(f'滚动至目标元素，locator:[ {kwargs} ]')
+            if self.scroll.to(**kwargs):
+                return method(**kwargs)
+            else:
+                raise UiObjectNotFoundError(
+                    {
+                        'code': -32002,
+                        'message': 'scrool to target element failed',
+                        'data': str(kwargs)
+                    },
+                    method='Element.__scroll_to_find')
+        else:
+            return method(**kwargs)
+
     @retry_find_u2element
     def child(self, **kwargs):
-        return super().child(**kwargs)
+        # return super().child(**kwargs)
+        return self.__scroll_to_find(super().child, **kwargs)
 
     @retry_find_u2element
     def sibling(self, **kwargs):
-        return super().sibling(**kwargs)
+        # return super().sibling(**kwargs)
+        return self.__scroll_to_find(super().sibling, **kwargs)
 
     @retry_find_u2element
     def right(self, **kwargs):
-        return super().right(**kwargs)
+        # return super().right(**kwargs)
+        return self.__scroll_to_find(super().right, **kwargs)
 
     @retry_find_u2element
     def left(self, **kwargs):
-        return super().left(**kwargs)
+        # return super().left(**kwargs)
+        return self.__scroll_to_find(super().left, **kwargs)
 
     @retry_find_u2element
     def up(self, **kwargs):
-        return super().up(**kwargs)
+        # return super().up(**kwargs)
+        return self.__scroll_to_find(super().up, **kwargs)
 
     @retry_find_u2element
     def down(self, **kwargs):
-        return super().down(**kwargs)
+        # return super().down(**kwargs)
+        return self.__scroll_to_find(super().down, **kwargs)
 
     def __getitem__(self, instance: int):
         return Element(ui_object=super().__getitem__(instance))
