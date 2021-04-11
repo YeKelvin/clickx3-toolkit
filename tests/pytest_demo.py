@@ -34,6 +34,11 @@ def test_fixture_return(fixture_return_data):
     print(fixture_return_data)
 
 
+@pytest.fixture
+def fixture_request(request):
+    print(dir(request))
+
+
 @pytest.fixture(params=[{'keyA': 'valueA'}, {'keyB': 'valueB'}])
 def data(request):
     return request.param
