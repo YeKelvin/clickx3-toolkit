@@ -14,8 +14,6 @@ config.ini
 **/assets/
 **/report.html
 
-action/*
-
 pages/*
 !/pages/__init__.py
 !/pages/via

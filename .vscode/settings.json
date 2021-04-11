@@ -8,7 +8,6 @@
     ],
     "python.venvPath": "${workspaceFolder}/.cache",
     // "python.pythonPath": "path/to/your/python",
-    "python.pythonPath": "./.cache/virtualenvs/appui-automator-jfnJCTrX-py3.8/bin/python",
 
     /* Python Lint */
     "python.linting.flake8Enabled": true,
