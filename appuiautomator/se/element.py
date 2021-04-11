@@ -223,6 +223,10 @@ class Element(WebElement):
         """
         return super().find_elements(by, value)
 
+    def scroll_into_view(self):
+        js = 'arguments[0].scrollIntoView(true);'
+        self.driver.execute_script(js, self)
+
     def save_screenshot(self, filename, frequency=0.5):
         """保存元素截图
 
