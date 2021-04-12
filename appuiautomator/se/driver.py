@@ -9,10 +9,12 @@ import time
 import cv2
 import imageio
 import numpy as np
+from appuiautomator.utils.log_util import get_logger
 from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
-from appuiautomator.utils.log_util import get_logger
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
 log = get_logger(__name__)
 
@@ -21,6 +23,7 @@ class Driver(WebDriver):
     def __init__(self, web_driver: WebDriver):
         # 直接把WebDriver的属性字典复制过来
         self.__dict__ = web_driver.__dict__
+        self.wait = DriverWait(self)
 
     @staticmethod
     def chrome(**kwargs):
@@ -93,6 +96,47 @@ class Driver(WebDriver):
     def release(self):
         """Selenium API, Releasing a held mouse button on an element"""
         ActionChains(self).release().perform()
+
+
+class DriverWait:
+    def __init__(self, driver):
+        self.driver = driver
+
+    def url_contains(self, url, timeout=5, message=''):
+        """等待url包含指定的字符串（区分大小写）
+
+        Returns:
+            匹配返回true，不匹配返回false
+        """
+        log.info(f'等待url包含:[ {url} ]')
+        return WebDriverWait(self.driver, timeout).until(EC.url_contains(url), message=message)
+
+    def url_matches(self, pattern, timeout=5, message=''):
+        """等待url正则匹配指定的字符串
+
+        Returns:
+            匹配返回true，不匹配返回false
+        """
+        log.info(f'等待正则匹配url:[ {pattern} ]')
+        return WebDriverWait(self.driver, timeout).until(EC.url_matches(pattern), message=message)
+
+    def url_to_be(self, url, timeout=5, message=''):
+        """等待url完全等于指定的字符串
+
+        Returns:
+            匹配返回true，不匹配返回false
+        """
+        log.info(f'等待url完全等于:[ {url} ]')
+        return WebDriverWait(self.driver, timeout).until(EC.url_to_be(url), message=message)
+
+    def url_changes(self, url, timeout=5, message=''):
+        """等待url匹配指定的字符串（不完全匹配）
+
+        Returns:
+            匹配返回true，不匹配返回false
+        """
+        log.info(f'等待url不完全匹配:[ {url} ]')
+        return WebDriverWait(self.driver, timeout).until(EC.url_changes(url), message=message)
 
 
 class Screenrecord:
