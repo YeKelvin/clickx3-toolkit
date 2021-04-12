@@ -32,6 +32,11 @@ class DBEngine:
         connection.close()
         return rows
 
+    def delete(self, expression: str):
+        connection, result = self.execute(expression)
+        print(result.__dict__)
+        connection.close()
+
 
 class Oracle:
     def __init__(self, username: str, password: str, address: str):
@@ -49,7 +54,7 @@ class Oracle:
         return rows
 
 
-def rownum(expression: str, number: int):
+def rownum(expression: str, number: int = 1):
     """拼接SQL语句，获取指定的rownum数据
 
     :param expression:  sql
