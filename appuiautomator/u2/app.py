@@ -62,9 +62,13 @@ class Webview:
             self.app.start()
 
         from appuiautomator.se.chromedriver import webview_driver
-        self.driver = webview_driver(
-            serial=self.app.device.serial,
-            package=self.app.package_name,
-            process=self.app.package_name,
-            activity=self.app.activity_name or self.app.device.app_current()['activity'])
+        from appuiautomator.se.driver import Driver
+        self.driver = Driver(
+            webview_driver(
+                serial=self.app.device.serial,
+                package=self.app.package_name,
+                process=self.app.package_name,
+                activity=self.app.activity_name or self.app.device.app_current()['activity']
+            )
+        )
         self.app.webview = self
