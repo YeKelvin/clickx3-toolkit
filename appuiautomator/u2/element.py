@@ -23,9 +23,9 @@ class Locator(dict):
 def retry_find_u2element(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        delay = kwargs.pop('timeout', 0.5)
+        delay = kwargs.pop('delay', 0.5)
         timeout = kwargs.pop('timeout', 10)
-        interval = kwargs.pop('timeout', 0.5)
+        interval = kwargs.pop('interval', 0.5)
 
         # 计算重试次数
         retry_count = int(float(timeout) / float(interval))
@@ -44,7 +44,7 @@ def retry_find_u2element(func):
                         'message': 'retry find element timeout',
                         'data': str(element.selector)
                     },
-                    method='retry_find_u2element')
+                    method='@retry_find_u2element')
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
@@ -59,7 +59,7 @@ def retry_find_u2element(func):
                 'message': 'retry find element timeout',
                 'data': str(element.selector)
             },
-            method='retry_find_u2element')
+            method='@retry_find_u2element')
     return wrapper
 
 
@@ -116,22 +116,10 @@ class Element(UiObject):
             },
             method='Element.__retry_find')
 
-    def scroll_to_child(self, **kwargs):
-        """滚动查找元素"""
-        if self.scroll.to(**kwargs):
-            return self.child(**kwargs)
-        else:
-            raise UiObjectNotFoundError(
-                {
-                    'code': -32002,
-                    'message': 'scrool to target element failed',
-                    'data': str(self.selector)
-                },
-                method='Element.scroll_to_child')
+    def __scroll_find(self, method, **kwargs):
+        allow_scroll_find = kwargs.pop('allow_scroll_find', True)
 
-    def __scroll_to_find(self, method, **kwargs):
-        scroll_to = kwargs.pop('scroll_to', True)
-        if scroll_to and self.info['scrollable']:
+        if allow_scroll_find and self.info['scrollable']:
             log.info(f'滚动至目标元素，locator:[ {kwargs} ]')
             if self.scroll.to(**kwargs):
                 return method(**kwargs)
@@ -148,33 +136,38 @@ class Element(UiObject):
 
     @retry_find_u2element
     def child(self, **kwargs):
-        # return super().child(**kwargs)
-        return self.__scroll_to_find(super().child, **kwargs)
+        """查找子元素
+
+        Args:
+            delay (float): 延迟查找等待时间，default=0.5
+            timeout (float): 重试查找超时时间，default=10
+            interval (float): 重试查找间隔时间，default=0.5
+            allow_scroll_find (bool): 是否允许滚动至目标元素，default=True
+
+        Returns:
+            Element
+        """
+        return self.__scroll_find(super().child, **kwargs)
 
     @retry_find_u2element
     def sibling(self, **kwargs):
-        # return super().sibling(**kwargs)
-        return self.__scroll_to_find(super().sibling, **kwargs)
+        return self.__scroll_find(super().sibling, **kwargs)
 
     @retry_find_u2element
     def right(self, **kwargs):
-        # return super().right(**kwargs)
-        return self.__scroll_to_find(super().right, **kwargs)
+        return self.__scroll_find(super().right, **kwargs)
 
     @retry_find_u2element
     def left(self, **kwargs):
-        # return super().left(**kwargs)
-        return self.__scroll_to_find(super().left, **kwargs)
+        return self.__scroll_find(super().left, **kwargs)
 
     @retry_find_u2element
     def up(self, **kwargs):
-        # return super().up(**kwargs)
-        return self.__scroll_to_find(super().up, **kwargs)
+        return self.__scroll_find(super().up, **kwargs)
 
     @retry_find_u2element
     def down(self, **kwargs):
-        # return super().down(**kwargs)
-        return self.__scroll_to_find(super().down, **kwargs)
+        return self.__scroll_find(super().down, **kwargs)
 
     def __getitem__(self, instance: int):
         return Element(ui_object=super().__getitem__(instance))
