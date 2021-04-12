@@ -6,7 +6,6 @@
 from appuiautomator.exceptions import AppException
 from appuiautomator.se.driver import Driver
 from appuiautomator.utils.log_util import get_logger
-from selenium.webdriver.remote.webdriver import WebDriver
 
 log = get_logger(__name__)
 
@@ -20,7 +19,7 @@ class WebApp:
             raise AppException('environments不允许为空')
 
         self.__set_base_url(env)
-        self.driver = driver  # type: WebDriver
+        self.driver = driver  # type: Driver
 
     def __set_base_url(self, env):
         if not env:
