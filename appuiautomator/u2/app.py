@@ -72,3 +72,4 @@ class Webview:
             )
         )
         self.app.webview = self
+        return self.driver

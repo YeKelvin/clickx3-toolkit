@@ -43,8 +43,13 @@ def android_serial():
 
 @pytest.fixture(scope='session')
 def android_device(android_serial):
-    # return Device(device.connect(android_serial))
     return Device.connect(android_serial)
+
+
+@pytest.fixture(scope='session')
+def chrome_webview(android_device):
+    from pages.chrome.android import Chrome
+    return Chrome(android_device).webview
 
 
 @pytest.fixture(scope='session')
