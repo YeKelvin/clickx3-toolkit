@@ -11,6 +11,7 @@ from appuiautomator.utils.log_util import get_logger
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.touch_actions import TouchActions
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
@@ -34,9 +35,9 @@ def retry_find_webelement(func):
         by = kwargs.pop('by', None) or args[1]
         value = kwargs.pop('value', None) or args[2]
         visible = kwargs.pop('visible', False)
-        delay = kwargs.pop('timeout', 0.5)
+        delay = kwargs.pop('delay', 0.5)
         timeout = kwargs.pop('timeout', 10)
-        interval = kwargs.pop('timeout', 0.5)
+        interval = kwargs.pop('interval', 0.5)
 
         # 计算重试次数
         retry_count = int(float(timeout) / float(interval))
@@ -83,9 +84,9 @@ def retry_find_webelements(func):
         driver = parent.driver
         by = kwargs.pop('by', None) or args[1]
         value = kwargs.pop('value', None) or args[2]
-        delay = kwargs.pop('timeout', 0.5)
+        delay = kwargs.pop('delay', 0.5)
         timeout = kwargs.pop('timeout', 10)
-        interval = kwargs.pop('timeout', 0.5)
+        interval = kwargs.pop('interval', 0.5)
 
         # 计算重试次数
         retry_count = int(float(timeout) / float(interval))
@@ -136,13 +137,10 @@ class Element(WebElement):
         self.timeout = timeout
         self.interval = interval
 
-    def __find(self):
+    def __retry_find(self):
         if (not self.by) or (not self.value):
             raise ElementException('元素定位信息不允许为空')
 
-        return self.driver.find_element(self.by, self.value)
-
-    def __retry_find(self):
         # 计算重试次数
         retry_count = int(float(self.timeout) / float(self.interval))
         # 延迟查找元素
@@ -151,7 +149,7 @@ class Element(WebElement):
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            element = self.__find()
+            element = self.driver.find_element(self.by, self.value)
             self.__dict__.update(element.__dict__)
             if self.visible:
                 WebDriverWait(
@@ -166,7 +164,7 @@ class Element(WebElement):
             try:
                 if i > 0:
                     sleep(self.interval)
-                element = self.__find()
+                element = self.driver.find_element(self.by, self.value)
                 self.__dict__.update(element.__dict__)
                 if self.visible:
                     WebDriverWait(
@@ -275,6 +273,37 @@ class Element(WebElement):
         """Selenium ActionChains API"""
         ActionChains(self.driver).drag_and_drop_by_offset(self, xoffset=x, yoffset=y).perform()
 
+    def tap(self):
+        """
+        Selenium TouchActions API
+        webview专用，单次点触，触控坐标为元素的左上角
+        """
+        TouchActions(self.driver).tap(self).perform()
+
+    def tap_offset(self, xoffset, yoffset):
+        """
+        Selenium TouchActions API
+        webview专用，单次点触，触控坐标是元素的左上角+偏移量
+
+        Args:
+            xoffset (int): x轴偏移量
+            yoffset (int): y轴偏移量
+        """
+        location = self.location
+        xcoord = int(location['x']) + int(xoffset)
+        ycoord = int(location['y']) + int(yoffset)
+        TouchActions(self.driver).tap_and_hold(xcoord, ycoord).release(xcoord, ycoord).perform()
+
+    def tap_center(self):
+        """
+        Selenium TouchActions API
+        webview专用，单次点触，触控坐标为元素的正中间
+        """
+        size = self.size
+        height = int(size['height']) / 2
+        width = int(size['width']) / 2
+        self.tap_offset(width, height)
+
 
 class Elements(list):
 
@@ -300,13 +329,10 @@ class Elements(list):
         self.timeout = timeout
         self.interval = interval
 
-    def __find(self):
+    def __retry_find(self):
         if (not self.by) or (not self.value):
             raise ElementException('元素定位信息不允许为空')
 
-        return self.driver.find_elements(self.by, self.value)
-
-    def __retry_find(self):
         # 计算重试次数
         retry_count = int(float(self.timeout) / float(self.interval))
         # 延迟查找元素
@@ -315,7 +341,7 @@ class Elements(list):
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            elements = self.__find()
+            elements = self.driver.find_elements(self.by, self.value)
             if not elements:
                 raise NoSuchElementException(f'By:[ {self.by} ] value:[ {self.value} ]')
             self.extend(elements)
@@ -325,7 +351,7 @@ class Elements(list):
         for i in range(retry_count):
             if i > 0:
                 sleep(self.interval)
-            elements = self.__find()
+            elements = self.driver.find_elements(self.by, self.value)
             if not elements:
                 if i == (retry_count - 1):
                     raise NoSuchElementException(f'By:[ {self.by} ] value:[ {self.value} ]')
