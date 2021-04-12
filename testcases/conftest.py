@@ -23,6 +23,11 @@ log = get_logger(__name__)
 # collect_ignore_glob = ['*_ignore.py']
 
 
+@pytest.fixture(autouse=True)
+def ctx(request):
+    return request
+
+
 @pytest.fixture(scope='session')
 def web_driver():
     # driver = Driver.chrome()
