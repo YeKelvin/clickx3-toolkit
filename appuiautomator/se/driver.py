@@ -37,6 +37,10 @@ class Driver(WebDriver):
         wd = firefox_driver(**kwargs)
         return Driver(wd)
 
+    def get(self, url):
+        log.info(f'打开网址，url:[ {url} ]')
+        super().get(url)
+
     def sleep(self, secs: float = 1):
         log.info(f'等待 {secs}s')
         time.sleep(secs)

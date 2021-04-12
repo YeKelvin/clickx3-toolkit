@@ -31,5 +31,4 @@ class WebApp:
         self.base_url = self.environments.get(env) if isinstance(self.environments, dict) else self.environments
 
     def start(self):
-        log.info(f'打开地址:[ {self.base_url} ]')
         self.driver.get(self.base_url)
