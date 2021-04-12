@@ -97,6 +97,7 @@ def webview_driver(serial,
     options.add_argument('--no-sandbox')  # bypass OS security model
     options.add_argument('--disable-dev-shm-usage')  # overcome limited resource problems
     options.add_argument('--disable-extensions')
+    options.add_experimental_option('w3c', False)
     options.add_experimental_option('androidDeviceSerial', serial)
     options.add_experimental_option('androidPackage', package)
     options.add_experimental_option('androidProcess', process)
