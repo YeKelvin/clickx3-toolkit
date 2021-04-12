@@ -5,6 +5,7 @@
 # @Author  : Kelvin.Ye
 from appuiautomator.exceptions import PageException
 from appuiautomator.se.app import WebApp
+from appuiautomator.se.driver import Driver
 from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)
@@ -15,7 +16,7 @@ class Page:
 
     def __init__(self):
         self.initialized = False
-        self.driver = None
+        self.driver = None  # type:Driver
         self.base_url = None
 
     def __get__(self, instance, owner):

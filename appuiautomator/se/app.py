@@ -19,7 +19,7 @@ class WebApp:
             raise AppException('environments不允许为空')
 
         self.__set_base_url(env)
-        self.driver = driver  # type: Driver
+        self.driver = driver
 
     def __set_base_url(self, env):
         if not env:
