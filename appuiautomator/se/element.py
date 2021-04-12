@@ -257,6 +257,9 @@ class Element(WebElement):
         """Selenium ActionChains API"""
         ActionChains(self.driver).move_to_element(self).perform()
 
+    def click_by_action(self):
+        ActionChains(self.driver).move_to_element(self).click(self).perform()
+
     def click_and_hold(self):
         """Selenium ActionChains API"""
         ActionChains(self.driver).click_and_hold(self).perform()
@@ -303,6 +306,10 @@ class Element(WebElement):
         height = int(size['height']) / 2
         width = int(size['width']) / 2
         self.tap_offset(width, height)
+
+    def hide(self):
+        js = "arguments[0].style.display='none';"
+        self.driver.execute_script(js, self)
 
 
 class Elements(list):
