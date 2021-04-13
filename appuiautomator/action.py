@@ -6,14 +6,14 @@
 
 
 class BaseAction:
-    def __init__(self, source=None):
-        self.source = source
+    def __init__(self, app=None):
+        self.app = app
 
     def __get__(self, instance, owner):
         if instance is None:
             raise Exception('持有类必须实例化')
-        if self.source is None:
-            self.source = instance
+        if self.app is None:
+            self.app = instance
         return self
 
     def __set__(self, instance, value):
