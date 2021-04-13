@@ -223,6 +223,10 @@ class Element(WebElement):
         """
         return super().find_elements(by, value)
 
+    def textarea_value(self):
+        """获取textarea元素的值"""
+        return self.get_attribute('value')
+
     def scroll_into_view(self):
         js = 'arguments[0].scrollIntoView(true);'
         self.driver.execute_script(js, self)
@@ -311,6 +315,9 @@ class Element(WebElement):
         height = int(size['height']) / 2
         width = int(size['width']) / 2
         self.tap_offset(width, height)
+
+    def scroll_here(self):
+        TouchActions(self.driver).scroll_from_element(self, 0, self.size['height']).perform()
 
     def hide(self):
         js = "arguments[0].style.display='none';"
