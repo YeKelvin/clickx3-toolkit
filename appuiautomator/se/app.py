@@ -18,17 +18,18 @@ class WebApp:
         if not self.environments:
             raise AppException('environments不允许为空')
 
-        self.__set_base_url(env)
         self.driver = driver
+        self.env = env
+        self.__set_base_url()
 
-    def __set_base_url(self, env):
-        if not env:
+    def __set_base_url(self):
+        if not self.env:
             return
 
-        if env and (env not in self.environments):
-            raise AppException(f'不支持的环境名称 env:[ {env} ] environments:[ {self.environments} ]')
+        if self.env and (self.env not in self.environments):
+            raise AppException(f'不支持的环境名称 env:[ {self.env} ] environments:[ {self.environments} ]')
 
-        self.base_url = self.environments.get(env) if isinstance(self.environments, dict) else self.environments
+        self.base_url = self.environments.get(self.env) if isinstance(self.environments, dict) else self.environments
 
     def start(self):
         self.driver.get(self.base_url)
