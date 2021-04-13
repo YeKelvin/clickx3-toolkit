@@ -45,9 +45,18 @@ class Driver(WebDriver):
         log.info(f'等待 {secs}s')
         time.sleep(secs)
 
+    def clear_cookies(self):
+        log.info('清空cookies')
+        self.delete_all_cookies()
+
     def clear_local_storage(self):
         log.info('清空localStorage')
-        js = 'window.localStorage.clear();'
+        js = 'localStorage.clear();'
+        self.execute_script(js)
+
+    def clear_session_storage(self):
+        log.info('清空sessionStorage')
+        js = 'sessionStorage.clear();'
         self.execute_script(js)
 
     def window_scroll(self, width=None, height=None):

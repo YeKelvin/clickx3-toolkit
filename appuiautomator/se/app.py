@@ -33,3 +33,8 @@ class WebApp:
 
     def start(self):
         self.driver.get(self.base_url)
+
+    def clear(self):
+        self.driver.clear_cookies()
+        self.driver.clear_local_storage()
+        self.driver.clear_session_storage()
