@@ -21,10 +21,12 @@ from selenium.webdriver.support.wait import WebDriverWait
 log = get_logger(__name__)
 
 
-class Locator:
+class Locator(list):
     def __init__(self, by: By, value: str):
         self.by = by
         self.value = value
+        self.append(by)
+        self.append(value)
 
 
 def retry_find_webelement(func):
@@ -276,12 +278,15 @@ class Element(WebElement):
         """Selenium ActionChains API"""
         ActionChains(self.driver).drag_and_drop_by_offset(self, xoffset=x, yoffset=y).perform()
 
-    def tap(self):
+    def tap(self, center=True):
         """
         Selenium TouchActions API
         webview专用，单次点触，触控坐标为元素的左上角
         """
-        TouchActions(self.driver).tap(self).perform()
+        if center:
+            self.tap_center()
+        else:
+            TouchActions(self.driver).tap(self).perform()
 
     def tap_offset(self, xoffset, yoffset):
         """
