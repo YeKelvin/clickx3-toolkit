@@ -34,8 +34,9 @@ class DBEngine:
 
     def delete(self, expression: str):
         connection, result = self.execute(expression)
-        print(result.__dict__)
+        rowcount = result.rowcount
         connection.close()
+        return rowcount
 
 
 class Oracle:
