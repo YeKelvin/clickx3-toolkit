@@ -27,3 +27,5 @@ testcases/*
 
 resources/webdrive/*
 resources/paddleocr/*
+resources/testdata/*
+!resources/testdata/template.yaml
