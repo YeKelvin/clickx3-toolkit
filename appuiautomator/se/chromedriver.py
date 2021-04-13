@@ -17,7 +17,7 @@ CHROME_DRIVER_LAST_VERSION_PATH = chromedriver_last_version_path()
 CHROME_DRIVER_LOG_PATH = chromedriver_log_path()
 
 
-def chrome_driver(exe_path=None,
+def chrome_driver(driver_path=None,
                   device_name=None,
                   headless=False,
                   ua=None,
@@ -63,7 +63,7 @@ def chrome_driver(exe_path=None,
         'pageLoadStrategy': page_load_strategy
     })
 
-    executable_path = exe_path or CHROME_DRIVER_LAST_VERSION_PATH
+    executable_path = driver_path or CHROME_DRIVER_LAST_VERSION_PATH
 
     if headless:
         log.info('无头模式启动chrome driver')
@@ -90,7 +90,7 @@ def webview_driver(serial,
                    process,
                    page_load_strategy='normal',
                    attach=True,
-                   exe_path=None):
+                   driver_path=None):
 
     options = webdriver.ChromeOptions()
     options.add_argument('--start-maximized')  # open Browser in maximized mode
@@ -110,7 +110,7 @@ def webview_driver(serial,
         'resetKeyboard': True  # 隐藏键盘，这样才能输入中文
     })
 
-    executable_path = exe_path or CHROME_DRIVER_LAST_VERSION_PATH
+    executable_path = driver_path or CHROME_DRIVER_LAST_VERSION_PATH
 
     log.info('启动chrome driver')
     log.info(f'driver executable:[ {executable_path} ]')
