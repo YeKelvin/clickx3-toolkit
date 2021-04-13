@@ -28,6 +28,7 @@ class Page:
 
             self.driver = instance.driver
             self.base_url = instance.base_url
+            self.env = instance.env
             self.initialized = True
 
         return self
@@ -39,3 +40,6 @@ class Page:
         if self.base_url and self.uri:
             url = self.base_url + self.uri
             self.driver.get(url)
+
+    def wait_to_here(self, timeout=5, message=''):
+        self.driver.wait.url_contains(self.uri, timeout, message)
