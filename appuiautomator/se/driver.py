@@ -112,7 +112,7 @@ class DriverWait:
         Returns:
             匹配返回true，不匹配返回false
         """
-        log.info(f'等待url包含:[ {url} ]')
+        log.info(f'等待url跳转并包含:[ {url} ]')
         return WebDriverWait(self.driver, timeout).until(EC.url_contains(url), message=message)
 
     def url_matches(self, pattern, timeout=5, message=''):
@@ -121,7 +121,7 @@ class DriverWait:
         Returns:
             匹配返回true，不匹配返回false
         """
-        log.info(f'等待正则匹配url:[ {pattern} ]')
+        log.info(f'等待url跳转并正则匹配:[ {pattern} ]')
         return WebDriverWait(self.driver, timeout).until(EC.url_matches(pattern), message=message)
 
     def url_to_be(self, url, timeout=5, message=''):
@@ -130,7 +130,7 @@ class DriverWait:
         Returns:
             匹配返回true，不匹配返回false
         """
-        log.info(f'等待url完全等于:[ {url} ]')
+        log.info(f'等待url跳转并完全等于:[ {url} ]')
         return WebDriverWait(self.driver, timeout).until(EC.url_to_be(url), message=message)
 
     def url_changes(self, url, timeout=5, message=''):
@@ -139,7 +139,7 @@ class DriverWait:
         Returns:
             匹配返回true，不匹配返回false
         """
-        log.info(f'等待url不完全匹配:[ {url} ]')
+        log.info(f'等待url跳转并不完全匹配:[ {url} ]')
         return WebDriverWait(self.driver, timeout).until(EC.url_changes(url), message=message)
 
 
