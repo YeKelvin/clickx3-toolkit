@@ -38,4 +38,7 @@ class WebApp:
         self.driver.clear_cookies()
         self.driver.clear_local_storage()
         self.driver.clear_session_storage()
+
+    def clear_and_restart(self):
+        self.clear()
         self.driver.refresh()
