@@ -33,7 +33,7 @@ def retry_find_webelement(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         parent = args[0]
-        driver = parent.driver
+        driver = parent.driver  # type: WebDriver
         by = kwargs.pop('by', None) or args[1]
         value = kwargs.pop('value', None) or args[2]
         visible = kwargs.pop('visible', False)
@@ -49,28 +49,22 @@ def retry_find_webelement(func):
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            element = func(parent, by, value)
+            web_element = func(parent, by, value)
+            element = Element(driver=driver, web_element=web_element)
             if visible:
-                WebDriverWait(
-                    driver, timeout
-                ).until(
-                    EC.visibility_of(element), message=f'By:[ {by} ] value:[ {value} ]'
-                )
-            return Element(driver=driver, web_element=element)
+                element.wait.visibility()
+            return element
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
             try:
                 if i > 0:
                     sleep(interval)
-                element = func(parent, by, value)
+                web_element = func(parent, by, value)
+                element = Element(driver=driver, web_element=web_element)
                 if visible:
-                    WebDriverWait(
-                        driver, timeout
-                    ).until(
-                        EC.visibility_of(element), message=f'By:[ {by} ] value:[ {value} ]'
-                    )
-                return Element(driver=driver, web_element=element)
+                    element.wait.visibility()
+                return element
             except NoSuchElementException:
                 if i == (retry_count - 1):
                     raise
@@ -83,7 +77,7 @@ def retry_find_webelements(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         parent = args[0]
-        driver = parent.driver
+        driver = parent.driver  # type: WebDriver
         by = kwargs.pop('by', None) or args[1]
         value = kwargs.pop('value', None) or args[2]
         delay = kwargs.pop('delay', 0.5)
@@ -98,21 +92,21 @@ def retry_find_webelements(func):
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            elements = func(parent, by, value)
-            if not elements:
+            web_elements = func(parent, by, value)
+            if not web_elements:
                 raise NoSuchElementException(f'By:[ {by} ] value:[ {value} ]')
-            return Elements(driver=driver, web_elements=elements)
+            return Elements(driver=driver, web_elements=web_elements)
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
             if i > 0:
                 sleep(interval)
-            elements = func(parent, by, value)
-            if not elements:
+            web_elements = func(parent, by, value)
+            if not web_elements:
                 if i == (retry_count - 1):
                     raise NoSuchElementException(f'By:[ {by} ] value:[ {value} ]')
                 continue
-            return Elements(driver=driver, web_elements=elements)
+            return Elements(driver=driver, web_elements=web_elements)
 
     return wrapper
 
@@ -156,11 +150,7 @@ class Element(WebElement):
             element = self.driver.find_element(self.by, self.value)
             self.__dict__.update(element.__dict__)
             if self.visible:
-                WebDriverWait(
-                    self.driver, self.timeout
-                ).until(
-                    EC.visibility_of(self), message=f'By:[ {self.by} ] value:[ {self.value} ]'
-                )
+                self.wait.visibility()
             return self
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
@@ -171,11 +161,7 @@ class Element(WebElement):
                 element = self.driver.find_element(self.by, self.value)
                 self.__dict__.update(element.__dict__)
                 if self.visible:
-                    WebDriverWait(
-                        self.driver, self.timeout
-                    ).until(
-                        EC.visibility_of(self), message=f'By:[ {self.by} ] value:[ {self.value} ]'
-                    )
+                    self.wait.visibility()
                 return self
             except NoSuchElementException:
                 if i == (retry_count - 1):
