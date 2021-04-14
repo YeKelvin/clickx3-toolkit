@@ -12,13 +12,6 @@ from appuiautomator.utils.log_util import get_logger
 log = get_logger(__name__)
 
 
-def connect(addr=None):
-    log.info(f'连接Android设备成功，设备号or地址:[ {addr} ]')
-    d = u2.connect(addr)
-    log.info(f'设备信息:[ {d.info} ]')
-    return Device(d)
-
-
 class Device(u2.Device):
     """Android设备类，封装Uiautomator2的Device类
     """

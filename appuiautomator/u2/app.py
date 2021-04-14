@@ -34,7 +34,7 @@ class AndroidApp:
         self.device.app_stop(self.package_name)
 
     def wait(self):
-        log.info(f'等待app启动且在前台，package:[ {self.package_name} ]')
+        log.info(f'等待app启动并出现在前台，package:[ {self.package_name} ]')
         self.device.app_wait(self.package_name, front=True)
 
     def clear(self):
