@@ -127,17 +127,19 @@ class Element(WebElement):
                  delay: float = 0.5,
                  timeout: float = 10,
                  interval: float = 0.5):
-        if driver:
-            self.driver = driver
+
         if web_element:
             # 直接把WebElement的属性字典复制过来
             self.__dict__.update(web_element.__dict__)
+
+        self.driver = driver
         self.by = by
         self.value = value
         self.visible = visible
         self.delay = delay
         self.timeout = timeout
         self.interval = interval
+        self.wait = ElementWait(self)
 
     def __retry_find(self):
         if (not self.by) or (not self.value):
@@ -396,3 +398,22 @@ class Elements(list):
             return Element(driver=self.driver, web_element=item)
         else:
             raise ElementException(f'仅支持uitesttoolkit.Element和selenium.WebElement，object:[ {item} ]')
+
+
+class ElementWait:
+    def __init__(self, element=None):
+        self.element = element
+
+    def visibility(self, timeout=None, message=None):
+        if not message:
+            message = f'By:[ {self.element.by} ] value:[ {self.element.value} ]'
+        if not timeout:
+            timeout = self.element.timeout
+        return WebDriverWait(self.element.driver, timeout).until(EC.visibility_of(self.element), message=message)
+
+    def invisibility(self, timeout=None, message=None):
+        if not message:
+            message = f'By:[ {self.element.by} ] value:[ {self.element.value} ]'
+        if not timeout:
+            timeout = self.element.timeout
+        return WebDriverWait(self.element.driver, timeout).until(EC.invisibility_of_element(self.element), message=message)
