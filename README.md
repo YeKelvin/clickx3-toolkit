@@ -1,4 +1,4 @@
-# Auto Test Toolkit
+# ClickX3 Toolkit
 
 简称AutoTT
 
@@ -30,6 +30,6 @@ poetry export -f requirements.txt -o requirements.txt --without-hashes
 
 ## todo
 
-- [ ] 成立两个项目，分离封装模块(auto-test-toolkit)和测试案例(automator-template)
+- [ ] 成立两个项目，分离封装模块(clickx3-toolkit)和测试案例(clickx3-template)
 - [ ] 完善例子
 - [ ] 制定命名规范
