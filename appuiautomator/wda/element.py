@@ -26,13 +26,12 @@ class Element(WDAElement):
                  timeout: float = 10,
                  interval: float = 0.5,
                  **kwargs):
-        if selector:
-            self.selector = selector
 
         if element:
             # 直接把Element的属性字典复制过来
             self.__dict__.update(element.__dict__)
 
+        self.selector = selector
         self.delay = delay
         self.timeout = timeout
         self.interval = interval
