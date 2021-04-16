@@ -1,6 +1,14 @@
 {
     /* vscode */
     "files.insertFinalNewline": true,
+    "files.exclude": {
+        "**/.idea": true,
+        "**/.pytest_cache": true,
+        "**/__pycache__": true,
+    },
+    "files.watcherExclude": {
+        "**/.cache": true
+    },
 
     /* Python PATH */
     "python.venvFolders": [
