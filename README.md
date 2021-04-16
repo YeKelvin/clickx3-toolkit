@@ -18,7 +18,9 @@ python3 -m pip install -r requirements.txt
 
 ## 虚拟环境添加pyproject.pth
 
-```pth
+在目录`.cache/virtualenvs/xxx/Lib/site-packages/`下新增`pyproject.pth`文件，内容如下：
+
+```text
 path/to/project/root
 ```
 

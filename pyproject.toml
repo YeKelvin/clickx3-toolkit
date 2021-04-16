@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "appui-automator"
+name = "clickx3-toolkit"
 version = "0.1.0"
 description = ""
 authors = ["Kelvin.Ye <testmankelvin@163.com>"]
