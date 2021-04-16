@@ -20,6 +20,10 @@ class ElementException(Exception):
     pass
 
 
+class TimeoutException(Exception):
+    pass
+
+
 class OCRException(Exception):
     pass
 
