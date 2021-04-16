@@ -173,4 +173,4 @@ class Elements(list):
         elif isinstance(item, WDAElement):
             return Element(selector=self.selector, element=item)
         else:
-            raise ElementException(f'仅支持uitesttoolkit.Element和wda.WDAElement，object:[ {item} ]')
+            raise ElementException(f'仅支持clickx3.Element和wda.WDAElement，object:[ {item} ]')

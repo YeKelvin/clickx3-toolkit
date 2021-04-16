@@ -318,4 +318,4 @@ class XPathElements(list):
         elif isinstance(item, XMLElement):
             return XPathElement(xpath_selector=self.xpath_selector, xml_element=item)
         else:
-            raise ElementException(f'仅支持uitesttoolkit.Element和uiautomator2.XMLElement，object:[ {item} ]')
+            raise ElementException(f'仅支持clickx3.Element和uiautomator2.XMLElement，object:[ {item} ]')

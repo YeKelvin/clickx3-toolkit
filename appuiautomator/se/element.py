@@ -383,7 +383,7 @@ class Elements(list):
         elif isinstance(item, WebElement):
             return Element(driver=self.driver, web_element=item)
         else:
-            raise ElementException(f'仅支持uitesttoolkit.Element和selenium.WebElement，object:[ {item} ]')
+            raise ElementException(f'仅支持clickx3.Element和selenium.WebElement，object:[ {item} ]')
 
 
 class ElementWait:
