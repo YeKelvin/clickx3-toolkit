@@ -7,7 +7,7 @@ import atexit
 
 from selenium import webdriver
 
-from appuiautomator.se.driver_util import gecodriver_last_version_path, gecodriver_log_path
+from appuiautomator.se.support.driver_util import gecodriver_last_version_path, gecodriver_log_path
 from appuiautomator.utils.log_util import get_logger
 
 log = get_logger(__name__)

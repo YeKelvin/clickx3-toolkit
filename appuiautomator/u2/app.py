@@ -61,9 +61,9 @@ class Webview:
         if self.app.package_name != current_app['package']:
             self.app.start()
 
-        from appuiautomator.se.chromedriver import webview_driver
         from appuiautomator.se.driver import Driver
-        from appuiautomator.se.driver_util import get_chromedriver_path
+        from appuiautomator.se.support.chromedriver import webview_driver
+        from appuiautomator.se.support.driver_util import get_chromedriver_path
 
         driver_path = None
         if version:

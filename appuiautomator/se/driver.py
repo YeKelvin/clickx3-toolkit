@@ -27,13 +27,13 @@ class Driver(WebDriver):
 
     @staticmethod
     def chrome(**kwargs):
-        from appuiautomator.se.chromedriver import chrome_driver
+        from appuiautomator.se.support.chromedriver import chrome_driver
         wd = chrome_driver(**kwargs)
         return Driver(wd)
 
     @staticmethod
     def firefox(**kwargs):
-        from appuiautomator.se.geckodriver import firefox_driver
+        from appuiautomator.se.support.geckodriver import firefox_driver
         wd = firefox_driver(**kwargs)
         return Driver(wd)
 
