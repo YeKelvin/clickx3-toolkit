@@ -9,8 +9,8 @@ Chrome app测试案例
 """
 import pytest
 
-from appuiautomator.se.chromedriver import webview_driver
-from appuiautomator.utils.log_util import get_logger
+from clickx3.se.support.chromedriver import webview_driver
+from clickx3.utils.log_util import get_logger
 from pages.chrome.android import Chrome
 
 log = get_logger(__name__)

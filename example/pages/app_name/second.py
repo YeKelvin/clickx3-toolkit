@@ -3,9 +3,9 @@
 # @File    : search_result
 # @Time    : 2020/9/1 16:19
 # @Author  : Kelvin.Ye
-from appuiautomator.u2.page import Page
-from appuiautomator.u2.element import Element
-from appuiautomator.utils.log_util import get_logger
+from clickx3.u2.page import Page
+from clickx3.u2.element import Element
+from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
 

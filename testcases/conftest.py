@@ -6,11 +6,11 @@
 import os
 
 import pytest
-from appuiautomator.devices_manager import DevicesManager
-from appuiautomator.se.driver import Driver
-from appuiautomator.u2.device import Device
-from appuiautomator.utils.config import screenrecord_path, screenshot_path
-from appuiautomator.utils.log_util import get_logger
+from clickx3.devices_manager import DevicesManager
+from clickx3.se.driver import Driver
+from clickx3.u2.device import Device
+from clickx3.utils.config import screenrecord_path, screenshot_path
+from clickx3.utils.log_util import get_logger
 
 # from py._xmlgen import html
 

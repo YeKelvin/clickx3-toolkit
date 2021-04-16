@@ -16,6 +16,7 @@
     ],
     "python.venvPath": "${workspaceFolder}/.cache",
     // "python.pythonPath": "path/to/your/python",
+    "python.pythonPath": ".\\.cache\\virtualenvs\\appui-automator-jz9f0mFc-py3.8\\Scripts\\python.exe",
 
     /* Python Lint */
     "python.linting.flake8Enabled": true,

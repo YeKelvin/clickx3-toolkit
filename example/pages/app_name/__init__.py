@@ -8,9 +8,9 @@
 demo
 """
 
-from appuiautomator.action import BaseAction
-from appuiautomator.u2.app import App
-from appuiautomator.utils.log_util import get_logger
+from clickx3.action import BaseAction
+from clickx3.u2.app import App
+from clickx3.utils.log_util import get_logger
 from example.pages.app_name.first import FirstPage
 from example.pages.app_name.second import SecondPage
 
