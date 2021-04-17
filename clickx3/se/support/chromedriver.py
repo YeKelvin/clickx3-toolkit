@@ -13,10 +13,6 @@ from clickx3.utils.log_util import get_logger
 log = get_logger(__name__)
 
 
-CHROME_DRIVER_LAST_VERSION_PATH = chromedriver_last_version_path()
-CHROME_DRIVER_LOG_PATH = chromedriver_log_path()
-
-
 def chrome_driver(driver_path=None,
                   device_name=None,
                   headless=False,
@@ -63,7 +59,7 @@ def chrome_driver(driver_path=None,
         'pageLoadStrategy': page_load_strategy
     })
 
-    executable_path = driver_path or CHROME_DRIVER_LAST_VERSION_PATH
+    executable_path = driver_path or chromedriver_last_version_path()
 
     if headless:
         log.info('无头模式启动chrome driver')
@@ -72,7 +68,7 @@ def chrome_driver(driver_path=None,
     log.info(f'driver executable:[ {executable_path} ]')
 
     wd = webdriver.Chrome(executable_path=executable_path,
-                          service_log_path=CHROME_DRIVER_LOG_PATH,
+                          service_log_path=chromedriver_log_path(),
                           options=options,
                           desired_capabilities=caps)
 
@@ -110,7 +106,7 @@ def webview_driver(serial,
         'resetKeyboard': True  # 隐藏键盘，这样才能输入中文
     })
 
-    executable_path = driver_path or CHROME_DRIVER_LAST_VERSION_PATH
+    executable_path = driver_path or chromedriver_last_version_path()
 
     log.info('启动chrome driver')
     log.info(f'driver executable:[ {executable_path} ]')
@@ -120,7 +116,7 @@ def webview_driver(serial,
     log.info(f'android activity:[ {activity} ]')
 
     wd = webdriver.Chrome(executable_path=executable_path,
-                          service_log_path=CHROME_DRIVER_LOG_PATH,
+                          service_log_path=chromedriver_log_path(),
                           options=options,
                           desired_capabilities=caps)
 

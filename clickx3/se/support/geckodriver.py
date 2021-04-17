@@ -12,11 +12,6 @@ from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
 
-
-GECODRIVER_LAST_VERSION_PATH = gecodriver_last_version_path()
-GECODRIVER_LOG_PATH = gecodriver_log_path()
-
-
 IPHONE_X_UA = (
     r'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) '
     r'Version/12.0 Mobile/15A372 Safari/604.1'
@@ -51,7 +46,7 @@ def firefox_driver(exe_path=None,
         'pageLoadStrategy': page_load_strategy
     })
 
-    executable_path = exe_path or GECODRIVER_LAST_VERSION_PATH
+    executable_path = exe_path or gecodriver_last_version_path()
 
     if headless:
         log.info('无头模式启动firefox driver')
@@ -60,7 +55,7 @@ def firefox_driver(exe_path=None,
     log.info(f'driver executable path:[ {executable_path} ]')
 
     wd = webdriver.Firefox(executable_path=executable_path,
-                           service_log_path=GECODRIVER_LOG_PATH,
+                           service_log_path=gecodriver_log_path(),
                            options=options,
                            desired_capabilities=desired_capabilities)
 

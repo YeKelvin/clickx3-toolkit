@@ -27,7 +27,7 @@ def last_version(driver_name):
     """
     driver_dir = os.path.join(resources_path(), 'webdrive', driver_name)
     if not os.path.exists(driver_dir):
-        return None
+        raise FileExistsError(f'驱动目录不存在，路径:[ {driver_dir} ]')
     verisons = [ver for ver in os.listdir(driver_dir) if os.path.isdir(os.path.join(driver_dir, ver))]
     verisons.sort()
     return os.path.join(driver_dir, verisons[-1])
@@ -37,7 +37,7 @@ def get_version(driver_name, version):
     """根据driver名称和版本号获取driver所在目录的绝对路径"""
     driver_dir = os.path.join(resources_path(), 'webdrive', driver_name, version)
     if not os.path.exists(driver_dir):
-        raise RuntimeError('Driver路径不存在')
+        raise FileExistsError(f'驱动版本目录不存在，路径:[ {driver_dir} ]')
     return driver_dir
 
 
