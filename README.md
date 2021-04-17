@@ -43,9 +43,9 @@ python3 -m poetry export -f requirements.txt -o requirements.txt --without-hashe
 
 ## Todo
 
-- [ ] 分离模块(clickx3-toolkit)和测试案例(clickx3-template)
+- [ ] 分离lib模块(clickx3-toolkit)和测试案例(clickx3-template)
 - [ ] 完善例子
-- [ ] 制定命名规范
+- [ ] 编写使用文档
 
 ## 站在巨人的肩膀上，主要使用了以下开源项目
 
@@ -55,3 +55,4 @@ python3 -m poetry export -f requirements.txt -o requirements.txt --without-hashe
 - WebDriverAgent: `https://github.com/appium/WebDriverAgent`
 - WebEditor: `https://github.com/alibaba/web-editor`
 - Tidevice: `https://github.com/alibaba/taobao-iphone-device`
+- 感谢
