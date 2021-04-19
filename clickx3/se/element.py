@@ -211,33 +211,29 @@ class Element(WebElement):
         """
         return super().find_elements(by, value)
 
-    def click(self, move_here=False):
-        if move_here:
-            self.move_here_and_click()
-        else:
-            super().click()
-
     def textarea_value(self):
         """获取textarea元素的值"""
         return self.get_attribute('value')
 
-    def scroll_into_view(self):
-        js = 'arguments[0].scrollIntoView(true);'
-        self.driver.execute_script(js, self)
-
     def save_screenshot(self, filename, frequency=0.5):
-        """保存元素截图
+        """元素截图并保存
 
-        :param filename:  截图名称
-        :param frequency: 读取图片complete属性的频率
-        :return:
+        Args:
+            filename (str): 截图图片名称
+            frequency (float): 判断图片complete属性的频率
+
+        Raises:
+            TimeoutException: [description]
+
+        Returns:
+            True | False
         """
         end_time = time() + self.timeout
 
         while not bool(self.get_attribute('complete')):
             sleep(frequency)
             if time() > end_time:
-                raise TimeoutException('CONTENT:Image loading is not complete')
+                raise TimeoutException('image loading is not complete')
 
         return self.screenshot(filename)
 
@@ -253,12 +249,17 @@ class Element(WebElement):
         """Selenium Select API"""
         Select(self).select_by_index(index)
 
-    def move_here(self):
+    def move_here(self, after_sleep=0.5):
         """Selenium ActionChains API"""
         ActionChains(self.driver).move_to_element(self).perform()
+        if after_sleep:
+            sleep(after_sleep)
 
-    def move_here_and_click(self):
-        ActionChains(self.driver).move_to_element(self).click(self).perform()
+    def click_by_location(self):
+        size = self.size
+        height = int(size['height']) / 2
+        width = int(size['width']) / 2
+        ActionChains(self.driver).move_to_element_with_offset(self, width, height).click().perform()
 
     def click_and_hold(self):
         """Selenium ActionChains API"""
@@ -272,9 +273,9 @@ class Element(WebElement):
         """Selenium ActionChains API"""
         ActionChains(self.driver).context_click(self).perform()
 
-    def drag_and_drop_by_offset(self, x, y):
+    def drag_and_drop_by_offset(self, xoffset, yoffset):
         """Selenium ActionChains API"""
-        ActionChains(self.driver).drag_and_drop_by_offset(self, xoffset=x, yoffset=y).perform()
+        ActionChains(self.driver).drag_and_drop_by_offset(self, xoffset, yoffset).perform()
 
     def tap(self, center=True):
         """
@@ -315,6 +316,10 @@ class Element(WebElement):
 
     def hide(self):
         js = "arguments[0].style.display='none';"
+        self.driver.execute_script(js, self)
+
+    def scroll_into_view(self):
+        js = 'arguments[0].scrollIntoView(true);'
         self.driver.execute_script(js, self)
 
 
@@ -409,3 +414,10 @@ class ElementWait:
         if not timeout:
             timeout = self.element.timeout
         return WebDriverWait(self.element.driver, timeout).until(EC.invisibility_of_element(self.element), message=message)
+
+    def to_be_clickable(self, timeout=None, message=None):
+        if not message:
+            message = f'By:[ {self.element.by} ] value:[ {self.element.value} ]'
+        if not timeout:
+            timeout = self.element.timeout
+        return WebDriverWait(self.element.driver, timeout).until(EC.element_to_be_clickable(self.element), message=message)
