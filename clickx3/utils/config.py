@@ -51,6 +51,10 @@ def screenshot_path():
     return os.path.join(project_path(), 'testcases', '.screenshots')
 
 
+def default_test_image_path():
+    return os.path.join(resources_path(), 'testimage', 'default.png')
+
+
 if __name__ == '__main__':
     print(__CONFIG_PATH__)
     print(project_path())
