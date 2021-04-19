@@ -211,6 +211,12 @@ class Element(WebElement):
         """
         return super().find_elements(by, value)
 
+    def click(self, move_here=False):
+        if move_here:
+            self.move_here_and_click()
+        else:
+            super().click()
+
     def textarea_value(self):
         """获取textarea元素的值"""
         return self.get_attribute('value')
@@ -251,7 +257,7 @@ class Element(WebElement):
         """Selenium ActionChains API"""
         ActionChains(self.driver).move_to_element(self).perform()
 
-    def click_by_action(self):
+    def move_here_and_click(self):
         ActionChains(self.driver).move_to_element(self).click(self).perform()
 
     def click_and_hold(self):
