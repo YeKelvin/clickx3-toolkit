@@ -255,6 +255,11 @@ class Element(WebElement):
         if after_sleep:
             sleep(after_sleep)
 
+    def click(self, clickable=True):
+        if clickable:
+            self.wait.to_be_clickable()
+        super().click()
+
     def click_by_location(self):
         size = self.size
         height = int(size['height']) / 2
@@ -320,6 +325,14 @@ class Element(WebElement):
 
     def scroll_into_view(self):
         js = 'arguments[0].scrollIntoView(true);'
+        self.driver.execute_script(js, self)
+
+    def click_by_js(self):
+        js = 'arguments[0].click();'
+        self.driver.execute_script(js, self)
+
+    def highlight(self):
+        js = 'arguments[0].style.border="2px solid red";'
         self.driver.execute_script(js, self)
 
 
