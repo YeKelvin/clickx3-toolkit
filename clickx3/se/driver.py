@@ -38,7 +38,7 @@ class Driver(WebDriver):
         return Driver(wd)
 
     def get(self, url):
-        log.info(f'打开网址，url:[ {url} ]')
+        log.info(f'打开地址，url:[ {url} ]')
         super().get(url)
 
     def sleep(self, secs: float = 1):
