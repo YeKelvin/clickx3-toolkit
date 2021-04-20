@@ -37,11 +37,12 @@ def chrome_driver(driver_path=None,
     options.set_capability('noRetest', True)
 
     options.add_argument('--disable-gpu')
-    options.add_argument('--disable-infobars')  # 防止Chrome显示“Chrome正在被自动化软件控制”的通知
+    options.add_argument('--disable-infobars')  # 禁止显示“Chrome正在被自动化软件控制”的通知
+    options.add_argument('--disable-notifications')  # 禁用通知
     options.add_argument('--disable-popup-blocking')
     options.add_argument('--disable-extensions')
     options.add_argument('--disable-dev-shm-usage')  # overcome limited resource problems
-    options.add_argument('--start-maximized')  # open Browser in maximized mode
+    options.add_argument('--start-maximized')  # 最大化模式打开浏览器
     options.add_argument('--no-sandbox')  # bypass OS security model
     options.add_argument('--version')  # 打印chrome浏览器版本
     options.add_argument(f'--lang={lang}')
