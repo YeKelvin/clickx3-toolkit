@@ -4,11 +4,11 @@
 # @Time    : 2020/9/29 15:47
 # @Author  : Kelvin.Ye
 from functools import wraps
-from time import sleep, time
+from time import sleep
 
 from clickx3.exceptions import ElementException
 from clickx3.utils.log_util import get_logger
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.touch_actions import TouchActions
@@ -126,30 +126,30 @@ class Element(WebElement):
             # 直接把WebElement的属性字典复制过来
             self.__dict__.update(web_element.__dict__)
 
+        self._by = by
+        self._value = value
+        self._visible = visible
+        self._delay = delay
+        self._timeout = timeout
+        self._interval = interval
         self.driver = driver
-        self.by = by
-        self.value = value
-        self.visible = visible
-        self.delay = delay
-        self.timeout = timeout
-        self.interval = interval
         self.wait = ElementWait(self)
 
     def __retry_find(self):
-        if (not self.by) or (not self.value):
+        if (not self._by) or (not self._value):
             raise ElementException('元素定位信息不允许为空')
 
         # 计算重试次数
-        retry_count = int(float(self.timeout) / float(self.interval))
+        retry_count = int(float(self._timeout) / float(self._interval))
         # 延迟查找元素
-        if self.delay:
-            sleep(self.delay)
+        if self._delay:
+            sleep(self._delay)
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            element = self.driver.find_element(self.by, self.value)
+            element = self.driver.find_element(self._by, self._value)
             self.__dict__.update(element.__dict__)
-            if self.visible:
+            if self._visible:
                 self.wait.visibility()
             return self
 
@@ -157,10 +157,10 @@ class Element(WebElement):
         for i in range(retry_count):
             try:
                 if i > 0:
-                    sleep(self.interval)
-                element = self.driver.find_element(self.by, self.value)
+                    sleep(self._interval)
+                element = self.driver.find_element(self._by, self._value)
                 self.__dict__.update(element.__dict__)
-                if self.visible:
+                if self._visible:
                     self.wait.visibility()
                 return self
             except NoSuchElementException:
@@ -185,10 +185,10 @@ class Element(WebElement):
         Args:
             by(By): 定位类型
             value(str): 定位值
-            visible(bool): 是否等待可见，default=False
-            delay(float): 延迟时间，default=0.5
-            timeout(float): 查找超时时间，default=10
-            interval(float): 重试查找间隔时间，default=0.5
+            visible(bool, False): 是否等待可见
+            delay(float, 0.5): 延迟时间
+            timeout(float, 10): 查找超时时间
+            interval(float, 0.5): 重试查找间隔时间
 
         Returns:
             Element
@@ -202,40 +202,22 @@ class Element(WebElement):
         Args:
             by(By): 定位类型
             value(str): 定位值
-            delay(float): 延迟时间，default=0.5
-            timeout(float): 查找超时时间，default=10
-            interval(float): 重试查找间隔时间，default=0.5
+            delay(float, 0.5): 延迟时间
+            timeout(float, 10): 查找超时时间
+            interval(float, 0.5): 重试查找间隔时间
 
         Returns:
             Elements
         """
         return super().find_elements(by, value)
 
-    def textarea_value(self):
-        """获取textarea元素的值"""
+    def get_value(self):
+        """多用于获取textarea元素的值"""
         return self.get_attribute('value')
 
-    def save_screenshot(self, filename, frequency=0.5):
-        """元素截图并保存
-
-        Args:
-            filename (str): 截图图片名称
-            frequency (float): 判断图片complete属性的频率
-
-        Raises:
-            TimeoutException: [description]
-
-        Returns:
-            True | False
-        """
-        end_time = time() + self.timeout
-
-        while not bool(self.get_attribute('complete')):
-            sleep(frequency)
-            if time() > end_time:
-                raise TimeoutException('image loading is not complete')
-
-        return self.screenshot(filename)
+    def set_value(self, value):
+        """多用于textarea元素的赋值"""
+        self.driver.execute_script(f'arguments[0].value="{value}";', self)
 
     def select_by_value(self, value):
         """Selenium Select API"""
@@ -255,12 +237,18 @@ class Element(WebElement):
         if after_sleep:
             sleep(after_sleep)
 
-    def click(self, clickable=True):
-        if clickable:
-            self.wait.to_be_clickable()
-        super().click()
+    def click(self):
+        """
+        Selenium API
+        如果原生点击报错抛ElementNotInteractableException时，尝试使用坐标点击
+        """
+        try:
+            super().click()
+        except ElementNotInteractableException:
+            self.click_by_location()
 
     def click_by_location(self):
+        """点击元素的坐标"""
         size = self.size
         height = int(size['height']) / 2
         width = int(size['width']) / 2
@@ -320,18 +308,34 @@ class Element(WebElement):
         TouchActions(self.driver).scroll_from_element(self, 0, self.size['height']).perform()
 
     def hide(self):
+        """
+        JavaScript API
+        隐藏元素
+        """
         js = "arguments[0].style.display='none';"
         self.driver.execute_script(js, self)
 
     def scroll_into_view(self):
+        """
+        JavaScript API
+        滚动至元素
+        """
         js = 'arguments[0].scrollIntoView(true);'
         self.driver.execute_script(js, self)
 
     def click_by_js(self):
+        """
+        JavaScript API
+        js点击元素
+        """
         js = 'arguments[0].click();'
         self.driver.execute_script(js, self)
 
     def highlight(self):
+        """
+        JavaScript API
+        高亮元素
+        """
         js = 'arguments[0].style.border="2px solid red";'
         self.driver.execute_script(js, self)
 
@@ -350,42 +354,43 @@ class Elements(list):
                  delay: float = 0.5,
                  timeout: float = 10,
                  interval: float = 0.5):
-        if driver:
-            self.driver = driver
+
         if web_elements:
             self.extend(web_elements)
-        self.by = by
-        self.value = value
-        self.delay = delay
-        self.timeout = timeout
-        self.interval = interval
+
+        self._by = by
+        self._value = value
+        self._delay = delay
+        self._timeout = timeout
+        self._interval = interval
+        self.driver = driver
 
     def __retry_find(self):
-        if (not self.by) or (not self.value):
+        if (not self._by) or (not self._value):
             raise ElementException('元素定位信息不允许为空')
 
         # 计算重试次数
-        retry_count = int(float(self.timeout) / float(self.interval))
+        retry_count = int(float(self._timeout) / float(self._interval))
         # 延迟查找元素
-        if self.delay:
-            sleep(self.delay)
+        if self._delay:
+            sleep(self._delay)
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            elements = self.driver.find_elements(self.by, self.value)
+            elements = self.driver.find_elements(self._by, self._value)
             if not elements:
-                raise NoSuchElementException(f'By:[ {self.by} ] value:[ {self.value} ]')
+                raise NoSuchElementException(f'By:[ {self._by} ] value:[ {self._value} ]')
             self.extend(elements)
             return self
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
             if i > 0:
-                sleep(self.interval)
-            elements = self.driver.find_elements(self.by, self.value)
+                sleep(self._interval)
+            elements = self.driver.find_elements(self._by, self._value)
             if not elements:
                 if i == (retry_count - 1):
-                    raise NoSuchElementException(f'By:[ {self.by} ] value:[ {self.value} ]')
+                    raise NoSuchElementException(f'By:[ {self._by} ] value:[ {self._value} ]')
                 continue
             self.extend(elements)
             return self
@@ -415,22 +420,39 @@ class ElementWait:
         self.element = element
 
     def visibility(self, timeout=None, message=None):
-        if not message:
-            message = f'By:[ {self.element.by} ] value:[ {self.element.value} ]'
-        if not timeout:
-            timeout = self.element.timeout
+        message = message or f'By:[ {self.element._by} ] value:[ {self.element._value} ]'
+        timeout = timeout or self.element._timeout
         return WebDriverWait(self.element.driver, timeout).until(EC.visibility_of(self.element), message=message)
 
     def invisibility(self, timeout=None, message=None):
-        if not message:
-            message = f'By:[ {self.element.by} ] value:[ {self.element.value} ]'
-        if not timeout:
-            timeout = self.element.timeout
+        message = message or f'By:[ {self.element._by} ] value:[ {self.element._value} ]'
+        timeout = timeout or self.element._timeout
+        log.info('等待元素不可见')
         return WebDriverWait(self.element.driver, timeout).until(EC.invisibility_of_element(self.element), message=message)
 
-    def to_be_clickable(self, timeout=None, message=None):
-        if not message:
-            message = f'By:[ {self.element.by} ] value:[ {self.element.value} ]'
-        if not timeout:
-            timeout = self.element.timeout
-        return WebDriverWait(self.element.driver, timeout).until(EC.element_to_be_clickable(self.element), message=message)
+    def clickable(self, timeout=None, message=None):
+        message = message or f'By:[ {self.element._by} ] value:[ {self.element._value} ]'
+        timeout = timeout or self.element._timeout
+        return WebDriverWait(self.element.driver, timeout).until(clickable_of(self.element), message=message)
+
+    def img_completed(self, timeout=None, message=None):
+        message = message or f'By:[ {self.element._by} ] value:[ {self.element._value} ]'
+        timeout = timeout or self.element._timeout
+        log.info('等待图片加载完成')
+        return WebDriverWait(self.element.driver, timeout).until(image_completed_of(self.element), message=message)
+
+
+class clickable_of:
+    def __init__(self, element):
+        self.element = element
+
+    def __call__(self, driver):
+        return self.element.is_enabled()
+
+
+class image_completed_of:
+    def __init__(self, element):
+        self.element = element
+
+    def __call__(self, driver):
+        return bool(self.element.get_attribute('complete'))
