@@ -72,11 +72,9 @@ def ios_serial():
 def pytest_runtest_call(item):
     execution_count = getattr(item, 'execution_count', 1)
     if execution_count > 1:  # 测试用例重跑时，开始录屏
-        android_device = item.funcargs.get('android_device')
         if android_device:
             video_name = __get_node_name(item.nodeid)
-            video_path = __android_screenshot(android_device, video_name)
-            __android_start_screenrecord(android_device, video_path)
+            __android_start_screenrecord(item, video_name)
 
 
 @pytest.mark.hookwrapper
@@ -87,22 +85,21 @@ def pytest_runtest_makereport(item):
 
     if result.when == 'call':
         pytest_html = item.config.pluginmanager.get_plugin('html')
-        android_device = item.funcargs.get('android_device')
-        if pytest_html and android_device:
-            __actions_after_failed_test(item, result, pytest_html, android_device)
+        if pytest_html:
+            __actions_after_failed_test(item, result, pytest_html)
 
 
-def __actions_after_failed_test(item, result, pytest_html, android_device):
+def __actions_after_failed_test(item, result, pytest_html):
     execution_count = getattr(item, 'execution_count', 1)
     extra = getattr(result, 'extra', [])
     media_name = __get_node_name(item.nodeid)
     if execution_count == 1:  # 测试用例首次失败时，pytest-html添加截图
         if result.failed:
-            image_path = __android_screenshot(android_device, media_name)
-            extra.append(pytest_html.extras.png(image_path))
+            __android_screenshot(item, media_name, extra, pytest_html)
+            __web_screenshot(item, media_name, extra, pytest_html)
             result.extra = extra
     elif execution_count > 1:  # 测试用例重跑时，pytest-html添加录屏视频
-        video_path = __android_stop_screenrecord(android_device, media_name)
+        video_path = __android_stop_screenrecord(item, media_name)
         if result.failed:
             extra.append(pytest_html.extras.mp4(video_path))
             result.extra = extra
@@ -116,23 +113,39 @@ def __get_node_name(nodeid):
         return formatted_nodeid.split('/')[-1]
 
 
-def __android_screenshot(android_device, image_name):
-    log.info('开始截图')
-    image_path = os.path.join(screenshot_path(), f'{image_name}.png')
-    android_device.screenshot(image_path)
-    log.info(f'截图保存路径={image_path}')
-    return image_path
+def __android_screenshot(item, image_name, extra, pytest_html):
+    android_device = item.funcargs.get('android_device')
+    if android_device:
+        log.info('Android截图')
+        image_path = os.path.join(screenshot_path(), f'{image_name}.android.png')
+        log.info(f'截图保存路径={image_path}')
+        android_device.screenshot(image_path)
+        extra.append(pytest_html.extras.png(image_path))
 
 
-def __android_start_screenrecord(android_device, video_name):
-    log.info('开始录屏')
-    video_path = os.path.join(screenrecord_path(), f'{video_name}.mp4')
-    android_device.screenrecord(video_path)
+def __web_screenshot(item, image_name, extra, pytest_html):
+    web_driver = item.funcargs.get('web_driver')
+    if web_driver:
+        log.info('Web截图')
+        image_path = os.path.join(screenshot_path(), f'{image_name}.web.png')
+        log.info(f'截图保存路径={image_path}')
+        web_driver.save_screenshot(image_path)
+        extra.append(pytest_html.extras.png(image_path))
 
 
-def __android_stop_screenrecord(android_device, video_name):
-    log.info('停止录屏')
-    android_device.screenrecord.stop()
-    video_path = os.path.join(screenrecord_path(), f'{video_name}.mp4')
-    log.info(f'视频保存路径={video_path}')
-    return video_path
+def __android_start_screenrecord(item, video_name):
+    android_device = item.funcargs.get('android_device')
+    if android_device:
+        log.info('开始录屏')
+        video_path = os.path.join(screenrecord_path(), f'{video_name}.mp4')
+        android_device.screenrecord(video_path)
+
+
+def __android_stop_screenrecord(item, video_name):
+    android_device = item.funcargs.get('android_device')
+    if android_device and android_device.screenrecord._running:
+        log.info('停止录屏')
+        android_device.screenrecord.stop()
+        video_path = os.path.join(screenrecord_path(), f'{video_name}.mp4')
+        log.info(f'视频保存路径={video_path}')
+        return video_path
