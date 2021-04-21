@@ -96,20 +96,6 @@ class Driver(WebDriver):
     def get_alert_text(self):
         return self.switch_to.alert.text
 
-    def move_by_offset(self, x, y):
-        """Selenium API
-        Moving the mouse to an offset from current mouse position.
-
-        Args:
-            x: X offset to move to, as a positive or negative integer.
-            y: Y offset to move to, as a positive or negative integer.
-        """
-        ActionChains(self).move_by_offset(x, y).perform()
-
-    def release(self):
-        """Selenium API, Releasing a held mouse button on an element"""
-        ActionChains(self).release().perform()
-
 
 class DriverWait:
     def __init__(self, driver):
