@@ -70,24 +70,26 @@ class Element(UiObject):
                  timeout: float = 10,
                  interval: float = 0.5,
                  **kwargs):
+
         if ui_object:
             # 直接把UiObject的属性字典复制过来
             self.__dict__.update(ui_object.__dict__)
-        self.delay = delay
-        self.timeout = timeout
-        self.interval = interval
-        self.kwargs = kwargs
+
+        self._delay = delay
+        self._timeout = timeout
+        self._interval = interval
+        self._kwargs = kwargs
 
     def __retry_find(self, device: Device):
         # 计算重试次数
-        retry_count = int(float(self.timeout) / float(self.interval))
+        retry_count = int(float(self._timeout) / float(self._interval))
         # 延迟查找元素
-        if self.delay:
-            sleep(self.delay)
+        if self._delay:
+            sleep(self._delay)
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            element = device(**self.kwargs)
+            element = device(**self._kwargs)
             if element.exists:
                 self.__dict__.update(element.__dict__)
                 return self
@@ -103,8 +105,8 @@ class Element(UiObject):
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
             if i > 0:
-                sleep(self.interval)
-            element = device(**self.kwargs)
+                sleep(self._interval)
+            element = device(**self._kwargs)
             if element.exists:
                 self.__dict__.update(element.__dict__)
                 return self
@@ -139,10 +141,10 @@ class Element(UiObject):
         """查找子元素
 
         Args:
-            delay (float): 延迟查找等待时间，default=0.5
-            timeout (float): 重试查找超时时间，default=10
-            interval (float): 重试查找间隔时间，default=0.5
-            allow_scroll_find (bool): 是否允许滚动至目标元素，default=True
+            delay (float, 0.5): 延迟查找等待时间
+            timeout (float, 10): 重试查找超时时间
+            interval (float, 0.5): 重试查找间隔时间
+            allow_scroll_find (bool, True): 是否允许滚动至目标元素
 
         Returns:
             Element
@@ -189,34 +191,35 @@ class XPathElement(XMLElement):
                  delay: float = 0.5,
                  timeout: float = 10,
                  interval: float = 0.5):
+
         if not xpath:
             raise ValueError('xpath不允许为空')
 
         if xpath_selector:
-            self.xpath_selector = xpath_selector
+            self._xpath_selector = xpath_selector
 
         if xml_element:
             # 直接把XMLElement的属性字典复制过来
             self.__dict__.update(xml_element.__dict__)
 
-        self.xpath = xpath
-        self.delay = delay
-        self.timeout = timeout
-        self.interval = interval
+        self._xpath = xpath
+        self._delay = delay
+        self._timeout = timeout
+        self._interval = interval
 
     def __retry_find(self, device: Device):
         # 计算重试次数
-        retry_count = int(float(self.timeout) / float(self.interval))
+        retry_count = int(float(self._timeout) / float(self._interval))
         # 延迟查找元素
-        if self.delay:
-            sleep(self.delay)
+        if self._delay:
+            sleep(self._delay)
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            xpath_selector = device.xpath(self.xpath)
+            xpath_selector = device.xpath(self._xpath)
             if xpath_selector.exists:
                 xml_element = xpath_selector.get()
-                self.xpath_selector = xpath_selector
+                self._xpath_selector = xpath_selector
                 self.__dict__.update(xml_element.__dict__)
                 return self
             else:
@@ -225,11 +228,11 @@ class XPathElement(XMLElement):
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
             if i > 0:
-                sleep(self.interval)
-            xpath_selector = device.xpath(self.xpath)
+                sleep(self._interval)
+            xpath_selector = device.xpath(self._xpath)
             if xpath_selector.exists:
                 xml_element = xpath_selector.get()
-                self.xpath_selector = xpath_selector
+                self._xpath_selector = xpath_selector
                 self.__dict__.update(xml_element.__dict__)
                 return self
         raise XPathElementNotFoundError(self._xpath_list)
@@ -259,33 +262,34 @@ class XPathElements(list):
                  delay: float = 0.5,
                  timeout: float = 10,
                  interval: float = 0.5):
+
         if not xpath:
             raise ValueError('xpath不允许为空')
 
         if xpath_selector:
-            self.xpath_selector = xpath_selector
+            self._xpath_selector = xpath_selector
 
         if xml_elements:
             self.extend(xml_elements)
 
-        self.xpath = xpath
-        self.delay = delay
-        self.timeout = timeout
-        self.interval = interval
+        self._xpath = xpath
+        self._delay = delay
+        self._timeout = timeout
+        self._interval = interval
 
     def __retry_find(self, device: Device):
         # 计算重试次数
-        retry_count = int(float(self.timeout) / float(self.interval))
+        retry_count = int(float(self._timeout) / float(self._interval))
         # 延迟查找元素
-        if self.delay:
-            sleep(self.delay)
+        if self._delay:
+            sleep(self._delay)
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            xpath_selector = device.xpath(self.xpath)
+            xpath_selector = device.xpath(self._xpath)
             if xpath_selector.exists:
                 xml_elements = xpath_selector.all()
-                self.xpath_selector = xpath_selector
+                self._xpath_selector = xpath_selector
                 self.extend(xml_elements)
                 return self
             else:
@@ -294,11 +298,11 @@ class XPathElements(list):
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
             if i > 0:
-                sleep(self.interval)
-            xpath_selector = device.xpath(self.xpath)
+                sleep(self._interval)
+            xpath_selector = device.xpath(self._xpath)
             if xpath_selector.exists:
                 xml_elements = xpath_selector.all()
-                self.xpath_selector = xpath_selector
+                self._xpath_selector = xpath_selector
                 self.extend(xml_elements)
                 return self
         raise XPathElementNotFoundError(self._xpath_list)
@@ -316,6 +320,6 @@ class XPathElements(list):
         if isinstance(item, XPathElement):
             return item
         elif isinstance(item, XMLElement):
-            return XPathElement(xpath_selector=self.xpath_selector, xml_element=item)
+            return XPathElement(xpath_selector=self._xpath_selector, xml_element=item)
         else:
-            raise ElementException(f'仅支持clickx3.Element和uiautomator2.XMLElement，object:[ {item} ]')
+            raise ElementException(f'仅支持clickx3.XPathElement和uiautomator2.XMLElement，object:[ {item} ]')
