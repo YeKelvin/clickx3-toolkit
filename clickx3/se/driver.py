@@ -11,7 +11,6 @@ import imageio
 import numpy as np
 from clickx3.utils.log_util import get_logger
 from selenium.common.exceptions import NoAlertPresentException
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
