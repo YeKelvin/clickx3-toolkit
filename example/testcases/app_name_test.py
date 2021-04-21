@@ -8,7 +8,7 @@
 简单搜索app demo
 """
 
-from clickx3.devices_manager import DevicesManager
+from clickx3.common.devices_manager import DevicesManager
 from clickx3.u2.device import Device
 from clickx3.utils.log_util import get_logger
 from example.pages.app_name import ApplicationName

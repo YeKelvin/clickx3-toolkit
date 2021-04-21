@@ -8,7 +8,7 @@
 demo
 """
 
-from clickx3.action import BaseAction
+from clickx3.common.action import BaseAction
 from clickx3.u2.app import App
 from clickx3.utils.log_util import get_logger
 from example.pages.app_name.first import FirstPage

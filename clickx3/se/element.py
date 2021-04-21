@@ -6,7 +6,7 @@
 from functools import wraps
 from time import sleep
 
-from clickx3.exceptions import ElementException
+from clickx3.common.exceptions import ElementException
 from clickx3.utils.log_util import get_logger
 from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException
 from selenium.webdriver.common.action_chains import ActionChains

@@ -3,7 +3,7 @@
 # @File    : page.py
 # @Time    : 2020/4/3 11:56
 # @Author  : Kelvin.Ye
-from clickx3.exceptions import PageException
+from clickx3.common.exceptions import PageException
 from clickx3.se.app import WebApp
 from clickx3.se.driver import Driver
 from clickx3.utils.log_util import get_logger

@@ -6,7 +6,7 @@
 from functools import wraps
 from time import sleep
 
-from clickx3.exceptions import ElementException
+from clickx3.common.exceptions import ElementException
 from clickx3.u2.device import Device
 from clickx3.utils.log_util import get_logger
 from uiautomator2 import UiObject

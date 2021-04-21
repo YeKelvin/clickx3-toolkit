@@ -6,7 +6,7 @@
 import os
 
 import pytest
-from clickx3.devices_manager import DevicesManager
+from clickx3.common.devices_manager import DevicesManager
 from clickx3.se.driver import Driver
 from clickx3.u2.device import Device
 from clickx3.utils.config import screenrecord_path, screenshot_path

@@ -3,7 +3,7 @@
 # @File    : app.py
 # @Time    : 2020/4/3 19:14
 # @Author  : Kelvin.Ye
-from clickx3.exceptions import AppException
+from clickx3.common.exceptions import AppException
 from clickx3.utils.log_util import get_logger
 
 from wda import Client

@@ -6,7 +6,7 @@
 from clickx3.u2.app import AndroidApp, Webview
 from clickx3.u2.device import Device
 from clickx3.utils.log_util import get_logger
-from clickx3.exceptions import PageException
+from clickx3.common.exceptions import PageException
 
 log = get_logger(__name__)
 
