@@ -10,7 +10,7 @@ import cv2
 import imageio
 import numpy as np
 from clickx3.utils.log_util import get_logger
-from selenium.common.exceptions import NoAlertPresentException
+from selenium.common.exceptions import NoAlertPresentException, TimeoutException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -100,41 +100,57 @@ class DriverWait:
     def __init__(self, driver):
         self.driver = driver
 
-    def url_contains(self, url, timeout=5, message=''):
+    def url_contains(self, url, timeout=5, errmsg=''):
         """等待url包含指定的字符串（区分大小写）
 
         Returns:
             匹配返回true，不匹配返回false
         """
         log.info(f'等待url跳转并包含:[ {url} ]')
-        return WebDriverWait(self.driver, timeout).until(EC.url_contains(url), message=message)
+        try:
+            return WebDriverWait(self.driver, timeout).until(EC.url_contains(url), message=errmsg)
+        except TimeoutException:
+            log.error(f'等待超时，当前url:[ {self.driver.current_url} ]')
+            raise
 
-    def url_matches(self, pattern, timeout=5, message=''):
+    def url_matches(self, pattern, timeout=5, errmsg=''):
         """等待url正则匹配指定的字符串
 
         Returns:
             匹配返回true，不匹配返回false
         """
         log.info(f'等待url跳转并正则匹配:[ {pattern} ]')
-        return WebDriverWait(self.driver, timeout).until(EC.url_matches(pattern), message=message)
+        try:
+            return WebDriverWait(self.driver, timeout).until(EC.url_matches(pattern), message=errmsg)
+        except TimeoutException:
+            log.error(f'等待超时，当前url:[ {self.driver.current_url} ]')
+            raise
 
-    def url_to_be(self, url, timeout=5, message=''):
+    def url_to_be(self, url, timeout=5, errmsg=''):
         """等待url完全等于指定的字符串
 
         Returns:
             匹配返回true，不匹配返回false
         """
         log.info(f'等待url跳转并完全等于:[ {url} ]')
-        return WebDriverWait(self.driver, timeout).until(EC.url_to_be(url), message=message)
+        try:
+            return WebDriverWait(self.driver, timeout).until(EC.url_to_be(url), message=errmsg)
+        except TimeoutException:
+            log.error(f'等待超时，当前url:[ {self.driver.current_url} ]')
+            raise
 
-    def url_changes(self, url, timeout=5, message=''):
+    def url_changes(self, url, timeout=5, errmsg=''):
         """等待url匹配指定的字符串（不完全匹配）
 
         Returns:
             匹配返回true，不匹配返回false
         """
         log.info(f'等待url跳转并不完全匹配:[ {url} ]')
-        return WebDriverWait(self.driver, timeout).until(EC.url_changes(url), message=message)
+        try:
+            return WebDriverWait(self.driver, timeout).until(EC.url_changes(url), message=errmsg)
+        except TimeoutException:
+            log.error(f'等待超时，当前url:[ {self.driver.current_url} ]')
+            raise
 
 
 class Screenrecord:
