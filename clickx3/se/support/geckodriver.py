@@ -23,7 +23,7 @@ def firefox_driver(exe_path=None,
                    ua=None,
                    lang='zh-CN',
                    page_load_strategy='normal',
-                   maximize=False):
+                   maximize=True):
     """
 
     :param exe_path:            driver路径
@@ -42,7 +42,7 @@ def firefox_driver(exe_path=None,
     if ua:
         options.set_preference('general.useragent.override', ua)
 
-    desired_capabilities = webdriver.DesiredCapabilities.FIREFOX.copy().update({
+    caps = webdriver.DesiredCapabilities.FIREFOX.copy().update({
         'pageLoadStrategy': page_load_strategy
     })
 
@@ -51,13 +51,13 @@ def firefox_driver(exe_path=None,
     if headless:
         log.info('无头模式启动firefox driver')
     else:
-        log.info('启动firefox driver')
-    log.info(f'driver executable path:[ {executable_path} ]')
+        log.info('正常模式启动firefox driver')
+    log.info(f'geckodriver executable:[ {executable_path} ]')
 
     wd = webdriver.Firefox(executable_path=executable_path,
                            service_log_path=gecodriver_log_path(),
                            options=options,
-                           desired_capabilities=desired_capabilities)
+                           desired_capabilities=caps)
 
     if maximize:
         log.info('最大化窗口')

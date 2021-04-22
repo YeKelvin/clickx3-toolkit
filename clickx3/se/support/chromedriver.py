@@ -19,7 +19,7 @@ def chrome_driver(driver_path=None,
                   ua=None,
                   lang='zh-CN',
                   page_load_strategy='normal',
-                  maximize=False):
+                  maximize=True):
     """
 
     :param exe_path:            driver路径
@@ -42,17 +42,20 @@ def chrome_driver(driver_path=None,
     options.add_argument('--disable-popup-blocking')
     options.add_argument('--disable-extensions')
     options.add_argument('--disable-dev-shm-usage')  # overcome limited resource problems
-    options.add_argument('--start-maximized')  # 最大化模式打开浏览器
     options.add_argument('--no-sandbox')  # bypass OS security model
     options.add_argument('--version')  # 打印chrome浏览器版本
     options.add_argument(f'--lang={lang}')
-    if ua:
-        options.add_argument(f'--user-agent={ua}')
-
     options.add_experimental_option('prefs', {
         'credentials_enable_service': False,
         'profile.password_manager_enabled': False
     })
+
+    if ua:
+        options.add_argument(f'--user-agent={ua}')
+    if headless:
+        options.add_argument("--window-size=1920,1080")
+    if maximize:
+        options.add_argument('--start-maximized')  # 最大化模式打开浏览器
     if device_name:
         options.add_experimental_option('mobileEmulation', {'deviceName': device_name})
 
@@ -65,17 +68,13 @@ def chrome_driver(driver_path=None,
     if headless:
         log.info('无头模式启动chrome driver')
     else:
-        log.info('启动chrome driver')
-    log.info(f'driver executable:[ {executable_path} ]')
+        log.info('正常模式启动chrome driver')
+    log.info(f'chromedriver executable:[ {executable_path} ]')
 
     wd = webdriver.Chrome(executable_path=executable_path,
                           service_log_path=chromedriver_log_path(),
                           options=options,
                           desired_capabilities=caps)
-
-    if maximize:
-        log.info('最大化窗口')
-        wd.maximize_window()
 
     atexit.register(wd.quit)  # always quit driver when done
     return wd
@@ -97,7 +96,6 @@ def webview_driver(serial,
     options.add_experimental_option('w3c', False)
     options.add_experimental_option('androidDeviceSerial', serial)
     options.add_experimental_option('androidPackage', package)
-    options.add_experimental_option('androidProcess', process)
     options.add_experimental_option('androidActivity', activity)
     options.add_experimental_option('androidUseRunningApp', attach)
 
@@ -110,10 +108,9 @@ def webview_driver(serial,
     executable_path = driver_path or chromedriver_last_version_path()
 
     log.info('启动chrome driver')
-    log.info(f'driver executable:[ {executable_path} ]')
+    log.info(f'chromedriver executable:[ {executable_path} ]')
     log.info(f'android serial:[ {serial} ]')
     log.info(f'android package:[ {package} ]')
-    log.info(f'android process:[ {process} ]')
     log.info(f'android activity:[ {activity} ]')
 
     wd = webdriver.Chrome(executable_path=executable_path,
