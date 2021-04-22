@@ -429,29 +429,34 @@ class ElementWait:
         self.element = element
 
     def visibility(self, timeout=None, errmsg=None):
-        errmsg = f'errmsg:[ {errmsg} ] by:[ {self.element._by} ] value:[ {self.element._value} ]'
+        errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
+        errmsg = errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
         return WebDriverWait(self.element.driver, timeout).until(EC.visibility_of(self.element), message=errmsg)
 
     def invisibility(self, timeout=None, errmsg=None):
-        errmsg = f'errmsg:[ {errmsg} ] by:[ {self.element._by} ] value:[ {self.element._value} ]'
+        errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
+        errmsg = errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
         log.info('等待元素不可见')
         return WebDriverWait(self.element.driver, timeout).until(EC.invisibility_of_element(self.element), message=errmsg)
 
     def clickable(self, timeout=None, errmsg=None):
-        errmsg = f'errmsg:[ {errmsg} ] by:[ {self.element._by} ] value:[ {self.element._value} ]'
+        errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
+        errmsg = errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
         return WebDriverWait(self.element.driver, timeout).until(clickable_of(self.element), message=errmsg)
 
     def image_completed(self, timeout=None, errmsg=None):
-        errmsg = f'errmsg:[ {errmsg} ] by:[ {self.element._by} ] value:[ {self.element._value} ]'
+        errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
+        errmsg = errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
         log.info('等待img图片加载完成')
         return WebDriverWait(self.element.driver, timeout).until(image_completed_of(self.element), message=errmsg)
 
     def text_contains(self, expected, timeout=None, errmsg=None):
-        errmsg = f'errmsg:[ {errmsg} ] by:[ {self.element._by} ] value:[ {self.element._value} ]'
+        errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
+        errmsg = errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
         log.info(f'等待元素text包含:[ {expected} ]')
         try:

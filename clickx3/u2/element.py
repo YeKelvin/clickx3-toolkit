@@ -332,7 +332,8 @@ class ElementWait:
         self.element = element
 
     def text_contains(self, expected, timeout=None, errmsg=None):
-        errmsg = errmsg or f'selector:[ {self.element._kwargs} ]'
+        errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
+        errmsg = errmsg + f'selector:[ {self.element._kwargs} ]'
         timeout = timeout or self.element._timeout
         log.info(f'等待元素text包含:[ {expected} ]')
         try:
