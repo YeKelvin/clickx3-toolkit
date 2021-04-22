@@ -99,6 +99,9 @@ class Driver(WebDriver):
     def get_alert_text(self):
         return self.switch_to.alert.text
 
+    def click_exists(self, by, value, **kwargs):
+        ...
+
 
 class DriverWait:
     def __init__(self, driver):

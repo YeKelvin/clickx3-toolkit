@@ -21,8 +21,9 @@ secondary = true
 python = "^3.6"
 pywin32 = { version = "*", markers = "platform_system == 'Windows'" }
 uiautomator2 = { version = "^2.15.0", extras=["image"] }
-tidevice = { version = "^0.3.5", extras=["openssl"] }
+tidevice = { version = "^0.4.0", extras=["openssl"] }
 weditor = "^0.6.3"
+facebook-wda = "^1.4.0"
 jsonpath = "^0.82"
 orjson = "^3.5.1"
 pytest = "^5.4.3"
