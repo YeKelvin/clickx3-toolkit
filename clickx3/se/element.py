@@ -454,13 +454,13 @@ class ElementWait:
         log.info('等待img图片加载完成')
         return WebDriverWait(self.element.driver, timeout).until(image_completed_of(self.element), message=errmsg)
 
-    def text_contains(self, expected, timeout=None, errmsg=None):
+    def text_contains(self, expected, refresh=False, timeout=None, errmsg=None):
         errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
         errmsg = errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
         log.info(f'等待元素text包含:[ {expected} ]')
         try:
-            return WebDriverWait(self.element.driver, timeout).until(text_contains_of(self.element, expected), message=errmsg)
+            return WebDriverWait(self.element.driver, timeout).until(text_contains_of(self.element, expected, refresh), message=errmsg)
         except TimeoutException:
             log.error(f'等待超时，当前元素text:[ {self.element.text} ]')
             raise
@@ -483,9 +483,12 @@ class image_completed_of:
 
 
 class text_contains_of:
-    def __init__(self, element, expected):
+    def __init__(self, element, expected, refresh=False):
         self.element = element
         self.expected = expected
+        self.refresh = refresh
 
     def __call__(self, driver):
+        if self.refresh:
+            driver.refresh()
         return self.expected in self.element.text
