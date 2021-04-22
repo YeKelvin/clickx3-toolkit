@@ -6,7 +6,7 @@
 from functools import wraps
 from time import sleep
 
-from clickx3.common.exceptions import ElementException
+from clickx3.common.exceptions import ElementException, TimeoutException
 from clickx3.u2.device import Device
 from clickx3.u2.support.wait import U2DeviceWait
 from clickx3.utils.log_util import get_logger
@@ -331,11 +331,15 @@ class ElementWait:
     def __init__(self, element=None):
         self.element = element
 
-    def text_contains(self, expected, timeout=None, message=None):
-        message = message or f'selector:[ {self.element._kwargs} ]'
+    def text_contains(self, expected, timeout=None, errmsg=None):
+        errmsg = errmsg or f'selector:[ {self.element._kwargs} ]'
         timeout = timeout or self.element._timeout
         log.info(f'等待元素text包含:[ {expected} ]')
-        return U2DeviceWait(None, timeout).until(text_contains_of(self.element, expected), message=message)
+        try:
+            return U2DeviceWait(None, timeout).until(text_contains_of(self.element, expected), message=errmsg)
+        except TimeoutException:
+            log.error(f'等待超时，当前元素text:[ {self.element.text} ]')
+            raise
 
 
 class text_contains_of:
@@ -344,4 +348,4 @@ class text_contains_of:
         self.expected = expected
 
     def __call__(self, device):
-        return self.element.get_text().contains(self.expected)
+        return self.expected in self.element.get_text()

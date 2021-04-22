@@ -8,7 +8,7 @@ from time import sleep
 
 from clickx3.common.exceptions import ElementException
 from clickx3.utils.log_util import get_logger
-from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException
+from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.touch_actions import TouchActions
@@ -428,33 +428,37 @@ class ElementWait:
     def __init__(self, element=None):
         self.element = element
 
-    def visibility(self, timeout=None, message=None):
-        message = message or f'By:[ {self.element._by} ] value:[ {self.element._value} ]'
+    def visibility(self, timeout=None, errmsg=None):
+        errmsg = f'errmsg:[ {errmsg} ] by:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
-        return WebDriverWait(self.element.driver, timeout).until(EC.visibility_of(self.element), message=message)
+        return WebDriverWait(self.element.driver, timeout).until(EC.visibility_of(self.element), message=errmsg)
 
-    def invisibility(self, timeout=None, message=None):
-        message = message or f'By:[ {self.element._by} ] value:[ {self.element._value} ]'
+    def invisibility(self, timeout=None, errmsg=None):
+        errmsg = f'errmsg:[ {errmsg} ] by:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
         log.info('等待元素不可见')
-        return WebDriverWait(self.element.driver, timeout).until(EC.invisibility_of_element(self.element), message=message)
+        return WebDriverWait(self.element.driver, timeout).until(EC.invisibility_of_element(self.element), message=errmsg)
 
-    def clickable(self, timeout=None, message=None):
-        message = message or f'By:[ {self.element._by} ] value:[ {self.element._value} ]'
+    def clickable(self, timeout=None, errmsg=None):
+        errmsg = f'errmsg:[ {errmsg} ] by:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
-        return WebDriverWait(self.element.driver, timeout).until(clickable_of(self.element), message=message)
+        return WebDriverWait(self.element.driver, timeout).until(clickable_of(self.element), message=errmsg)
 
-    def image_completed(self, timeout=None, message=None):
-        message = message or f'By:[ {self.element._by} ] value:[ {self.element._value} ]'
+    def image_completed(self, timeout=None, errmsg=None):
+        errmsg = f'errmsg:[ {errmsg} ] by:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
         log.info('等待img图片加载完成')
-        return WebDriverWait(self.element.driver, timeout).until(image_completed_of(self.element), message=message)
+        return WebDriverWait(self.element.driver, timeout).until(image_completed_of(self.element), message=errmsg)
 
-    def text_contains(self, expected, timeout=None, message=None):
-        message = message or f'By:[ {self.element._by} ] value:[ {self.element._value} ]'
+    def text_contains(self, expected, timeout=None, errmsg=None):
+        errmsg = f'errmsg:[ {errmsg} ] by:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
         log.info(f'等待元素text包含:[ {expected} ]')
-        return WebDriverWait(self.element.driver, timeout).until(text_contains_of(self.element, expected), message=message)
+        try:
+            return WebDriverWait(self.element.driver, timeout).until(text_contains_of(self.element, expected), message=errmsg)
+        except TimeoutException:
+            log.error(f'等待超时，当前元素text:[ {self.element.text} ]')
+            raise
 
 
 class clickable_of:
@@ -479,4 +483,4 @@ class text_contains_of:
         self.expected = expected
 
     def __call__(self, driver):
-        return self.element.text.contains(self.expected)
+        return self.expected in self.element.text
