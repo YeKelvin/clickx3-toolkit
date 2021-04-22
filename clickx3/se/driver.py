@@ -40,6 +40,10 @@ class Driver(WebDriver):
         log.info(f'打开地址，url:[ {url} ]')
         super().get(url)
 
+    def refresh(self):
+        log.info('刷新页面')
+        super().refresh()
+
     def sleep(self, secs: float = 1):
         log.info(f'等待 {secs}s')
         time.sleep(secs)
