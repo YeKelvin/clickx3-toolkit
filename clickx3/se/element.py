@@ -450,6 +450,12 @@ class ElementWait:
         log.info('等待图片加载完成')
         return WebDriverWait(self.element.driver, timeout).until(image_completed_of(self.element), message=message)
 
+    def text_contains(self, expected, timeout=None, message=None):
+        message = message or f'By:[ {self.element._by} ] value:[ {self.element._value} ]'
+        timeout = timeout or self.element._timeout
+        log.info(f'等待text包含:[ {expected} ]')
+        return WebDriverWait(self.element.driver, timeout).until(text_contains_of(self.element, expected), message=message)
+
 
 class clickable_of:
     def __init__(self, element):
@@ -465,3 +471,11 @@ class image_completed_of:
 
     def __call__(self, driver):
         return bool(self.element.get_attribute('complete'))
+
+
+class text_contains_of:
+    def __init__(self, element):
+        self.element = element
+
+    def __call__(self, driver, expected):
+        return self.element.text.contains(expected)
