@@ -212,12 +212,21 @@ class Element(WebElement):
         return super().find_elements(by, value)
 
     def get_value(self):
-        """多用于获取textarea元素的值"""
+        """多用于获取<textarea>元素的值"""
         return self.get_attribute('value')
 
     def set_value(self, value):
-        """多用于textarea元素的赋值"""
+        """多用于<textarea>元素的赋值"""
         self.driver.execute_script(f'arguments[0].value="{value}";', self)
+
+    def save_image(self, image_path):
+        """保存图片，用于<img>元素
+
+        Args:
+            image_path (str): 图片保存路径
+        """
+        self.wait.image_completed()
+        self.screenshot(image_path)
 
     def select_by_value(self, value):
         """Selenium Select API"""
@@ -435,7 +444,7 @@ class ElementWait:
         timeout = timeout or self.element._timeout
         return WebDriverWait(self.element.driver, timeout).until(clickable_of(self.element), message=message)
 
-    def img_completed(self, timeout=None, message=None):
+    def image_completed(self, timeout=None, message=None):
         message = message or f'By:[ {self.element._by} ] value:[ {self.element._value} ]'
         timeout = timeout or self.element._timeout
         log.info('等待图片加载完成')
