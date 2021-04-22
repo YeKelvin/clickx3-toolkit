@@ -8,6 +8,7 @@ from time import sleep
 
 from clickx3.common.exceptions import ElementException
 from clickx3.u2.device import Device
+from clickx3.u2.support.wait import U2DeviceWait
 from clickx3.utils.log_util import get_logger
 from uiautomator2 import UiObject
 from uiautomator2.exceptions import UiObjectNotFoundError, XPathElementNotFoundError
@@ -79,6 +80,7 @@ class Element(UiObject):
         self._timeout = timeout
         self._interval = interval
         self._kwargs = kwargs
+        self.wait = ElementWait(self)
 
     def __retry_find(self, device: Device):
         # 计算重试次数
@@ -323,3 +325,23 @@ class XPathElements(list):
             return XPathElement(xpath_selector=self._xpath_selector, xml_element=item)
         else:
             raise ElementException(f'仅支持clickx3.XPathElement和uiautomator2.XMLElement，object:[ {item} ]')
+
+
+class ElementWait:
+    def __init__(self, element=None):
+        self.element = element
+
+    def text_contains(self, expected, timeout=None, message=None):
+        message = message or f'selector:[ {self.element._kwargs} ]'
+        timeout = timeout or self.element._timeout
+        log.info(f'等待元素text包含:[ {expected} ]')
+        return U2DeviceWait(None, timeout).until(text_contains_of(self.element, expected), message=message)
+
+
+class text_contains_of:
+    def __init__(self, element, expected):
+        self.element = element
+        self.expected = expected
+
+    def __call__(self, device):
+        return self.element.get_text().contains(self.expected)
