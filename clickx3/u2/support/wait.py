@@ -9,7 +9,8 @@
 import time
 
 from clickx3.utils.log_util import get_logger
-from uiautomator2.exceptions import TimeoutException, UiObjectNotFoundError, XPathElementNotFoundError
+from clickx3.common.exceptions import TimeoutException
+from uiautomator2.exceptions import UiObjectNotFoundError, XPathElementNotFoundError
 
 log = get_logger(__name__)
 
