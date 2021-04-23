@@ -4,6 +4,7 @@
 # @Time    : 2020/4/3 10:47
 # @Author  : Kelvin.Ye
 from selenium import webdriver
+
 from clickx3.u2.device import Device
 from clickx3.utils.log_util import get_logger
 
@@ -52,6 +53,7 @@ class AndroidApp:
 
 
 class Webview:
+
     def __init__(self, app):
         self.driver = None  # type: webdriver
         self.app = app
@@ -74,7 +76,6 @@ class Webview:
                 driver_path=driver_path,
                 serial=self.app.device.serial,
                 package=self.app.package_name,
-                process=self.app.package_name,
                 activity=self.app.activity_name or self.app.device.app_current()['activity']
             )
         )

@@ -9,16 +9,19 @@ import time
 import cv2
 import imageio
 import numpy as np
-from clickx3.utils.log_util import get_logger
-from selenium.common.exceptions import NoAlertPresentException, TimeoutException
+from selenium.common.exceptions import NoAlertPresentException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+
+from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
 
 
 class Driver(WebDriver):
+
     def __init__(self, web_driver: WebDriver):
         # 直接把WebDriver的属性字典复制过来
         self.__dict__ = web_driver.__dict__
@@ -104,6 +107,7 @@ class Driver(WebDriver):
 
 
 class DriverWait:
+
     def __init__(self, driver):
         self.driver = driver
 
@@ -161,6 +165,7 @@ class DriverWait:
 
 
 class Screenrecord:
+
     def __init__(self, driver: Driver):
         self._driver = driver
         self._running = False

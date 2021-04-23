@@ -6,9 +6,9 @@
 from functools import wraps
 from time import sleep
 
-from clickx3.common.exceptions import ElementException
-from clickx3.utils.log_util import get_logger
-from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, TimeoutException
+from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.touch_actions import TouchActions
@@ -17,6 +17,9 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
+
+from clickx3.common.exceptions import ElementException
+from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
 

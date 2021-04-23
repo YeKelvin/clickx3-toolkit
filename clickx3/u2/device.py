@@ -3,10 +3,11 @@
 # @File    : device.py
 # @Time    : 2020/4/3 10:46
 # @Author  : Kelvin.Ye
-import time
 from datetime import datetime
+import time
 
 import uiautomator2 as u2
+
 from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
@@ -15,6 +16,7 @@ log = get_logger(__name__)
 class Device(u2.Device):
     """Android设备类，封装Uiautomator2的Device类
     """
+
     @staticmethod
     def connect(source):
         """连接Android设备
@@ -81,8 +83,7 @@ class Device(u2.Device):
         log.info('ADB广播刷新系统图库')
         if file_uri.startswith('/'):
             file_uri = file_uri[1:]
-        self.adb_shell(
-            fr'am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///{file_uri}')
+        self.adb_shell(fr'am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///{file_uri}')
 
     def adb_screencap_local(self, path: str = None) -> None:
         """设备本地截图

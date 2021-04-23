@@ -21,15 +21,7 @@
     "python.linting.flake8Enabled": true,
     "python.linting.pylintEnabled": false,
     "python.linting.lintOnSave": true,
-    "python.linting.flake8Args": [
-        "--max-line-length=120",
-        "--ignore=E501, E262",
-    ],
     "python.formatting.provider": "yapf",
-    "python.formatting.yapfArgs": [
-        "--style",
-        "{based_on_style: pep8, indent_width: 4, column_limit: 120}"
-    ],
 
     /* Python Test Framework */
     "python.testing.cwd": "${workspaceFolder}",

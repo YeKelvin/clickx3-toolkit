@@ -6,7 +6,8 @@
 from queue import Queue
 from typing import Dict, List
 
-from adbutils import AdbDevice, adb
+from adbutils import adb
+from adbutils import AdbDevice
 
 from clickx3.utils.design_patterns import Singleton
 from clickx3.utils.log_util import get_logger
@@ -15,6 +16,7 @@ log = get_logger(__name__)
 
 
 class AndroidDevicesManager(Singleton):
+
     def __init__(self):
         # 设备列表
         self.__unused_devices = adb.device_list()  #type: List[AdbDevice]
@@ -54,6 +56,7 @@ class AndroidDevicesManager(Singleton):
 
 
 class DevicesManager:
+
     @staticmethod
     def android():
         return AndroidDevicesManager()
@@ -64,8 +67,10 @@ class DevicesManager:
 
 
 if __name__ == '__main__':
-    from tidevice import Device, Usbmux
     from pprint import pprint
+
+    from tidevice import Device
+    from tidevice import Usbmux
 
     u = Usbmux()
 

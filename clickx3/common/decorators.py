@@ -3,7 +3,8 @@
 # @File    : decorators.py
 # @Time    : 2021/04/02 16:22
 # @Author  : Kelvin.Ye
-from functools import wraps, partial
+from functools import partial
+from functools import wraps
 from time import sleep
 
 from clickx3.utils.log_util import get_logger
@@ -38,4 +39,5 @@ def retry_assert(func=None, count: int = 5, interval: float = 1):
                     raise
                 log.info(f'断言失败，重试断言，剩余重试次数:[ {count - 1 - i} ]')
                 continue
+
     return wrapper

@@ -7,7 +7,8 @@ import atexit
 
 from selenium import webdriver
 
-from clickx3.se.support.driver_util import chromedriver_last_version_path, chromedriver_log_path
+from clickx3.se.support.driver_util import chromedriver_last_version_path
+from clickx3.se.support.driver_util import chromedriver_log_path
 from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
@@ -59,9 +60,7 @@ def chrome_driver(driver_path=None,
     if device_name:
         options.add_experimental_option('mobileEmulation', {'deviceName': device_name})
 
-    caps = webdriver.DesiredCapabilities.CHROME.copy().update({
-        'pageLoadStrategy': page_load_strategy
-    })
+    caps = webdriver.DesiredCapabilities.CHROME.copy().update({'pageLoadStrategy': page_load_strategy})
 
     executable_path = driver_path or chromedriver_last_version_path()
 
@@ -71,22 +70,18 @@ def chrome_driver(driver_path=None,
         log.info('正常模式启动chrome driver')
     log.info(f'chromedriver executable:[ {executable_path} ]')
 
-    wd = webdriver.Chrome(executable_path=executable_path,
-                          service_log_path=chromedriver_log_path(),
-                          options=options,
-                          desired_capabilities=caps)
+    wd = webdriver.Chrome(
+        executable_path=executable_path,
+        service_log_path=chromedriver_log_path(),
+        options=options,
+        desired_capabilities=caps
+    )
 
     atexit.register(wd.quit)  # always quit driver when done
     return wd
 
 
-def webview_driver(serial,
-                   package,
-                   activity,
-                   process,
-                   page_load_strategy='normal',
-                   attach=True,
-                   driver_path=None):
+def webview_driver(serial, package, activity, page_load_strategy='normal', attach=True, driver_path=None):
 
     options = webdriver.ChromeOptions()
     options.add_argument('--start-maximized')  # open Browser in maximized mode
@@ -113,10 +108,12 @@ def webview_driver(serial,
     log.info(f'android package:[ {package} ]')
     log.info(f'android activity:[ {activity} ]')
 
-    wd = webdriver.Chrome(executable_path=executable_path,
-                          service_log_path=chromedriver_log_path(),
-                          options=options,
-                          desired_capabilities=caps)
+    wd = webdriver.Chrome(
+        executable_path=executable_path,
+        service_log_path=chromedriver_log_path(),
+        options=options,
+        desired_capabilities=caps
+    )
 
     atexit.register(wd.quit)  # always quit driver when done
     return wd

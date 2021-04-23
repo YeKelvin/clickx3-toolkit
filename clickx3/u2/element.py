@@ -6,13 +6,17 @@
 from functools import wraps
 from time import sleep
 
-from clickx3.common.exceptions import ElementException, TimeoutException
+from uiautomator2 import UiObject
+from uiautomator2.exceptions import UiObjectNotFoundError
+from uiautomator2.exceptions import XPathElementNotFoundError
+from uiautomator2.xpath import XMLElement
+from uiautomator2.xpath import XPathSelector
+
+from clickx3.common.exceptions import ElementException
+from clickx3.common.exceptions import TimeoutException
 from clickx3.u2.device import Device
 from clickx3.u2.support.wait import U2DeviceWait
 from clickx3.utils.log_util import get_logger
-from uiautomator2 import UiObject
-from uiautomator2.exceptions import UiObjectNotFoundError, XPathElementNotFoundError
-from uiautomator2.xpath import XPathSelector, XMLElement
 
 log = get_logger(__name__)
 
@@ -65,6 +69,7 @@ def retry_find_u2element(func):
 
 
 class Element(UiObject):
+
     def __init__(self,
                  ui_object: UiObject = None,
                  delay: float = 0.5,
@@ -102,7 +107,7 @@ class Element(UiObject):
                         'message': 'retry find element timeout',
                         'data': str(element.selector)
                     },
-                    method='Element.__retry_find')
+                    method='Element.__retry_find')  # yapf: disable
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
@@ -118,7 +123,7 @@ class Element(UiObject):
                 'message': 'retry find element timeout',
                 'data': str(element.selector)
             },
-            method='Element.__retry_find')
+            method='Element.__retry_find')  # yapf: disable
 
     def __scroll_find(self, method, **kwargs):
         allow_scroll_find = kwargs.pop('allow_scroll_find', True)
@@ -186,6 +191,7 @@ class Element(UiObject):
 
 
 class XPathElement(XMLElement):
+
     def __init__(self,
                  xpath,
                  xpath_selector: XPathSelector = None,
@@ -328,6 +334,7 @@ class XPathElements(list):
 
 
 class ElementWait:
+
     def __init__(self, element=None):
         self.element = element
 
@@ -344,6 +351,7 @@ class ElementWait:
 
 
 class text_contains_of:
+
     def __init__(self, element, expected):
         self.element = element
         self.expected = expected

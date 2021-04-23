@@ -3,10 +3,11 @@
 # @File    : page.py
 # @Time    : 2020/4/1 23:53
 # @Author  : Kelvin.Ye
-from clickx3.u2.app import AndroidApp, Webview
+from clickx3.common.exceptions import PageException
+from clickx3.u2.app import AndroidApp
+from clickx3.u2.app import Webview
 from clickx3.u2.device import Device
 from clickx3.utils.log_util import get_logger
-from clickx3.common.exceptions import PageException
 
 log = get_logger(__name__)
 

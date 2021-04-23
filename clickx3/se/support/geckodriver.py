@@ -7,23 +7,17 @@ import atexit
 
 from selenium import webdriver
 
-from clickx3.se.support.driver_util import gecodriver_last_version_path, gecodriver_log_path
+from clickx3.se.support.driver_util import gecodriver_last_version_path
+from clickx3.se.support.driver_util import gecodriver_log_path
 from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
 
-IPHONE_X_UA = (
-    r'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) '
-    r'Version/12.0 Mobile/15A372 Safari/604.1'
-)
+IPHONE_X_UA = (r'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) '
+               r'Version/12.0 Mobile/15A372 Safari/604.1')
 
 
-def firefox_driver(exe_path=None,
-                   headless=False,
-                   ua=None,
-                   lang='zh-CN',
-                   page_load_strategy='normal',
-                   maximize=True):
+def firefox_driver(exe_path=None, headless=False, ua=None, lang='zh-CN', page_load_strategy='normal', maximize=True):
     """
 
     :param exe_path:            driver路径
@@ -42,9 +36,7 @@ def firefox_driver(exe_path=None,
     if ua:
         options.set_preference('general.useragent.override', ua)
 
-    caps = webdriver.DesiredCapabilities.FIREFOX.copy().update({
-        'pageLoadStrategy': page_load_strategy
-    })
+    caps = webdriver.DesiredCapabilities.FIREFOX.copy().update({'pageLoadStrategy': page_load_strategy})
 
     executable_path = exe_path or gecodriver_last_version_path()
 

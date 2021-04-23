@@ -5,11 +5,12 @@
 # @Author  : Kelvin.Ye
 from time import sleep
 
+from wda import Element as WDAElement
+from wda import Selector
+from wda.exceptions import WDAElementNotFoundError
+
 from clickx3.common.exceptions import ElementException
 from clickx3.utils.log_util import get_logger
-
-from wda import Selector, Element as WDAElement
-from wda.exceptions import WDAElementNotFoundError
 
 log = get_logger(__name__)
 

@@ -3,13 +3,12 @@
 # @File    : watcher.py
 # @Time    : 2021/4/21 11:21
 # @Author  : Kelvin.Ye
+from collections import OrderedDict
 import inspect
 import threading
 import time
 import typing
-from collections import OrderedDict
 from typing import Optional
-
 
 import uiautomator2
 from uiautomator2.xpath import XPath
@@ -39,16 +38,14 @@ def inject_call(fn, *args, **kwargs):
     assert callable(fn), "first argument must be callable"
 
     st = inspect.signature(fn)
-    fn_kwargs = {
-        key: kwargs[key]
-        for key in st.parameters.keys() if key in kwargs
-    }
+    fn_kwargs = {key: kwargs[key] for key in st.parameters.keys() if key in kwargs}
     ba = st.bind(*args, **fn_kwargs)
     ba.apply_defaults()
     return fn(*ba.args, **ba.kwargs)
 
 
 class WatchContext:
+
     def __init__(self, d: "uiautomator2.Device", builtin: bool = False):
         self._d = d
         self._callbacks = OrderedDict()
@@ -150,9 +147,7 @@ class WatchContext:
         self.__stop.clear()
         self.__stopped.clear()
         interval = 2.0  # 检查周期
-        threading.Thread(target=self._run_forever,
-                         daemon=True,
-                         args=(interval, )).start()
+        threading.Thread(target=self._run_forever, daemon=True, args=(interval,)).start()
 
     def stop(self):
         self.__stop.set()
@@ -168,6 +163,7 @@ class WatchContext:
 
 
 class Watcher():
+
     def __init__(self, d: "uiautomator2.Device"):
         self._d = d
         self._watchers = []
@@ -193,9 +189,7 @@ class Watcher():
             self.log.warning("already started")
             return
         self._watching = True
-        th = threading.Thread(name="watcher",
-                              target=self._watch_forever,
-                              args=(interval, ))
+        th = threading.Thread(name="watcher", target=self._watch_forever, args=(interval,))
         th.daemon = True
         th.start()
         return th
@@ -273,10 +267,7 @@ class Watcher():
                     "source": source,
                 }
                 st = inspect.signature(cb)
-                kwargs = {
-                    key: defaults[key]
-                    for key in st.parameters.keys() if key in defaults
-                }
+                kwargs = {key: defaults[key] for key in st.parameters.keys() if key in defaults}
                 ba = st.bind(**kwargs)
                 ba.apply_defaults()
                 try:
@@ -303,6 +294,7 @@ class Watcher():
 
 
 class XPathWatcher():
+
     def __init__(self, parent: Watcher, xpath: str, name: str = ''):
         self._name = name
         self._parent = parent
@@ -324,6 +316,7 @@ class XPathWatcher():
         })
 
     def click(self):
+
         def _inner_click(selector):
             selector.get_last_match().click()
 
@@ -336,6 +329,7 @@ class XPathWatcher():
             "search", "enter", "delete", "del", "recent", "volume_up",
             "menu", "volume_down", "volume_mute", "camera", "power")
         """
+
         def _inner_press(d: "uiautomator2.Device"):
             d.press(key)
 

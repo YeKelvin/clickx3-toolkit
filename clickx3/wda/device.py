@@ -5,9 +5,9 @@
 # @Author  : Kelvin.Ye
 import time
 
-from clickx3.utils.log_util import get_logger
-
 from wda import Client
+
+from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
 

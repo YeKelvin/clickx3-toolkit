@@ -3,17 +3,15 @@
 # @File    : webdriver.py
 # @Time    : 2021/4/15 12:53
 # @Author  : Kelvin.Ye
-
-# Not yet implemented
-
 import time
 
-from clickx3.utils.log_util import get_logger
+from uiautomator2.exceptions import UiObjectNotFoundError
+from uiautomator2.exceptions import XPathElementNotFoundError
+
 from clickx3.common.exceptions import TimeoutException
-from uiautomator2.exceptions import UiObjectNotFoundError, XPathElementNotFoundError
+from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
-
 
 # 轮询频率（间隔等待时间）
 POLL_FREQUENCY = 0.5
@@ -22,6 +20,7 @@ IGNORED_EXCEPTIONS = (UiObjectNotFoundError, XPathElementNotFoundError)
 
 
 class U2DeviceWait(object):
+
     def __init__(self, device, timeout, poll_frequency=POLL_FREQUENCY, ignored_exceptions=None):
         self._device = device
         self._timeout = timeout

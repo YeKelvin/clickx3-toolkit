@@ -56,3 +56,10 @@ requires = [
     "poetry>=1.1.5"
 ]
 build-backend = "poetry.masonry.api"
+
+[tool.isort]
+profile = "google"
+# The max length of an import line (used for wrapping long imports).
+line_length = 120
+multi_line_output = 3
+group_by_package = true
