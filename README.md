@@ -27,9 +27,9 @@ python3 -m poetry shell
 pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
 ```
 
-## 虚拟环境添加pyproject.pth
+## 虚拟环境添加myproject.pth
 
-在目录`.cache/virtualenvs/xxx/Lib/site-packages/`下新增`pyproject.pth`文件，内容如下：
+在目录`.cache/virtualenvs/xxx/Lib/site-packages/`下新增`myproject.pth`文件，内容如下：
 
 ```text
 abs/path/to/project/root
