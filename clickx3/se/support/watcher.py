@@ -8,6 +8,7 @@ import inspect
 import threading
 import time
 import typing
+from typing import Callable
 from typing import Optional
 
 import uiautomator2
@@ -164,8 +165,8 @@ class WatchContext:
 
 class Watcher():
 
-    def __init__(self, d: "uiautomator2.Device"):
-        self._d = d
+    def __init__(self, driver: "uiautomator2.Device"):
+        self._d = driver
         self._watchers = []
 
         self._watch_stop_event = threading.Event()
@@ -184,9 +185,9 @@ class Watcher():
         return XPathWatcher(self, xpath)
 
     def start(self, interval: float = 2.0):
-        """ stop watcher """
+        """ start watcher """
         if self._watching:
-            self.log.warning("already started")
+            log.warning("already started")
             return
         self._watching = True
         th = threading.Thread(name="watcher", target=self._watch_forever, args=(interval,))
@@ -197,7 +198,7 @@ class Watcher():
     def stop(self):
         """ stop watcher """
         if not self._watching:
-            self.log.warning("watch already stopped")
+            log.warning("watch already stopped")
             return
 
         if self._watch_stopped.is_set():
@@ -258,7 +259,7 @@ class Watcher():
                     break
 
             if last_selector:
-                self.log.info("XPath(hook:%s): %s", h['name'], h['xpaths'])
+                log.info("XPath(hook:%s): %s", h['name'], h['xpaths'])
                 self._triggering = True
                 cb = h['callback']
                 defaults = {
@@ -273,7 +274,7 @@ class Watcher():
                 try:
                     cb(*ba.args, **ba.kwargs)
                 except Exception as e:
-                    self.log.warning("watchers exception: %s", e)
+                    log.warning("watchers exception: %s", e)
                 finally:
                     self._triggering = False
                 return True
@@ -334,3 +335,41 @@ class XPathWatcher():
             d.press(key)
 
         self.call(_inner_press)
+
+
+#################################################################################
+#################################################################################
+
+
+class Watcher():
+
+    def __init__(self, driver, builtin: bool = False):
+        self._driver = driver
+        self._watchers = []
+        self.__xpath_list = []
+
+        self._watch_stop_event = threading.Event()
+        self._watch_stopped = threading.Event()
+        self._watching = False  # func start is calling
+        self._triggering = False
+
+        if builtin:
+            ...
+
+    def when(self, xpath: str):
+        self.__xpath_list.append(xpath)
+        return self
+
+    def call(self, func: Callable):
+        """
+        Args:
+            func: support args (d: driver, el: Element)
+        """
+        xpath_list = tuple(self.__xpath_list)
+        self.__xpath_list = []
+        assert xpath_list, 'when should be called before'
+
+        self._callbacks[xpath_list] = func
+
+    def click(self):
+        self.call(_callback_click)

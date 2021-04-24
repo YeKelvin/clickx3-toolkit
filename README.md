@@ -16,6 +16,7 @@
 
 ```shell
 python3 -m pip install poetry -i https://mirrors.aliyun.com/pypi/simple/
+cd clickx3-toolkit/
 python3 -m poetry install
 ```
 
@@ -32,7 +33,7 @@ pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
 在目录`.cache/virtualenvs/xxx/Lib/site-packages/`下新增`myproject.pth`文件，内容如下：
 
 ```text
-abs/path/to/project/root
+abs/path/to/project
 ```
 
 ## 导出requirements.txt
@@ -55,4 +56,3 @@ python3 -m poetry export -f requirements.txt -o requirements.txt --without-hashe
 - WebDriverAgent: `https://github.com/appium/WebDriverAgent`
 - WebEditor: `https://github.com/alibaba/web-editor`
 - Tidevice: `https://github.com/alibaba/taobao-iphone-device`
-- 感谢
