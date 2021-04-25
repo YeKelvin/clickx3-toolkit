@@ -19,6 +19,7 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 from clickx3.common.exceptions import ElementException
+from clickx3.se.support import expected_conditions as X3_EC
 from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
@@ -428,70 +429,37 @@ class Elements(list):
 
 
 class ElementWait:
+
     def __init__(self, element=None):
         self.element = element
 
-    def visibility(self, timeout=None, errmsg=None):
+    def _selector_to_str(self, errmsg):
         errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
-        errmsg = errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
+        return errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
+
+    def _wait_until(self, method, timeout, errmsg):
+        errmsg = self._selector_to_str(errmsg)
         timeout = timeout or self.element._timeout
-        return WebDriverWait(self.element.driver, timeout).until(EC.visibility_of(self.element), message=errmsg)
+        return WebDriverWait(self.element.driver, timeout).until(method, message=errmsg)
+
+    def visibility(self, timeout=None, errmsg=None):
+        return self._wait_until(EC.visibility_of(self.element), timeout, errmsg)
 
     def invisibility(self, timeout=None, errmsg=None):
-        errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
-        errmsg = errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
-        timeout = timeout or self.element._timeout
         log.info('等待元素不可见')
-        return WebDriverWait(self.element.driver, timeout).until(EC.invisibility_of_element(self.element), message=errmsg)
+        return self._wait_until(EC.invisibility_of_element(self.element), timeout, errmsg)
 
     def clickable(self, timeout=None, errmsg=None):
-        errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
-        errmsg = errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
-        timeout = timeout or self.element._timeout
-        return WebDriverWait(self.element.driver, timeout).until(clickable_of(self.element), message=errmsg)
+        return self._wait_until(X3_EC.clickable_of(self.element), timeout, errmsg)
 
     def image_completed(self, timeout=None, errmsg=None):
-        errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
-        errmsg = errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
-        timeout = timeout or self.element._timeout
         log.info('等待img图片加载完成')
-        return WebDriverWait(self.element.driver, timeout).until(image_completed_of(self.element), message=errmsg)
+        return self._wait_until(X3_EC.image_completed_of(self.element), timeout, errmsg)
 
     def text_contains(self, expected, refresh=False, timeout=None, errmsg=None):
-        errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
-        errmsg = errmsg + f'by:[ {self.element._by} ] value:[ {self.element._value} ]'
-        timeout = timeout or self.element._timeout
         log.info(f'等待元素text包含:[ {expected} ]')
         try:
-            return WebDriverWait(self.element.driver, timeout).until(text_contains_of(self.element, expected, refresh), message=errmsg)
+            return self._wait_until(X3_EC.text_contains_of(self.element, expected, refresh), timeout, errmsg)
         except TimeoutException:
             log.error(f'等待超时，当前元素text:[ {self.element.text} ]')
             raise
-
-
-class clickable_of:
-    def __init__(self, element):
-        self.element = element
-
-    def __call__(self, driver):
-        return self.element.is_enabled()
-
-
-class image_completed_of:
-    def __init__(self, element):
-        self.element = element
-
-    def __call__(self, driver):
-        return bool(self.element.get_attribute('complete'))
-
-
-class text_contains_of:
-    def __init__(self, element, expected, refresh=False):
-        self.element = element
-        self.expected = expected
-        self.refresh = refresh
-
-    def __call__(self, driver):
-        if self.refresh:
-            driver.refresh()
-        return self.expected in self.element.text

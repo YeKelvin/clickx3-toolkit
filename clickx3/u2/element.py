@@ -15,6 +15,7 @@ from uiautomator2.xpath import XPathSelector
 from clickx3.common.exceptions import ElementException
 from clickx3.common.exceptions import TimeoutException
 from clickx3.u2.device import Device
+from clickx3.u2.support import expected_conditions as EC
 from clickx3.u2.support.wait import U2DeviceWait
 from clickx3.utils.log_util import get_logger
 
@@ -338,23 +339,19 @@ class ElementWait:
     def __init__(self, element=None):
         self.element = element
 
-    def text_contains(self, expected, timeout=None, errmsg=None):
+    def _selector_to_str(self, errmsg):
         errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
-        errmsg = errmsg + f'selector:[ {self.element._kwargs} ]'
+        return errmsg + f'selector:[ {self.element._kwargs} ]'
+
+    def _wait_until(self, method, timeout, errmsg):
+        errmsg = self._selector_to_str(errmsg)
         timeout = timeout or self.element._timeout
+        return U2DeviceWait(None, timeout).until(method, message=errmsg)
+
+    def text_contains(self, expected, timeout=None, errmsg=None):
         log.info(f'等待元素text包含:[ {expected} ]')
         try:
-            return U2DeviceWait(None, timeout).until(text_contains_of(self.element, expected), message=errmsg)
+            return self._wait_until(EC.text_contains_of(self.element, expected), timeout, errmsg)
         except TimeoutException:
             log.error(f'等待超时，当前元素text:[ {self.element.text} ]')
             raise
-
-
-class text_contains_of:
-
-    def __init__(self, element, expected):
-        self.element = element
-        self.expected = expected
-
-    def __call__(self, device):
-        return self.expected in self.element.get_text()
