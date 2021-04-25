@@ -23,6 +23,17 @@ log = get_logger(__name__)
 # collect_ignore_glob = ['*_ignore.py']
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--env", action="store", default="uat", help="测试环境名称"
+    )
+
+
+@pytest.fixture(autouse=True)
+def env(request):
+    return request.config.getoption("--env")
+
+
 @pytest.fixture(autouse=True)
 def ctx(request):
     return request
