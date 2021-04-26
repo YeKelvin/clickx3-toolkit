@@ -4,6 +4,6 @@
 env = uat
 
 [log]
-name = test
+name = clickx3
 level = INFO
 path =
