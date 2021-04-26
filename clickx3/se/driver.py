@@ -39,6 +39,12 @@ class Driver(WebDriver):
         wd = firefox_driver(**kwargs)
         return Driver(wd)
 
+    @staticmethod
+    def edge(**kwargs):
+        from clickx3.se.support.msedgedriver import edge_driver
+        wd = edge_driver(**kwargs)
+        return Driver(wd)
+
     def get(self, url):
         log.info(f'打开地址，url:[ {url} ]')
         super().get(url)
