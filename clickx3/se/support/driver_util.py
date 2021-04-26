@@ -70,3 +70,16 @@ def gecodriver_log_path():
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     return os.path.join(log_dir, 'geckodriver.log')
+
+
+def msedgedriver_last_version_path():
+    """获取resources/webdrive/edge目录下版本号最新driver的绝对路径"""
+    return os.path.join(last_version('edge'), executable_driver_name('msedgedriver'))
+
+
+def msedgedriver_log_path():
+    """获取msedgedriver.log的绝对路径"""
+    log_dir = os.path.join(resources_path(), 'webdrive', 'edge')
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    return os.path.join(log_dir, 'msedgedriver.log')
