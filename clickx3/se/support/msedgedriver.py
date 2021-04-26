@@ -13,6 +13,14 @@ from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
 
+KEY = 'ms:edgeOptions'
+
+
+def chrome_to_edge_options(chrome_options):
+    caps = chrome_options.to_capabilities()
+    caps[KEY] = chrome_options.pop(chrome_options.KEY)
+    return caps
+
 
 def edge_driver(driver_path=None,
                 device_name=None,
@@ -62,7 +70,7 @@ def edge_driver(driver_path=None,
 
     caps = webdriver.DesiredCapabilities.EDGE.copy()
     caps['pageLoadStrategy'] = page_load_strategy
-    caps.update(options.to_capabilities())
+    caps.update(chrome_to_edge_options(options))
 
     executable_path = driver_path or msedgedriver_last_version_path()
 
