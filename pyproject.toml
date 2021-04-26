@@ -5,6 +5,11 @@ description = "测试点点点"
 authors = ["Kelvin.Ye <testmankelvin@163.com>"]
 readme = 'README.md'
 
+packages = [
+    { include = "clickx3" },
+    { include = "clickx3/**/*.py" }
+]
+
 [[tool.poetry.source]]
 name = "aliyun"
 url = "https://mirrors.aliyun.com/pypi/simple/"
