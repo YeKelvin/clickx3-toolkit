@@ -27,11 +27,19 @@ def pytest_addoption(parser):
     parser.addoption(
         "--env", action="store", default="uat", help="测试环境名称"
     )
+    parser.addoption(
+        "--headless", action="store", default="true", help="无头模式"
+    )
 
 
 @pytest.fixture(autouse=True)
 def env(request):
     return request.config.getoption("--env")
+
+
+@pytest.fixture(autouse=True)
+def headless(request):
+    return bool(request.config.getoption("--headless"))
 
 
 @pytest.fixture(autouse=True)
@@ -44,6 +52,24 @@ def web_driver():
     # driver = Driver.chrome()
     driver = Driver.chrome(headless=True)
     driver.maximize_window()
+    return driver
+
+
+@pytest.fixture(scope='session')
+def chrome_driver(headless):
+    driver = Driver.chrome(headless=headless)
+    return driver
+
+
+@pytest.fixture(scope='session')
+def firefox_driver(headless):
+    driver = Driver.firefox(headless=headless)
+    return driver
+
+
+@pytest.fixture(scope='session')
+def edge_driver(headless):
+    driver = Driver.edge()(headless=headless)
     return driver
 
 
