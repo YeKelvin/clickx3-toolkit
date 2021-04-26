@@ -20,7 +20,6 @@ log = get_logger(__name__)
 
 
 def _callback_click(el):
-    # print("callback", threading.current_thread())
     el.click()
 
 
@@ -349,8 +348,8 @@ class Watcher():
         self.__xpath_list = []
 
         self._watch_stop_event = threading.Event()
-        self._watch_stopped = threading.Event()
-        self._watching = False  # func start is calling
+        self._watch_stopped_event = threading.Event()
+        self._watching = False
         self._triggering = False
 
         if builtin:
@@ -359,6 +358,59 @@ class Watcher():
     def when(self, xpath: str):
         self.__xpath_list.append(xpath)
         return self
+
+    def start(self, interval: float = 2.0):
+        """ start watcher """
+        if self._watching:
+            log.warning("already started")
+            return
+        self._watching = True
+        th = threading.Thread(name="watcher", target=self._watch_forever, args=(interval,))
+        th.daemon = True
+        th.start()
+        return th
+
+    def stop(self):
+        """ stop watcher """
+        if not self._watching:
+            log.warning("watch already stopped")
+            return
+
+        if self._watch_stopped.is_set():
+            return
+
+        self._watch_stopped.set()
+        self._watch_stop_event.wait(timeout=10)
+
+        # reset all status
+        self._watching = False
+        self._watch_stopped.clear()
+        self._watch_stop_event.clear()
+
+    def reset(self):
+        """ stop watching and remove all watchers """
+        if self._watching:
+            self.stop()
+        self.remove()
+
+    def run(self, source: Optional[str] = None):
+        """ run watchers
+        Args:
+            source: hierarchy content
+        """
+        if self.triggering:  # avoid to run watcher when run watcher
+            return False
+        return self._run_watchers(source=source)
+
+    def remove(self, name=None):
+        """ remove watcher """
+        if name is None:
+            self._watchers = []
+            return
+        for w in self._watchers[:]:
+            if w['name'] == name:
+                self.log.debug("remove(%s) %s", name, w['xpaths'])
+                self._watchers.remove(w)
 
     def call(self, func: Callable):
         """
@@ -371,5 +423,65 @@ class Watcher():
 
         self._callbacks[xpath_list] = func
 
+    def _call(self, func):
+        """
+        func accept argument, key(d, el)
+        d=self._d, el=element
+        """
+        self._parent._watchers.append({
+            "name": self._name,
+            "xpaths": self._xpath_list,
+            "callback": func,
+        })
+
     def click(self):
         self.call(_callback_click)
+
+    def _watch_forever(self, interval: float):
+        try:
+            wait_timeout = interval
+            while not self._watch_stopped.wait(timeout=wait_timeout):
+                triggered = self.run()
+                wait_timeout = min(0.5, interval) if triggered else interval
+        finally:
+            self._watch_stop_event.set()
+
+    def _run_watchers(self, source=None) -> bool:
+        """
+        Returns:
+            bool (watched or not)
+        """
+        source = source or self._dump_hierarchy()
+
+        for h in self._watchers:
+            last_selector = None
+            for xpath in h['xpaths']:
+                last_selector = self._xpath(xpath, source)
+                if not last_selector.exists:
+                    last_selector = None
+                    break
+
+            if last_selector:
+                log.info("XPath(hook:%s): %s", h['name'], h['xpaths'])
+                self._triggering = True
+                cb = h['callback']
+                defaults = {
+                    "selector": last_selector,
+                    "d": self._d,
+                    "source": source,
+                }
+                st = inspect.signature(cb)
+                kwargs = {key: defaults[key] for key in st.parameters.keys() if key in defaults}
+                ba = st.bind(**kwargs)
+                ba.apply_defaults()
+                try:
+                    cb(*ba.args, **ba.kwargs)
+                except Exception as e:
+                    log.warning("watchers exception: %s", e)
+                finally:
+                    self._triggering = False
+                return True
+        return False
+
+    def __call__(self, name: str) -> "XPathWatcher":
+        return XPathWatcher(self, None, name)
