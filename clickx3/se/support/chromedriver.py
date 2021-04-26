@@ -60,7 +60,8 @@ def chrome_driver(driver_path=None,
     if device_name:
         options.add_experimental_option('mobileEmulation', {'deviceName': device_name})
 
-    caps = webdriver.DesiredCapabilities.CHROME.copy().update({'pageLoadStrategy': page_load_strategy})
+    caps = webdriver.DesiredCapabilities.CHROME.copy()
+    caps['pageLoadStrategy'] = page_load_strategy
 
     executable_path = driver_path or chromedriver_last_version_path()
 

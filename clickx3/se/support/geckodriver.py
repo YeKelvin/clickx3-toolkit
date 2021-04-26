@@ -13,8 +13,10 @@ from clickx3.utils.log_util import get_logger
 
 log = get_logger(__name__)
 
-IPHONE_X_UA = (r'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) '
-               r'Version/12.0 Mobile/15A372 Safari/604.1')
+IPHONE_X_UA = (
+    r'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) '
+    r'Version/12.0 Mobile/15A372 Safari/604.1'
+)
 
 
 def firefox_driver(exe_path=None, headless=False, ua=None, lang='zh-CN', page_load_strategy='normal', maximize=True):
@@ -36,7 +38,8 @@ def firefox_driver(exe_path=None, headless=False, ua=None, lang='zh-CN', page_lo
     if ua:
         options.set_preference('general.useragent.override', ua)
 
-    caps = webdriver.DesiredCapabilities.FIREFOX.copy().update({'pageLoadStrategy': page_load_strategy})
+    caps = webdriver.DesiredCapabilities.FIREFOX.copy()
+    caps['pageLoadStrategy'] = page_load_strategy
 
     executable_path = exe_path or gecodriver_last_version_path()
 
@@ -46,10 +49,12 @@ def firefox_driver(exe_path=None, headless=False, ua=None, lang='zh-CN', page_lo
         log.info('正常模式启动firefox driver')
     log.info(f'geckodriver executable:[ {executable_path} ]')
 
-    wd = webdriver.Firefox(executable_path=executable_path,
-                           service_log_path=gecodriver_log_path(),
-                           options=options,
-                           desired_capabilities=caps)
+    wd = webdriver.Firefox(
+        executable_path=executable_path,
+        service_log_path=gecodriver_log_path(),
+        options=options,
+        desired_capabilities=caps
+    )
 
     if maximize:
         log.info('最大化窗口')
