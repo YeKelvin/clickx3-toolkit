@@ -9,44 +9,37 @@ readme = 'README.md'
 name = "aliyun"
 url = "https://mirrors.aliyun.com/pypi/simple/"
 default = true
-#secondary = true
-
-[[tool.poetry.source]]
-name = "baidu"
-url = "https://mirror.baidu.com/pypi/simple/"
-#default = true
-secondary = true
 
 [tool.poetry.dependencies]
 python = "^3.6"
 pywin32 = { version = "*", markers = "platform_system == 'Windows'" }
+selenium = "^3.141.0"
 uiautomator2 = { version = "^2.15.0", extras=["image"] }
-tidevice = { version = "^0.4.0", extras=["openssl"] }
-weditor = "^0.6.3"
 facebook-wda = "^1.4.0"
+tidevice = { version = "^0.4.0", extras=["openssl"] }
 jsonpath = "^0.82"
 orjson = "^3.5.1"
-pytest = "^5.4.3"
+pycryptodome = "^3.10.1"
+pywavelets = "^1.1.1"
+pyyaml = "^5.4.1"
+sqlalchemy = "^1.4.2"
+cx-oracle = "^8.1.0"
+sshtunnel = "^0.4.0"
+xlwings = "^0.23.0"
+paddlepaddle = "2.0.2"
+paddleocr = "^2.0.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.3"
 pytest-html = "^3.1.1"
 pytest-dependency = "^0.5.1"
 pytest-ordering = "^0.6"
 pytest-sugar = "^0.9.4"
 pytest-rerunfailures = "^9.1.1"
 allure-pytest = "^2.8.40"
-pycryptodome = "^3.10.1"
-pyyaml = "^5.4.1"
-PyWavelets = "^1.1.1"
-sqlalchemy = "^1.4.2"
-cx-oracle = "^8.1.0"
-sshtunnel = "^0.4.0"
-selenium = "^3.141.0"
-xlwings = "^0.23.0"
-paddlepaddle = "2.0.2"
-paddleocr = "^2.0.3"
-flake8 = "^3.9.0"
-yapf = "^0.31.0"
-
-[tool.poetry.dev-dependencies]
+allure-python-commons = "^2.8.40"
+flake8 = "*"
+yapf = "*"
 
 [tool.poetry.scripts]
 
@@ -59,7 +52,31 @@ build-backend = "poetry.masonry.api"
 
 [tool.isort]
 profile = "google"
-# The max length of an import line (used for wrapping long imports).
 line_length = 120
 multi_line_output = 3
 group_by_package = true
+
+# [tool.pytest]
+# minversion = "6.0"
+# addopts = [
+#     "-s",
+#     "-v",
+#     "--disable-warnings",
+#     "--pyargs",
+#     "--html=report.html"
+# ]
+# testpaths = [
+#     "testcases"
+# ]
+# log_cli = true
+# filterwarnings = [
+#     "ignore::DeprecationWarning"
+# ]
+# required_plugins = [
+#     "pytest-html",
+#     "pytest-rerunfailures"
+# ]
+# python_classes =[
+#     "Test*",
+#     "*TestSuite"
+# ]
