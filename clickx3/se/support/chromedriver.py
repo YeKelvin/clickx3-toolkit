@@ -14,13 +14,7 @@ from clickx3.utils.log_util import get_logger
 log = get_logger(__name__)
 
 
-def chrome_driver(driver_path=None,
-                  device_name=None,
-                  headless=False,
-                  ua=None,
-                  lang='zh-CN',
-                  page_load_strategy='normal',
-                  maximize=True):
+def chrome_driver(driver_path=None, device_name=None, headless=False, ua=None, lang=None, maximize=True):
     """
 
     :param exe_path:            driver路径
@@ -45,7 +39,6 @@ def chrome_driver(driver_path=None,
     options.add_argument('--disable-dev-shm-usage')  # overcome limited resource problems
     options.add_argument('--no-sandbox')  # bypass OS security model
     options.add_argument('--version')  # 打印chrome浏览器版本
-    options.add_argument(f'--lang={lang}')
     options.add_experimental_option('prefs', {
         'credentials_enable_service': False,
         'profile.password_manager_enabled': False
@@ -53,6 +46,8 @@ def chrome_driver(driver_path=None,
 
     if ua:
         options.add_argument(f'--user-agent={ua}')
+    if lang:
+        options.add_argument(f'--lang={lang}')
     if headless:
         options.add_argument("--window-size=1920,1080")
     if maximize:
@@ -61,7 +56,7 @@ def chrome_driver(driver_path=None,
         options.add_experimental_option('mobileEmulation', {'deviceName': device_name})
 
     caps = webdriver.DesiredCapabilities.CHROME.copy()
-    caps['pageLoadStrategy'] = page_load_strategy
+    caps['pageLoadStrategy'] = 'normal'
 
     executable_path = driver_path or chromedriver_last_version_path()
 
@@ -82,7 +77,7 @@ def chrome_driver(driver_path=None,
     return wd
 
 
-def webview_driver(serial, package, activity, page_load_strategy='normal', attach=True, driver_path=None):
+def webview_driver(serial, package, activity, driver_path=None):
 
     options = webdriver.ChromeOptions()
     options.add_argument('--start-maximized')  # open Browser in maximized mode
@@ -93,10 +88,10 @@ def webview_driver(serial, package, activity, page_load_strategy='normal', attac
     options.add_experimental_option('androidDeviceSerial', serial)
     options.add_experimental_option('androidPackage', package)
     options.add_experimental_option('androidActivity', activity)
-    options.add_experimental_option('androidUseRunningApp', attach)
+    options.add_experimental_option('androidUseRunningApp', True)
 
     caps = webdriver.DesiredCapabilities.ANDROID.copy().update({
-        'pageLoadStrategy': page_load_strategy,
+        'pageLoadStrategy': 'normal',
         'unicodeKeyboard': True,  # 使用Unicode编码方式发送字符串
         'resetKeyboard': True  # 隐藏键盘，这样才能输入中文
     })

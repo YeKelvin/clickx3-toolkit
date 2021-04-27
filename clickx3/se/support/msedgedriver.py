@@ -22,13 +22,7 @@ def chrome_to_edge_options(chrome_options):
     return caps
 
 
-def edge_driver(driver_path=None,
-                device_name=None,
-                headless=False,
-                ua=None,
-                lang='zh-CN',
-                page_load_strategy='normal',
-                maximize=True):
+def edge_driver(driver_path=None, device_name=None, headless=False, ua=None, lang=None, maximize=True):
     """
 
     :param exe_path:            driver路径
@@ -36,7 +30,6 @@ def edge_driver(driver_path=None,
     :param headless:            无头模式
     :param ua:                  user-agent
     :param lang:                浏览器语言，zh-CN | en-US | km-KH
-    :param page_load_strategy:  页面加载策略，none | eager | normal
     :param maximize:            是否最大化窗口
 
     :return: WebDriver
@@ -53,7 +46,7 @@ def edge_driver(driver_path=None,
     options.add_argument('--disable-dev-shm-usage')  # overcome limited resource problems
     options.add_argument('--no-sandbox')  # bypass OS security model
     options.add_argument('--version')  # 打印chrome浏览器版本
-    options.add_argument(f'--lang={lang}')
+
     options.add_experimental_option('prefs', {
         'credentials_enable_service': False,
         'profile.password_manager_enabled': False
@@ -61,6 +54,8 @@ def edge_driver(driver_path=None,
 
     if ua:
         options.add_argument(f'--user-agent={ua}')
+    if lang:
+        options.add_argument(f'--lang={lang}')
     if headless:
         options.add_argument("--window-size=1920,1080")
     if maximize:
@@ -69,7 +64,7 @@ def edge_driver(driver_path=None,
         options.add_experimental_option('mobileEmulation', {'deviceName': device_name})
 
     caps = webdriver.DesiredCapabilities.EDGE.copy()
-    caps['pageLoadStrategy'] = page_load_strategy
+    caps['pageLoadStrategy'] = 'normal'
     caps.update(chrome_to_edge_options(options))
 
     executable_path = driver_path or msedgedriver_last_version_path()
