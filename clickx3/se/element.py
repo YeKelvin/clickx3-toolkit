@@ -6,6 +6,7 @@
 from functools import wraps
 from time import sleep
 
+from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
@@ -278,11 +279,14 @@ class Element(WebElement):
         """
         Selenium API
         如果原生点击报错抛ElementNotInteractableException时，尝试使用坐标点击
+        如果原生点击报错抛ElementClickInterceptedException时，尝试使用js点击
         """
         try:
             super().click()
         except ElementNotInteractableException:
             self.click_by_location()
+        except ElementClickInterceptedException:
+            self.click_by_js()
 
     def click_by_location(self):
         """点击元素的坐标"""
