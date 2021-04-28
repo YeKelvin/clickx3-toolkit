@@ -244,6 +244,30 @@ class Element(WebElement):
         """Selenium Select API"""
         Select(self).select_by_index(index)
 
+    def select_by_text_contains(self, text):
+        """Selenium Select API"""
+        options = Select(self).options
+        for option in options:
+            if not option.is_enabled():
+                continue
+            if text in option.text:
+                if not option.is_selected():
+                    option.click()
+                return
+        raise ElementException(f'无匹配的选项或无可选择的选项，text:[ {text} ]')
+
+    def select_by_text_not_contains(self, text):
+        """Selenium Select API"""
+        options = Select(self).options
+        for option in options:
+            if not option.is_enabled():
+                continue
+            if text not in option.text:
+                if not option.is_selected():
+                    option.click()
+                return
+        raise ElementException(f'无匹配的选项或无可选择的选项，text:[ {text} ]')
+
     def move_here(self, after_sleep=0.5):
         """Selenium ActionChains API"""
         ActionChains(self.driver).move_to_element(self).perform()
