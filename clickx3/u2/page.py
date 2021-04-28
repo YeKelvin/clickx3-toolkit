@@ -42,12 +42,12 @@ class Page:
         if not self.url:
             raise PageException(f'没有提供url，page:[ {self} ]')
 
-        log.info(f'通知指定url打开页面，url:[ {self.url} ]')
+        log.info(f'根据url打开页面，url:[ {self.url} ]')
         self.device.open_url(self.url)
 
     def open_activity(self):
         if (not self.package_name) or (not self.activity_name):
             raise PageException(f'没有提供package或activity，page:[ {self} ]')
 
-        log.info(f'通知指定activity打开页面，activity:[ {self.activity} ]')
+        log.info(f'根据activity打开页面，activity:[ {self.activity} ]')
         self.device.app_start(self.package_name, self.activity)
