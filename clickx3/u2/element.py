@@ -86,7 +86,7 @@ class Element(UiObject):
         self._timeout = timeout
         self._interval = interval
         self._kwargs = kwargs
-        self.wait = ElementWait(self)
+        self.wait_until = ElementWait(self)
 
     def __retry_find(self, device: Device):
         # 计算重试次数
