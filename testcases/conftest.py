@@ -47,6 +47,16 @@ def ctx(request):
     return request
 
 
+@pytest.fixture(scope='session', autouse=True)
+def props():
+    return {}
+
+
+@pytest.fixture(scope='class', autouse=True)
+def vars():
+    return {}
+
+
 @pytest.fixture(scope='session')
 def web_driver():
     # driver = Driver.chrome()
