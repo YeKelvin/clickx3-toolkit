@@ -209,6 +209,7 @@ class XPathElement(XMLElement):
                  xpath,
                  xpath_selector: XPathSelector = None,
                  xml_element: XMLElement = None,
+                 scroll_to: bool = False,
                  delay: float = 0.5,
                  timeout: float = 10,
                  interval: float = 0.5):
@@ -224,6 +225,7 @@ class XPathElement(XMLElement):
             self.__dict__.update(xml_element.__dict__)
 
         self._xpath = xpath
+        self._scroll_to = scroll_to
         self._delay = delay
         self._timeout = timeout
         self._interval = interval
@@ -237,7 +239,11 @@ class XPathElement(XMLElement):
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            xpath_selector = device.xpath(self._xpath)
+            if self._scroll_to:
+                xpath_selector = device.xpath.scroll_to(self._xpath)
+            else:
+                xpath_selector = device.xpath(self._xpath)
+
             if xpath_selector.exists:
                 xml_element = xpath_selector.get()
                 self._xpath_selector = xpath_selector
@@ -250,7 +256,12 @@ class XPathElement(XMLElement):
         for i in range(retry_count):
             if i > 0:
                 sleep(self._interval)
-            xpath_selector = device.xpath(self._xpath)
+
+            if self._scroll_to:
+                xpath_selector = device.xpath.scroll_to(self._xpath)
+            else:
+                xpath_selector = device.xpath(self._xpath)
+
             if xpath_selector.exists:
                 xml_element = xpath_selector.get()
                 self._xpath_selector = xpath_selector
