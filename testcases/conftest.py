@@ -6,11 +6,14 @@
 import os
 
 import pytest
+
 from clickx3.common.devices_manager import DevicesManager
 from clickx3.se.driver import Driver
 from clickx3.u2.device import Device
-from clickx3.utils.config import screenrecord_path, screenshot_path
+from clickx3.utils.config import screenrecord_path
+from clickx3.utils.config import screenshot_path
 from clickx3.utils.log_util import get_logger
+from clickx3.utils.yaml_util import load_env_config
 
 # from py._xmlgen import html
 
@@ -49,8 +52,10 @@ def ctx(request):
 
 
 @pytest.fixture(scope='session', autouse=True)
-def props():
-    return {}
+def props(env):
+    env_config = load_env_config(env)
+    log.info('props会重新加载吗')
+    return env_config
 
 
 @pytest.fixture(scope='class', autouse=True)
