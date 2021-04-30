@@ -7,6 +7,7 @@ from datetime import datetime
 import time
 
 import uiautomator2 as u2
+from uiautomator2.exceptions import UiObjectNotFoundError
 
 from clickx3.utils.log_util import get_logger
 
@@ -101,3 +102,53 @@ class Device(u2.Device):
         toast_msg = self.toast.get_message(wait_timeout, cache_timeout, default)
         log.info(f'toast:[ {toast_msg} ]')
         return toast_msg
+
+    # TODO: 考虑优化，e.g.: exists().then().catch().error()
+    def click_exists(self, visible=True, timeout=2, **kwargs):
+        try:
+            log.info(f'如果元素存在且可见时点击元素，timeout:[ {timeout}s ]')
+            element = self._retry_find_element(visible=visible, timeout=timeout, **kwargs)
+            element.click()
+        except UiObjectNotFoundError:
+            log.info(f'元素不存在或不可见，无需点击，selector:[ {kwargs} ]')
+
+    def _retry_find_element(self, **kwargs):
+        from clickx3.u2.element import Element
+
+        delay = kwargs.pop('delay', 0.5)
+        timeout = kwargs.pop('timeout', 10)
+        interval = kwargs.pop('interval', 0.5)
+
+        # 计算重试次数
+        retry_count = int(float(timeout) / float(interval))
+        # 延迟查找元素
+        if delay:
+            time.sleep(delay)
+        # 重试次数小于1时，不重试，找不到直接抛异常
+        if retry_count < 1:
+            element = self(**kwargs)
+            if element.exists:
+                return Element(ui_object=element)
+            else:
+                raise UiObjectNotFoundError(
+                    {
+                        'code': -32002,
+                        'message': 'retry find element timeout',
+                        'data': str(element.selector)
+                    },
+                    method='Device._retry_find_element')
+
+        # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
+        for i in range(retry_count):
+            if i > 0:
+                time.sleep(interval)
+            element = self(**kwargs)
+            if element.exists:
+                return Element(ui_object=element)
+        raise UiObjectNotFoundError(
+            {
+                'code': -32002,
+                'message': 'retry find element timeout',
+                'data': str(element.selector)
+            },
+            method='Device._retry_find_element')
