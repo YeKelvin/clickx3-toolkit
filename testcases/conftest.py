@@ -39,7 +39,8 @@ def env(request):
 
 @pytest.fixture(autouse=True)
 def headless(request):
-    return bool(request.config.getoption("--headless"))
+    headless = request.config.getoption("--headless")
+    return True if headless.lower() == 'true' else False
 
 
 @pytest.fixture(autouse=True)
