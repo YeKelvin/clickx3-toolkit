@@ -26,6 +26,14 @@ class Locator(dict):
     ...
 
 
+class Child(dict):
+    ...
+
+
+class Sibling(dict):
+    ...
+
+
 def retry_find_u2element(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -76,6 +84,8 @@ class Element(UiObject):
                  delay: float = 0.5,
                  timeout: float = 10,
                  interval: float = 0.5,
+                 child: dict = None,
+                 sibling: dict = None,
                  **kwargs):
 
         if ui_object:
@@ -85,6 +95,8 @@ class Element(UiObject):
         self._delay = delay
         self._timeout = timeout
         self._interval = interval
+        self._child = child  # TODO: 添加child逻辑
+        self._sibling = sibling  # TODO: 添加sibling逻辑
         self._kwargs = kwargs
         self.wait_until = ElementWait(self)
 
@@ -232,7 +244,7 @@ class XPathElement(XMLElement):
                 self.__dict__.update(xml_element.__dict__)
                 return self
             else:
-                raise XPathElementNotFoundError(self._xpath_list)
+                raise XPathElementNotFoundError(self._xpath)
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
@@ -244,7 +256,7 @@ class XPathElement(XMLElement):
                 self._xpath_selector = xpath_selector
                 self.__dict__.update(xml_element.__dict__)
                 return self
-        raise XPathElementNotFoundError(self._xpath_list)
+        raise XPathElementNotFoundError(self._xpath)
 
     def __get__(self, instance, owner):
         if instance is None:
@@ -254,8 +266,17 @@ class XPathElement(XMLElement):
     def __set__(self, instance, value):
         raise NotImplementedError('老老实实set_text()吧')
 
-    def child(self, xpath):
-        raise NotImplementedError('用到再写吧')
+    def get_text(self):
+        return self.xpath_selector.get_text()
+
+    def set_text(self, text):
+        self.xpath_selector.set_text(text)
+
+    def save_screenshot(self, filename):
+        image = self.screenshot()
+        with open(filename, 'wb') as f:
+            f.write(image)
+        del image
 
 
 class XPathElements(list):
@@ -302,7 +323,7 @@ class XPathElements(list):
                 self.extend(xml_elements)
                 return self
             else:
-                raise XPathElementNotFoundError(self._xpath_list)
+                raise XPathElementNotFoundError(self._xpath)
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
@@ -314,7 +335,7 @@ class XPathElements(list):
                 self._xpath_selector = xpath_selector
                 self.extend(xml_elements)
                 return self
-        raise XPathElementNotFoundError(self._xpath_list)
+        raise XPathElementNotFoundError(self._xpath)
 
     def __get__(self, instance, owner):
         if instance is None:

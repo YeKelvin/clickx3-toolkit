@@ -8,6 +8,7 @@ import time
 
 import uiautomator2 as u2
 from uiautomator2.exceptions import UiObjectNotFoundError
+from uiautomator2.exceptions import XPathElementNotFoundError
 
 from clickx3.utils.log_util import get_logger
 
@@ -104,19 +105,25 @@ class Device(u2.Device):
         return toast_msg
 
     # TODO: 考虑优化，e.g.: exists().then().catch().error()
-    def click_exists(self, visible=True, timeout=2, **kwargs):
+    def click_exists(self, **kwargs):
         try:
-            log.info(f'如果元素存在且可见时点击元素，timeout:[ {timeout}s ]')
-            element = self._retry_find_element(visible=visible, timeout=timeout, **kwargs)
+            log.info('如果元素存在且可见时点击元素')
+            xpath = kwargs.pop('xpath', None)
+            if xpath:
+                element = self._retry_find_xpath_element(xpath)
+            else:
+                element = self._retry_find_element(**kwargs)
             element.click()
         except UiObjectNotFoundError:
             log.info(f'元素不存在或不可见，无需点击，selector:[ {kwargs} ]')
+        except XPathElementNotFoundError:
+            log.info(f'元素不存在或不可见，无需点击，xpath:[ {xpath} ]')
 
     def _retry_find_element(self, **kwargs):
         from clickx3.u2.element import Element
 
         delay = kwargs.pop('delay', 0.5)
-        timeout = kwargs.pop('timeout', 10)
+        timeout = kwargs.pop('timeout', 2)
         interval = kwargs.pop('interval', 0.5)
 
         # 计算重试次数
@@ -152,3 +159,35 @@ class Device(u2.Device):
                 'data': str(element.selector)
             },
             method='Device._retry_find_element')
+
+    def _retry_find_xpath_element(self, xpath, **kwargs):
+        from clickx3.u2.element import XPathElement
+
+        delay = kwargs.pop('delay', 0.5)
+        timeout = kwargs.pop('timeout', 2)
+        interval = kwargs.pop('interval', 0.5)
+        # 计算重试次数
+        retry_count = int(float(timeout) / float(interval))
+        # 延迟查找元素
+        if delay:
+            time.sleep(delay)
+
+        # 重试次数小于1时，不重试，找不到直接抛异常
+        if retry_count < 1:
+            xpath_selector = self.xpath(xpath)
+            if xpath_selector.exists:
+                xml_element = xpath_selector.get()
+                xml_element = xpath_selector.get()
+                return XPathElement(xpath_selector=xpath_selector, xml_element=xml_element)
+            else:
+                raise XPathElementNotFoundError(xpath)
+
+        # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
+        for i in range(retry_count):
+            if i > 0:
+                time.sleep(interval)
+            xpath_selector = self.xpath(xpath)
+            if xpath_selector.exists:
+                xml_element = xpath_selector.get()
+                return XPathElement(xpath_selector=xpath_selector, xml_element=xml_element)
+        raise XPathElementNotFoundError(xpath)
