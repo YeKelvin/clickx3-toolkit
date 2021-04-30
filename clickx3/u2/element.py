@@ -295,6 +295,14 @@ class XPathElement(XMLElement):
             self._scroll_view_locator['scrollable'] = True
             device(**self._scroll_view_locator).scroll.toBeginning()
         else:
+            # TODO: 还要优化
+            # xml_element = device.xpath(self._xpath).get()
+            # scrollable_parent = xml_element.parent('//*[@scrollable="True"')
+            # locator = {
+            #     'resourceId': scrollable_parent.attrib.get("resource-id"),
+            #     'scrollable': True
+            # }
+            # device(**locator).scroll.toBeginning()
             device(scrollable=True).scroll.toBeginning()
 
     def __get__(self, instance, owner):
