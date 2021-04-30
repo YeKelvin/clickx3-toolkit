@@ -42,9 +42,9 @@ class Page:
             self.driver.get(url)
 
     def wait_to_here(self, timeout=5, errmsg=''):
-        self.driver.wait.url_contains(self.uri, timeout, errmsg)
+        self.driver.wait_until.url_contains(self.uri, timeout, errmsg)
 
     def to_here_and_wait(self, timeout=5, errmsg=''):
         self.to_here()
         url = self.base_url + self.uri
-        self.driver.wait.url_contains(url, timeout, errmsg)
+        self.driver.wait_until.url_contains(url, timeout, errmsg)

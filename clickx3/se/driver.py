@@ -25,7 +25,7 @@ class Driver(WebDriver):
     def __init__(self, web_driver: WebDriver):
         # 直接把WebDriver的属性字典复制过来
         self.__dict__ = web_driver.__dict__
-        self.wait = DriverWait(self)
+        self.wait_until = DriverWait(self)
 
     @staticmethod
     def chrome(**kwargs):

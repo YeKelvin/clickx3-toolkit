@@ -13,13 +13,14 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.touch_actions import TouchActions
-from selenium.webdriver.remote.webdriver import WebDriver
+# from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 from clickx3.common.exceptions import ElementException
+from clickx3.se.driver import Driver
 from clickx3.se.support import expected_conditions as X3_EC
 from clickx3.utils.log_util import get_logger
 
@@ -38,7 +39,7 @@ def retry_find_webelement(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         parent = args[0]
-        driver = parent.driver  # type: WebDriver
+        driver = parent.driver  # type: Driver
         by = kwargs.pop('by', None) or args[1]
         value = kwargs.pop('value', None) or args[2]
         visible = kwargs.pop('visible', False)
@@ -57,7 +58,7 @@ def retry_find_webelement(func):
             web_element = func(parent, by, value)
             element = Element(driver=driver, web_element=web_element)
             if visible:
-                element.wait.visibility()
+                element.wait_until.visibility()
             return element
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
@@ -68,7 +69,7 @@ def retry_find_webelement(func):
                 web_element = func(parent, by, value)
                 element = Element(driver=driver, web_element=web_element)
                 if visible:
-                    element.wait.visibility()
+                    element.wait_until.visibility()
                 return element
             except NoSuchElementException:
                 if i == (retry_count - 1):
@@ -82,7 +83,7 @@ def retry_find_webelements(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         parent = args[0]
-        driver = parent.driver  # type: WebDriver
+        driver = parent.driver  # type: Driver
         by = kwargs.pop('by', None) or args[1]
         value = kwargs.pop('value', None) or args[2]
         delay = kwargs.pop('delay', 0.5)
@@ -121,7 +122,7 @@ class Element(WebElement):
                  by: By = None,
                  value: str = None,
                  visible: bool = True,
-                 driver: WebDriver = None,
+                 driver: Driver = None,
                  web_element: WebElement = None,
                  delay: float = 0.5,
                  timeout: float = 10,
@@ -138,7 +139,7 @@ class Element(WebElement):
         self._timeout = timeout
         self._interval = interval
         self.driver = driver
-        self.wait = ElementWait(self)
+        self.wait_until = ElementWait(self)
 
     def __retry_find(self):
         if (not self._by) or (not self._value):
@@ -155,7 +156,7 @@ class Element(WebElement):
             element = self.driver.find_element(self._by, self._value)
             self.__dict__.update(element.__dict__)
             if self._visible:
-                self.wait.visibility()
+                self.wait_until.visibility()
             return self
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
@@ -166,7 +167,7 @@ class Element(WebElement):
                 element = self.driver.find_element(self._by, self._value)
                 self.__dict__.update(element.__dict__)
                 if self._visible:
-                    self.wait.visibility()
+                    self.wait_until.visibility()
                 return self
             except NoSuchElementException:
                 if i == (retry_count - 1):
@@ -230,7 +231,7 @@ class Element(WebElement):
         Args:
             image_path (str): 图片保存路径
         """
-        self.wait.image_completed()
+        self.wait_until.image_completed()
         self.screenshot(image_path)
 
     def select_by_value(self, value):
@@ -390,7 +391,7 @@ class Elements(list):
     def __init__(self,
                  by: By = None,
                  value: str = None,
-                 driver: WebDriver = None,
+                 driver: Driver = None,
                  web_elements: list = None,
                  delay: float = 0.5,
                  timeout: float = 10,
