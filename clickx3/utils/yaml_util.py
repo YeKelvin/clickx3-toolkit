@@ -25,8 +25,8 @@ def dump(data):
 
 
 # TODO: 加结果缓存
-def load_testdata(name):
+def load_env_config(name):
     if not name.endswith('.yaml'):
         name = name + '.yaml'
-    file_path = os.path.join(resources_path(), 'testdata', name)
+    file_path = os.path.join(resources_path(), 'env', name)
     return load(file_path)
