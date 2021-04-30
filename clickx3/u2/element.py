@@ -236,6 +236,7 @@ class XPathElement(XMLElement):
         self._delay = delay
         self._timeout = timeout
         self._interval = interval
+        self.wait_until = ElementWait(self)
 
     def __retry_find(self, device: Device):
         # 计算重试次数
@@ -418,5 +419,5 @@ class ElementWait:
         try:
             return self._wait_until(EC.text_contains_of(self.element, expected), timeout, errmsg)
         except TimeoutException:
-            log.error(f'等待超时，当前元素text:[ {self.element.text} ]')
+            log.error(f'等待超时，当前元素text:[ {self.element.get_text()} ]')
             raise
