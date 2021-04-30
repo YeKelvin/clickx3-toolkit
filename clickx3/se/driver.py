@@ -10,6 +10,7 @@ import cv2
 import imageio
 import numpy as np
 from selenium.common.exceptions import NoAlertPresentException
+from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
@@ -108,8 +109,58 @@ class Driver(WebDriver):
     def get_alert_text(self):
         return self.switch_to.alert.text
 
-    def click_exists(self, by, value, **kwargs):
-        ...
+    def click_exists(self, by, value, visible=True, timeout=2):
+        try:
+            log.info(f'如果元素存在且可见时点击元素，timeout:[ {timeout}s ]')
+            element = self._retry_find_element(by, value, visible=visible, timeout=timeout)
+            element.click()
+        except NoSuchElementException:
+            log.info(f'元素不存在或不可见，无需点击，By:[ {by} ] value:[ {value} ]')
+
+    def tap_exists(self, by, value, visible=True, timeout=2):
+        try:
+            log.info(f'如果元素存在且可见时点击元素，timeout:[ {timeout}s ]')
+            element = self._retry_find_element(by, value, visible=visible, timeout=timeout)
+            element.tap()
+        except NoSuchElementException:
+            log.info(f'元素不存在或不可见，无需点击，By:[ {by} ] value:[ {value} ]')
+
+    def _retry_find_element(self, by, value, **kwargs):
+        from clickx3.se.element import Element
+
+        visible = kwargs.pop('visible', False)
+        delay = kwargs.pop('delay', 0.5)
+        timeout = kwargs.pop('timeout', 10)
+        interval = kwargs.pop('interval', 0.5)
+
+        # 计算重试次数
+        retry_count = int(float(timeout) / float(interval))
+        # 延迟查找元素
+        if delay:
+            time.sleep(delay)
+
+        # 重试次数小于1时，不重试，找不到直接抛异常
+        if retry_count < 1:
+            web_element = self.find_element(by, value)
+            element = Element(driver=self, web_element=web_element)
+            if visible:
+                element.wait_until.visibility()
+            return element
+
+        # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
+        for i in range(retry_count):
+            try:
+                if i > 0:
+                    time.sleep(interval)
+                web_element = self.find_element(by, value)
+                element = Element(driver=self, web_element=web_element)
+                if visible:
+                    element.wait_until.visibility()
+                return element
+            except NoSuchElementException:
+                if i == (retry_count - 1):
+                    raise
+                continue
 
 
 class DriverWait:
