@@ -203,6 +203,11 @@ class Element(UiObject):
         raise NotImplementedError('老老实实set_text()吧')
 
 
+"""
+U2 XPath规则： https://github.com/openatx/uiautomator2/blob/master/XPATH.md
+"""
+
+
 class XPathElement(XMLElement):
 
     def __init__(self,
@@ -210,6 +215,7 @@ class XPathElement(XMLElement):
                  xpath_selector: XPathSelector = None,
                  xml_element: XMLElement = None,
                  scroll_to: bool = False,
+                 scroll_view_locator: Locator = None,
                  delay: float = 0.5,
                  timeout: float = 10,
                  interval: float = 0.5):
@@ -226,6 +232,7 @@ class XPathElement(XMLElement):
 
         self._xpath = xpath
         self._scroll_to = scroll_to
+        self._scroll_view_locator = scroll_view_locator
         self._delay = delay
         self._timeout = timeout
         self._interval = interval
@@ -240,17 +247,23 @@ class XPathElement(XMLElement):
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
             if self._scroll_to:
-                xpath_selector = device.xpath.scroll_to(self._xpath)
+                # 滚动查找
+                self._scroll_to_beginning(device)  # 先返回页面顶部，因为scroll_to方法官网还没有加入循环滚动的逻辑
+                xml_element = device.xpath.scroll_to(self._xpath)
+                if not xml_element:
+                    raise XPathElementNotFoundError(self._xpath)
+                self._xpath_selector = None
+                self.__dict__.update(xml_element.__dict__)
+                return self
             else:
+                # 非滚动查找
                 xpath_selector = device.xpath(self._xpath)
-
-            if xpath_selector.exists:
+                if not xpath_selector.exists:
+                    raise XPathElementNotFoundError(self._xpath)
                 xml_element = xpath_selector.get()
                 self._xpath_selector = xpath_selector
                 self.__dict__.update(xml_element.__dict__)
                 return self
-            else:
-                raise XPathElementNotFoundError(self._xpath)
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
@@ -258,16 +271,30 @@ class XPathElement(XMLElement):
                 sleep(self._interval)
 
             if self._scroll_to:
-                xpath_selector = device.xpath.scroll_to(self._xpath)
+                # 滚动查找
+                self._scroll_to_beginning(device)  # 先返回页面顶部，因为scroll_to方法官网还没有加入循环滚动的逻辑
+                xml_element = device.xpath.scroll_to(self._xpath)
+                if xml_element:
+                    self._xpath_selector = None
+                    self.__dict__.update(xml_element.__dict__)
+                    return self
             else:
+                # 非滚动查找
                 xpath_selector = device.xpath(self._xpath)
-
-            if xpath_selector.exists:
-                xml_element = xpath_selector.get()
-                self._xpath_selector = xpath_selector
-                self.__dict__.update(xml_element.__dict__)
-                return self
+                if xpath_selector.exists:
+                    xml_element = xpath_selector.get()
+                    self._xpath_selector = xpath_selector
+                    self.__dict__.update(xml_element.__dict__)
+                    return self
         raise XPathElementNotFoundError(self._xpath)
+
+    def _scroll_to_beginning(self, device: Device):
+        """返回页面顶部"""
+        if self._scroll_view_locator:
+            self._scroll_view_locator['scrollable'] = True
+            device(**self._scroll_view_locator).scroll.toBeginning()
+        else:
+            device(scrollable=True).scroll.toBeginning()
 
     def __get__(self, instance, owner):
         if instance is None:
@@ -278,10 +305,16 @@ class XPathElement(XMLElement):
         raise NotImplementedError('老老实实set_text()吧')
 
     def get_text(self):
-        return self.xpath_selector.get_text()
+        if self._xpath_selector:
+            return self._xpath_selector.get_text()
+        return self.text
 
     def set_text(self, text):
-        self.xpath_selector.set_text(text)
+        if self._xpath_selector:
+            self._xpath_selector.set_text(text)
+        else:
+            self.click()  # focus input-area
+            self._parent.send_text(text)
 
     def save_screenshot(self, filename):
         image = self.screenshot()
