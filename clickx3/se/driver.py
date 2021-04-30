@@ -109,6 +109,7 @@ class Driver(WebDriver):
     def get_alert_text(self):
         return self.switch_to.alert.text
 
+    # TODO: 考虑优化，e.g.: exists().then().catch().error()
     def click_exists(self, by, value, visible=True, timeout=2):
         try:
             log.info(f'如果元素存在且可见时点击元素，timeout:[ {timeout}s ]')
