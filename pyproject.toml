@@ -16,12 +16,11 @@ url = "https://mirrors.aliyun.com/pypi/simple/"
 default = true
 
 [tool.poetry.dependencies]
-python = "^3.6"
-pywin32 = { version = "*", markers = "platform_system == 'Windows'" }
+python = "^3.8"
 selenium = "^3.141.0"
 uiautomator2 = { version = "^2.15.0", extras=["image"] }
 facebook-wda = "^1.4.0"
-tidevice = { version = "^0.4.0", extras=["openssl"] }
+tidevice = { version = "^0.4.1", extras=["openssl"] }
 jsonpath = "^0.82"
 orjson = "^3.5.1"
 pycryptodome = "^3.10.1"
@@ -30,19 +29,16 @@ pyyaml = "^5.4.1"
 sqlalchemy = "^1.4.2"
 cx-oracle = "^8.1.0"
 sshtunnel = "^0.4.0"
-xlwings = "^0.23.0"
 paddlepaddle = "2.0.2"
 paddleocr = "^2.0.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.3"
-pytest-html = "^3.1.1"
-pytest-dependency = "^0.5.1"
-pytest-ordering = "^0.6"
-pytest-sugar = "^0.9.4"
-pytest-rerunfailures = "^9.1.1"
-allure-pytest = "^2.8.40"
-allure-python-commons = "^2.8.40"
+pytest-cov = "*"
+pytest-html = "*"
+pytest-order = "*"
+pytest-sugar = "*"
+pytest-rerunfailures = "*"
 flake8 = "*"
 yapf = "*"
 
@@ -50,7 +46,7 @@ yapf = "*"
 
 [build-system]
 requires = [
-    "setuptools!=50.0",
+    "setuptools>=50.0",
     "poetry>=1.1.5"
 ]
 build-backend = "poetry.masonry.api"
@@ -68,7 +64,8 @@ group_by_package = true
 #     "-v",
 #     "--disable-warnings",
 #     "--pyargs",
-#     "--html=report.html"
+#     "--html=report.html",
+#     "--self-contained-html"
 # ]
 # testpaths = [
 #     "testcases"
