@@ -36,6 +36,13 @@ def resources_path():
 
 
 @lru_cache
+def environment_path():
+    """环境配置文件目录路径"""
+    resources = os.path.normpath(config.get('path', 'environment'))
+    return os.path.join(root_path(), resources)
+
+
+@lru_cache
 def screenrecord_path():
     """录屏视频目录路径"""
     screenrecord = os.path.normpath(config.get('path', 'screenrecord'))
