@@ -3,10 +3,13 @@
 # @File    : time_util.py
 # @Time    : 2021/4/10 21:39
 # @Author  : Kelvin.Ye
+from functools import lru_cache
 import os
 
 import yaml
-from clickx3.utils.config import resources_path
+
+# from clickx3.utils.config import resources_path
+from clickx3.utils import project
 
 
 def load(stream):
@@ -24,9 +27,14 @@ def dump(data):
     return yaml.safe_dump(data, encoding='utf-8')
 
 
-# TODO: 加结果缓存
+@lru_cache
 def load_env_config(name):
+    if not name:
+        raise FileNotFoundError('yaml配置文件名称不允许为空')
+
     if not name.endswith('.yaml'):
         name = name + '.yaml'
-    file_path = os.path.join(resources_path(), 'env', name)
+
+    # file_path = os.path.join(resources_path(), 'env', name)
+    file_path = os.path.join(project.environment_path(), name)
     return load(file_path)
