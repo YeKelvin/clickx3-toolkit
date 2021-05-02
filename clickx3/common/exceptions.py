@@ -30,3 +30,7 @@ class OCRException(Exception):
 
 class OCRRetriesExceededException(Exception):
     pass
+
+
+class ProjectBaseDirectoryNotFoundException(Exception):
+    ...
