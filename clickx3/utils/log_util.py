@@ -5,17 +5,20 @@
 # @Author  : Kelvin.Ye
 import logging
 
-from clickx3.utils import config
+# from clickx3.utils import config
+from clickx3.utils import project
 
 
 # 日志格式
 LOG_FORMAT = '[%(asctime)s][%(levelname)s][%(name)s.%(funcName)s %(lineno)d] %(message)s'
 
 # 日志级别
-LEVEL = config.get('log', 'level')
+# LEVEL = config.get('log', 'level')
+LEVEL = project.config.get('log', 'level')
 
 # 日志文件名称
-LOG_FILE_NAME = config.get('log', 'name')
+# LOG_FILE_NAME = config.get('log', 'name')
+LOG_FILE_NAME = project.config.get('log', 'level')
 
 # 日志格式
 FORMATTER = logging.Formatter(LOG_FORMAT)
