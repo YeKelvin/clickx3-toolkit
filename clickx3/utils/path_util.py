@@ -5,8 +5,12 @@
 # @Author  : Kelvin.Ye
 import os
 import sys
+# from typing import overload
 
 from clickx3.common.exceptions import ProjectBaseDirectoryNotFoundException
+
+# 项目构建文件列表
+__CONFIG_FILE_LIST__ = ['pyproject.toml', 'tox.ini', 'setup.cfg']
 
 
 def find_invoker_project_root(name=None, target='pyproject.toml'):
@@ -71,6 +75,8 @@ def __find_project_root_by_target(target):
     )
 
 
+# TODO: @overload str list
+# @overload
 def __has_target(parent_directory, target):
     if not parent_directory:
         return False
