@@ -214,8 +214,8 @@ class XPathElement(XMLElement):
                  xpath,
                  xpath_selector: XPathSelector = None,
                  xml_element: XMLElement = None,
-                 scroll_to: bool = False,
-                 scroll_view_locator: Locator = None,
+                 scroll_find: bool = False,
+                 scrollable_view: Locator = None,
                  delay: float = 0.5,
                  timeout: float = 10,
                  interval: float = 0.5):
@@ -231,8 +231,8 @@ class XPathElement(XMLElement):
             self.__dict__.update(xml_element.__dict__)
 
         self._xpath = xpath
-        self._scroll_to = scroll_to
-        self._scroll_view_locator = scroll_view_locator
+        self._scroll_find = scroll_find
+        self._scrollable_view = scrollable_view
         self._delay = delay
         self._timeout = timeout
         self._interval = interval
@@ -247,7 +247,7 @@ class XPathElement(XMLElement):
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            if self._scroll_to:
+            if self._scroll_find:
                 # 滚动查找
                 self._scroll_to_beginning(device)  # 先返回页面顶部，因为scroll_to方法官网还没有加入循环滚动的逻辑
                 xml_element = device.xpath.scroll_to(self._xpath)
@@ -271,7 +271,7 @@ class XPathElement(XMLElement):
             if i > 0:
                 sleep(self._interval)
 
-            if self._scroll_to:
+            if self._scroll_find:
                 # 滚动查找
                 self._scroll_to_beginning(device)  # 先返回页面顶部，因为scroll_to方法官网还没有加入循环滚动的逻辑
                 xml_element = device.xpath.scroll_to(self._xpath)
@@ -291,19 +291,12 @@ class XPathElement(XMLElement):
 
     def _scroll_to_beginning(self, device: Device):
         """返回页面顶部"""
-        if self._scroll_view_locator:
-            self._scroll_view_locator['scrollable'] = True
-            device(**self._scroll_view_locator).scroll.toBeginning()
+        if self._scrollable_view:
+            device(**self._scrollable_view).scroll.toBeginning()
         else:
-            # TODO: 还要优化
-            # xml_element = device.xpath(self._xpath).get()
-            # scrollable_parent = xml_element.parent('//*[@scrollable="True"')
-            # locator = {
-            #     'resourceId': scrollable_parent.attrib.get("resource-id"),
-            #     'scrollable': True
-            # }
-            # device(**locator).scroll.toBeginning()
-            device(scrollable=True).scroll.toBeginning()
+            scrollable_views = device(scrollable=True, enabled=True)
+            for view in scrollable_views:
+                view.scroll.toBeginning()
 
     def __get__(self, instance, owner):
         if instance is None:
