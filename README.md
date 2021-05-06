@@ -20,7 +20,7 @@ cd clickx3-toolkit/
 python3 -m poetry install
 ```
 
-Poetry安装报错的话就用pip老大哥吧，毕竟Poetry还有很多bug
+Poetry安装报错的话就用pip吧
 
 ```shell
 cd clickx3-toolkit/
@@ -44,7 +44,7 @@ python3 -m poetry export -f requirements.txt -o requirements.txt --without-hashe
 
 ## Todo
 
-- [ ] 分离lib模块(clickx3-toolkit)和测试案例(clickx3-template)
+- [-] 分离lib模块(clickx3-toolkit)和测试案例(clickx3-pytest-template)
 - [ ] 完善例子
 - [ ] 编写使用文档
 
