@@ -405,7 +405,7 @@ class XPathElements(list):
         elif isinstance(item, XMLElement):
             return XPathElement(xpath_selector=self._xpath_selector, xml_element=item)
         else:
-            raise ElementException(f'仅支持clickx3.XPathElement和uiautomator2.XMLElement，object:[ {item} ]')
+            raise TypeError(f'仅支持clickx3.XPathElement和uiautomator2.XMLElement，object:[ {item} ]')
 
 
 class ElementWait:
@@ -415,7 +415,12 @@ class ElementWait:
 
     def _selector_to_str(self, errmsg):
         errmsg = f'errmsg:[ {errmsg} ] ' if errmsg else ''
-        return errmsg + f'selector:[ {self.element._kwargs} ]'
+        if isinstance(self.element, Element):
+            return errmsg + f'selector:[ {self.element._kwargs} ]'
+        elif isinstance(self.element, XPathElement):
+            return errmsg + f'xpath:[ {self.element._xpath} ]'
+        else:
+            raise TypeError(f'仅支持clickx3.u2.Element或clickx3.u2.XPathElement，object:[ {self.element} ]')
 
     def _wait_until(self, method, timeout, errmsg):
         errmsg = self._selector_to_str(errmsg)
