@@ -5,6 +5,7 @@
 # @Author  : Kelvin.Ye
 from datetime import datetime
 import time
+from typing import List, Union
 
 import uiautomator2 as u2
 from uiautomator2.exceptions import UiObjectNotFoundError
@@ -42,14 +43,18 @@ class Device(u2.Device):
         log.info(f'等待 {secs}s')
         time.sleep(secs)
 
-    def adb_shell(self, command: str):
+    def adb_shell(self, command: Union[str, List[str]]):
         log.info(f'执行adb命令:[ {command} ]')
         output, exit_code = self.shell(command)
         log.info(f'adb shell output:\n {output}')
         log.info(f'adb shell exitCode:[ {exit_code} ]')
 
-    def open_url(self, url: str):
+    def open_url(self, url: str, delay=0.5):
+        if (not delay) or (delay < 0):
+            delay = 0
+        time.sleep(delay)
         self.adb_shell(f'am start -a android.intent.action.VIEW -d "{url}"')
+        time.sleep(delay)
 
     def app_restart(self, package_name, activity=None):
         log.info(f'重启app:[ {package_name} ]')
@@ -143,7 +148,7 @@ class Device(u2.Device):
                         'message': 'retry find element timeout',
                         'data': str(element.selector)
                     },
-                    method='Device._retry_find_element')
+                    method='Device._retry_find_element')  # yapf: disable
 
         # 重试查找元素，元素存在时返回，找不到时重试直到timeout后抛出异常
         for i in range(retry_count):
@@ -158,7 +163,7 @@ class Device(u2.Device):
                 'message': 'retry find element timeout',
                 'data': str(element.selector)
             },
-            method='Device._retry_find_element')
+            method='Device._retry_find_element')  # yapf: disable
 
     def _retry_find_xpath_element(self, xpath, **kwargs):
         from clickx3.u2.element import XPathElement
