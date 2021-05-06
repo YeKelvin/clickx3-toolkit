@@ -9,6 +9,9 @@
     "files.watcherExclude": {
         "**/.cache": true
     },
+    "todo-tree.filtering.excludeGlobs": [
+        "**/.cache"
+    ],
 
     /* Python PATH */
     "python.venvFolders": [
