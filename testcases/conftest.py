@@ -5,6 +5,7 @@
 # @Author  : Kelvin.Ye
 import os
 
+from py._xmlgen import html
 import pytest
 
 from clickx3.common.devices_manager import DevicesManager
@@ -15,15 +16,7 @@ from clickx3.utils.config import screenshot_path
 from clickx3.utils.log_util import get_logger
 from clickx3.utils.yaml_util import load_env_config
 
-# from py._xmlgen import html
-
-
 log = get_logger(__name__)
-
-
-# 声明排除测试目录或模块
-# collect_ignore = ['ignore.py']
-# collect_ignore_glob = ['*_ignore.py']
 
 
 def pytest_addoption(parser):
@@ -35,18 +28,18 @@ def pytest_addoption(parser):
     )
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope='session', autouse=True)
 def env(request):
     return request.config.getoption("--env")
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope='session', autouse=True)
 def headless(request):
     headless = request.config.getoption("--headless")
     return True if headless.lower() == 'true' else False
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope='session', autouse=True)
 def ctx(request):
     return request
 
@@ -110,19 +103,31 @@ def ios_serial():
     ...
 
 
-# @pytest.mark.optionalhook
-# def pytest_html_report_title(report):
-#     report.title = 'APP UI自动化测试报告'
+@pytest.mark.optionalhook
+def pytest_html_report_title(report):
+    report.title = 'APP UI自动化测试报告'
 
 
-# @pytest.mark.optionalhook
-# def pytest_html_results_table_header(cells):
-#     cells.insert(1, html.th('Description'))
+def pytest_configure(config):
+    """修改Environment"""
+    # 添加元数据
+    config._metadata['Project'] = 'UI测试自动化'
+    # 删除Java_Home
+    config._metadata.pop('JAVA_HOME')
 
 
-# @pytest.mark.optionalhook
-# def pytest_html_results_table_row(report, cells):
-#     cells.insert(1, html.td(report.description))
+@pytest.mark.optionalhook
+def pytest_html_results_table_header(cells):
+    """编辑表格头部"""
+    cells.pop(-1)  # 删除Links列
+    cells.insert(1, html.th('Description'))  # 添加Description列
+
+
+@pytest.mark.optionalhook
+def pytest_html_results_table_row(report, cells):
+    """编辑表格主体"""
+    cells.pop(-1)  # 删除Links列
+    cells.insert(1, html.td(report.description))  # 添加Description列
 
 
 def pytest_runtest_call(item):
@@ -138,6 +143,8 @@ def pytest_runtest_makereport(item):
     outcome = yield
     result = outcome.get_result()
     result.description = str(item.function.__doc__)  # 添加测试用例描述
+    result.nodeid = result.nodeid.encode('utf-8').decode('unicode_escape')  # 解决中文乱码
+    setattr(result, "duration_formatter", "%H:%M:%S.%f")
 
     if result.when == 'call':
         pytest_html = item.config.pluginmanager.get_plugin('html')
