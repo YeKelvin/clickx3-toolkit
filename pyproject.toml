@@ -20,7 +20,7 @@ python = "^3.8"
 selenium = "^3.141.0"
 uiautomator2 = { version = "^2.15.0", extras=["image"] }
 facebook-wda = "^1.4.0"
-tidevice = { version = "^0.4.1", extras=["openssl"] }
+tidevice = { version = "^0.4.3", extras=["openssl"] }
 jsonpath = "^0.82"
 orjson = "^3.5.1"
 pycryptodome = "^3.10.1"
@@ -33,7 +33,7 @@ paddlepaddle = "2.0.2"
 paddleocr = "^2.0.3"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.3"
+pytest = "^6.2.4"
 pytest-cov = "*"
 pytest-html = "*"
 pytest-order = "*"
@@ -56,29 +56,3 @@ profile = "google"
 line_length = 120
 multi_line_output = 3
 group_by_package = true
-
-# [tool.pytest]
-# minversion = "6.0"
-# addopts = [
-#     "-s",
-#     "-v",
-#     "--disable-warnings",
-#     "--pyargs",
-#     "--html=report.html",
-#     "--self-contained-html"
-# ]
-# testpaths = [
-#     "testcases"
-# ]
-# log_cli = true
-# filterwarnings = [
-#     "ignore::DeprecationWarning"
-# ]
-# required_plugins = [
-#     "pytest-html",
-#     "pytest-rerunfailures"
-# ]
-# python_classes =[
-#     "Test*",
-#     "*TestSuite"
-# ]
