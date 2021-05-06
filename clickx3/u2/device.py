@@ -46,7 +46,7 @@ class Device(u2.Device):
     def adb_shell(self, command: Union[str, List[str]]):
         log.info(f'执行adb命令:[ {command} ]')
         output, exit_code = self.shell(command)
-        log.info(f'adb shell output:\n {output}')
+        log.info(f'adb shell output:\n{output[:-1]}')
         log.info(f'adb shell exitCode:[ {exit_code} ]')
 
     def open_url(self, url: str, delay=0.5):
@@ -110,13 +110,14 @@ class Device(u2.Device):
         return toast_msg
 
     # TODO: 考虑优化，e.g.: exists().then().catch().error()
-    def click_exists(self, **kwargs):
+    def click_exists(self, timeout=2, **kwargs):
         try:
-            log.info('如果元素存在且可见时点击元素')
+            log.info(f'如果元素存在且是可见元素时点击元素，timeout:[ {timeout}s ]')
             xpath = kwargs.pop('xpath', None)
             if xpath:
-                element = self._retry_find_xpath_element(xpath)
+                element = self._retry_find_xpath_element(xpath, timeout=timeout)
             else:
+                kwargs['timeout'] = timeout
                 element = self._retry_find_element(**kwargs)
             element.click()
         except UiObjectNotFoundError:
@@ -128,7 +129,7 @@ class Device(u2.Device):
         from clickx3.u2.element import Element
 
         delay = kwargs.pop('delay', 0.5)
-        timeout = kwargs.pop('timeout', 2)
+        timeout = kwargs.pop('timeout', 10)
         interval = kwargs.pop('interval', 0.5)
 
         # 计算重试次数
@@ -169,7 +170,7 @@ class Device(u2.Device):
         from clickx3.u2.element import XPathElement
 
         delay = kwargs.pop('delay', 0.5)
-        timeout = kwargs.pop('timeout', 2)
+        timeout = kwargs.pop('timeout', 10)
         interval = kwargs.pop('interval', 0.5)
         # 计算重试次数
         retry_count = int(float(timeout) / float(interval))

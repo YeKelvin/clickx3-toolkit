@@ -112,7 +112,7 @@ class Driver(WebDriver):
     # TODO: 考虑优化，e.g.: exists().then().catch().error()
     def click_exists(self, by, value, visible=True, timeout=2):
         try:
-            log.info(f'如果元素存在且可见时点击元素，timeout:[ {timeout}s ]')
+            log.info(f'如果元素存在且是可见元素时点击元素，timeout:[ {timeout}s ]')
             element = self._retry_find_element(by, value, visible=visible, timeout=timeout)
             element.click()
         except NoSuchElementException:
@@ -120,7 +120,7 @@ class Driver(WebDriver):
 
     def tap_exists(self, by, value, visible=True, timeout=2):
         try:
-            log.info(f'如果元素存在且可见时点击元素，timeout:[ {timeout}s ]')
+            log.info(f'如果元素存在且是可见元素时点击元素，timeout:[ {timeout}s ]')
             element = self._retry_find_element(by, value, visible=visible, timeout=timeout)
             element.tap()
         except NoSuchElementException:
