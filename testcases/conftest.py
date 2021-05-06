@@ -47,7 +47,7 @@ def ctx(request):
 @pytest.fixture(scope='session', autouse=True)
 def props(env):
     env_config = load_env_config(env)
-    log.info('props会重新加载吗')
+    env_config['env'] = env
     return env_config
 
 
@@ -57,29 +57,29 @@ def vars():
 
 
 @pytest.fixture(scope='session')
-def web_driver():
-    # driver = Driver.chrome()
-    driver = Driver.chrome(headless=True)
-    driver.maximize_window()
-    return driver
-
-
-@pytest.fixture(scope='session')
 def chrome_driver(headless):
     driver = Driver.chrome(headless=headless)
+    driver.maximize_window()
     return driver
 
 
 @pytest.fixture(scope='session')
 def firefox_driver(headless):
     driver = Driver.firefox(headless=headless)
+    driver.maximize_window()
     return driver
 
 
 @pytest.fixture(scope='session')
 def edge_driver(headless):
     driver = Driver.edge()(headless=headless)
+    driver.maximize_window()
     return driver
+
+
+@pytest.fixture(scope='session')
+def web_driver(chrome_driver):
+    return chrome_driver
 
 
 @pytest.fixture(scope='session')
@@ -112,7 +112,7 @@ def pytest_configure(config):
     """修改Environment"""
     # 添加元数据
     config._metadata['Project'] = 'UI测试自动化'
-    # 删除Java_Home
+    # 删除JAVA_HOME
     config._metadata.pop('JAVA_HOME')
 
 
