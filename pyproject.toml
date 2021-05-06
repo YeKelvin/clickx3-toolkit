@@ -41,6 +41,7 @@ pytest-sugar = "*"
 pytest-rerunfailures = "*"
 flake8 = "*"
 yapf = "*"
+isort = "*"
 
 [tool.poetry.scripts]
 
@@ -56,3 +57,5 @@ profile = "google"
 line_length = 120
 multi_line_output = 3
 group_by_package = true
+include_trailing_comma = true
+force_sort_within_sections = true
