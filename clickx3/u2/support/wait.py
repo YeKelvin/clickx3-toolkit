@@ -42,7 +42,7 @@ class U2DeviceWait(object):
         end_time = time.time() + self._timeout
         while True:
             try:
-                value = method(self._driver)
+                value = method(self._device)
                 if value:
                     return value
             except self._ignored_exceptions as e:
@@ -57,7 +57,7 @@ class U2DeviceWait(object):
         end_time = time.time() + self._timeout
         while True:
             try:
-                value = method(self._driver)
+                value = method(self._device)
                 if not value:
                     return value
             except self._ignored_exceptions:
