@@ -3,9 +3,7 @@
 # @File    : pytest_demo.py
 # @Time    : 2019/9/18 19:15
 # @Author  : Kelvin.Ye
-import os
-
-import allure
+# import allure
 import pytest
 
 
@@ -78,57 +76,59 @@ def test_rerun():
     assert 1 == 2
 
 
-@allure.feature('标注功能or模块')
-class TestAllureDemo:
-    @allure.story("标注子功能or模块")
-    def test_story(self):
-        pass
+# @allure.feature('标注功能or模块')
+# class TestAllureDemo:
+#     @allure.story("标注子功能or模块")
+#     def test_story(self):
+#         pass
 
-    @allure.severity('标注案例重要程度')
-    def test_severity(self):
-        pass
+#     @allure.severity('标注案例重要程度')
+#     def test_severity(self):
+#         pass
 
-    @allure.step('标注案例步骤')
-    def test_step(self):
-        pass
+#     @allure.step('标注案例步骤')
+#     def test_step(self):
+#         pass
 
-    def test_step2(self):
-        with allure.step('步骤1'):
-            a = 1
-        with allure.step('步骤2'):
-            b = 1
-        assert a == b
+#     def test_step2(self):
+#         with allure.step('步骤1'):
+#             a = 1
+#         with allure.step('步骤2'):
+#             b = 1
+#         assert a == b
 
-    def test_attach_info(self):
-        allure.attach('附加信息')
+#     def test_attach_info(self):
+#         allure.attach('附加信息')
 
-    def test_attach_picture(self):
-        with open(r'baozou.png', 'rb') as file:
-            allure.attach(file.read(), name='附加图片', attachment_type=allure.attachment_type.JPG)
+#     def test_attach_picture(self):
+#         with open(r'baozou.png', 'rb') as file:
+#             allure.attach(file.read(), name='附加图片', attachment_type=allure.attachment_type.JPG)
 
-    @allure.testcase('案例链接', '链接名称')
-    def test_testcase(self):
-        pass
+#     @allure.testcase('案例链接', '链接名称')
+#     def test_testcase(self):
+#         pass
 
-    @allure.issue('问题链接', '链接名称')
-    def test_issue(self):
-        pass
+#     @allure.issue('问题链接', '链接名称')
+#     def test_issue(self):
+#         pass
 
-    @allure.description('案例描述')
-    def test_description(self):
-        pass
+#     @allure.description('案例描述')
+#     def test_description(self):
+#         pass
 
 
 if __name__ == '__main__':
     """python代码中运行pytest
     """
+    # import os
     # pytest.main(['-s', f'{os.path.basename(__file__)}::test_parametrize'])
     # pytest.main(['-s', f'{os.path.basename(__file__)}', '--html=./report.html'])
-    pytest.main(['-s', f'{os.path.basename(__file__)}', '--alluredir=./.report', '--clean-alluredir'])
-    from subprocess import Popen, PIPE
+    # pytest.main(['-s', f'{os.path.basename(__file__)}', '--alluredir=./.report', '--clean-alluredir'])
+    # from subprocess import Popen, PIPE
 
-    p = Popen('allure generate .report -o .html --clean', shell=True, stdout=PIPE, stderr=PIPE)
-    print(''.join([str(line, encoding="utf-8") for line in p.stdout.readlines()]))
+    # p = Popen('allure generate .report -o .html --clean', shell=True, stdout=PIPE, stderr=PIPE)
+    # print(''.join([str(line, encoding="utf-8") for line in p.stdout.readlines()]))
+    ...
 
 """
 生成 Allure HTML报告
