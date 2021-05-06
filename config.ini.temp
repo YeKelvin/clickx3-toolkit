@@ -1,9 +1,0 @@
-[public]
-
-[test]
-env = uat
-
-[log]
-name = clickx3
-level = INFO
-path =
