@@ -81,6 +81,7 @@ def edge_driver(driver_path=None, device_name=None, headless=False, ua=None, lan
         options=options,
         desired_capabilities=caps
     )
+    wd.set_page_load_timeout(10)
 
     atexit.register(wd.quit)  # always quit driver when done
     return wd

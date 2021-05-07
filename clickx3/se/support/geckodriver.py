@@ -64,6 +64,7 @@ def firefox_driver(exe_path=None, headless=False, ua=None, lang=None, maximize=T
         options=options,
         desired_capabilities=caps
     )
+    wd.set_page_load_timeout(10)
 
     if maximize:
         log.info('最大化窗口')
@@ -121,6 +122,7 @@ def gecko_view(serial, package, activity, driver_path=None):
         options=options,
         desired_capabilities=caps
     )
+    wd.set_page_load_timeout(10)
 
     atexit.register(wd.quit)  # always quit driver when done
     return wd
