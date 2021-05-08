@@ -57,6 +57,7 @@ def pytest_runtest_makereport(item, result):
     execution_count = getattr(item, 'execution_count', 1)
     if execution_count > 1:
 
+        extra = getattr(result, 'extra', [])
         video_name = node_id_to_name(item.nodeid)
 
         # Chrome停止录屏
@@ -64,21 +65,22 @@ def pytest_runtest_makereport(item, result):
         if driver:
             log.info('Chrome停止录屏')
             video_path = stop_web_screenrecord(driver, f'{video_name}.chrome')
+            extra.append(pytest_html.extras.mp4(video_path))
 
         # Firefox停止录屏
         driver = item.funcargs.get('firefox_driver')
         if driver:
             log.info('Firefox停止录屏')
             video_path = stop_web_screenrecord(driver, f'{video_name}.firefox')
+            extra.append(pytest_html.extras.mp4(video_path))
 
         # Edge停止录屏
         driver = item.funcargs.get('edge_driver')
         if driver:
             log.info('Edge停止录屏')
             video_path = stop_web_screenrecord(driver, f'{video_name}.edge')
+            extra.append(pytest_html.extras.mp4(video_path))
 
-        extra = getattr(result, 'extra', [])
-        extra.append(pytest_html.extras.mp4(video_path))
         result.extra = extra
 
 
