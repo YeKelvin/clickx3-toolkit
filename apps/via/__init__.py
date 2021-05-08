@@ -1,16 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @File    : __init__.py
-# @Time    : 2020/9/1 16:39
+# @Time    : 2021/4/28 11:10
 # @Author  : Kelvin.Ye
-
-"""
-Via App
-"""
-
 from clickx3.u2.app import AndroidApp
 from clickx3.utils.log_util import get_logger
-from pages.via.home import HomePage
+from apps.via.home import HomePage
 
 log = get_logger(__name__)
 
