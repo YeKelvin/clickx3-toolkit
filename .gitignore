@@ -28,7 +28,3 @@ resources/webdrive/*
 resources/paddleocr/*
 resources/env/*
 !resources/env/template.yaml
-
-tests/debug_selenium_test.py
-tests/debug_u2_test.py
-tests/debug_wda_test.py
