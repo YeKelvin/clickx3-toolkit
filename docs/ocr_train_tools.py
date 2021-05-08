@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @File    : tinhnow_ocr_train
+# @File    : ocr_train_tools.py
 # @Time    : 2020/10/14 14:40
 # @Author  : Kelvin.Ye
 import os
@@ -20,7 +20,7 @@ def create_rec_train_txt():
 
 def read_image_shape():
     import cv2
-    image = cv2.imread(r'E:\Github\PaddleOCR\train_data\tinhnow_rec_data\train\ADQE.png')
+    image = cv2.imread('path/to/your/image')
     print(image.shape[0])
     print(image.shape[1])
     print(image.shape[2])

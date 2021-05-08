@@ -20,20 +20,12 @@ cd clickx3-toolkit/
 python3 -m poetry install
 ```
 
-Poetry安装报错的话就用pip吧
-
-```shell
-cd clickx3-toolkit/
-python3 -m poetry shell
-pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
-```
-
 ## 虚拟环境添加myproject.pth
 
 在目录`.cache/virtualenvs/xxx/Lib/site-packages/`下新增`myproject.pth`文件，内容如下：
 
 ```text
-abs/path/to/project
+absolute/path/to/project
 ```
 
 ## 导出requirements.txt
@@ -41,12 +33,6 @@ abs/path/to/project
 ```shell
 python3 -m poetry export -f requirements.txt -o requirements.txt --without-hashes
 ```
-
-## Todo
-
-- [-] 分离lib模块(clickx3-toolkit)和测试案例(clickx3-pytest-template)
-- [ ] 完善例子
-- [ ] 编写使用文档
 
 ## 站在巨人的肩膀上，主要使用了以下开源项目
 
