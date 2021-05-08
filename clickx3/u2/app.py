@@ -16,8 +16,9 @@ class AndroidApp:
     activity_name = None  # type: str
     url = None  # type: str
 
-    def __init__(self, device: Device):
+    def __init__(self, device: Device, env: str = None):
         self.device = device
+        self.env = env
         self.webview = Webview(self)
 
     def start(self):

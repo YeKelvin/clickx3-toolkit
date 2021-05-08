@@ -38,7 +38,7 @@ class Element(WDAElement):
         self.interval = interval
         self.kwargs = kwargs
 
-    def __retry_find(self, client):
+    def __retry_find(self, device):
         # 计算重试次数
         retry_count = int(float(self.timeout) / float(self.interval))
         # 延迟查找元素
@@ -47,7 +47,7 @@ class Element(WDAElement):
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            selector = client(**self.kwargs)
+            selector = device(**self.kwargs)
             if selector.exists:
                 element = selector.get()
                 self.selector = selector
@@ -60,7 +60,7 @@ class Element(WDAElement):
         for i in range(retry_count):
             if i > 0:
                 sleep(self.interval)
-            selector = client(**self.kwargs)
+            selector = device(**self.kwargs)
             if selector.exists:
                 element = selector.get()
                 self.selector = selector
@@ -71,7 +71,7 @@ class Element(WDAElement):
     def __get__(self, instance, owner):
         if instance is None:
             raise ElementException('持有类没有实例化')
-        return self.__retry_find(instance.client)
+        return self.__retry_find(instance.device)
 
     def __set__(self, instance, value):
         raise NotImplementedError('老老实实set_text()吧')
@@ -129,7 +129,7 @@ class Elements(list):
         self.timeout = timeout
         self.interval = interval
 
-    def __retry_find(self, client):
+    def __retry_find(self, device):
         # 计算重试次数
         retry_count = int(float(self.timeout) / float(self.interval))
         # 延迟查找元素
@@ -138,7 +138,7 @@ class Elements(list):
 
         # 重试次数小于1时，不重试，找不到直接抛异常
         if retry_count < 1:
-            selector = client(**self.kwargs)
+            selector = device(**self.kwargs)
             if selector.exists:
                 elements = selector.find_elements()
                 self.selector = selector
@@ -151,7 +151,7 @@ class Elements(list):
         for i in range(retry_count):
             if i > 0:
                 sleep(self.interval)
-            selector = client(**self.kwargs)
+            selector = device(**self.kwargs)
             if selector.exists:
                 elements = selector.find_elements()
                 self.selector = selector
@@ -162,7 +162,7 @@ class Elements(list):
     def __get__(self, instance, owner):
         if instance is None:
             raise ElementException('持有类没有实例化')
-        return self.__retry_find(instance.client)
+        return self.__retry_find(instance.device)
 
     def __set__(self, instance, value):
         raise NotImplementedError('老老实实set_text()吧')

@@ -16,7 +16,7 @@ class WebApp:
 
     def __init__(self, driver: Driver, env: str = None):
         if not self.environments:
-            raise AppException('environments不允许为空')
+            raise AppException('environment不允许为空')
 
         self.driver = driver
         self.env = env

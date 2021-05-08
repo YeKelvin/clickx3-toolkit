@@ -12,9 +12,11 @@ log = get_logger(__name__)
 
 
 class Page:
+
     def __init__(self):
-        self.initialized = False
-        self.device: Device = None
+        self.initialized = False  # type: bool
+        self.device = None  # type: Device
+        self.env = None  # type: str
 
     def __get__(self, instance, owner):
         if not self.initialized:
@@ -23,7 +25,8 @@ class Page:
 
             assert not isinstance(owner, IOSApp)
 
-            self.client = instance.client
+            self.device = instance.device
+            self.env = instance.env
             self.initialized = True
 
         return self

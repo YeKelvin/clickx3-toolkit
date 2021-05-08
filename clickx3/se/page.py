@@ -15,9 +15,10 @@ class Page:
     uri = None
 
     def __init__(self):
-        self.initialized = False
-        self.driver = None  # type:Driver
-        self.base_url = None
+        self.initialized = False  # type: bool
+        self.driver = None  # type: Driver
+        self.base_url = None  # type: str
+        self.env = None  # type: str
 
     def __get__(self, instance, owner):
         if not self.initialized:

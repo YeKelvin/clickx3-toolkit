@@ -5,7 +5,6 @@
 # @Author  : Kelvin.Ye
 from clickx3.common.exceptions import PageException
 from clickx3.u2.app import AndroidApp
-from clickx3.u2.app import Webview
 from clickx3.u2.device import Device
 from clickx3.utils.log_util import get_logger
 
@@ -18,9 +17,9 @@ class Page:
     url = None  # type: str
 
     def __init__(self):
-        self.initialized = False
-        self.device: Device = None
-        self.webview: Webview = None
+        self.initialized = False  # type: bool
+        self.device = None  # type: Device
+        self.env = None  # type: str
 
     def __get__(self, instance, owner):
         if not self.initialized:
@@ -31,6 +30,7 @@ class Page:
 
             self.package_name = instance.package_name
             self.device = instance.device
+            self.env = instance.env
             self.initialized = True
 
         return self
