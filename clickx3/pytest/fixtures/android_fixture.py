@@ -21,5 +21,5 @@ def android_device(android_serial):
 
 @pytest.fixture(scope='session')
 def chrome_webview(android_device):
-    from pages.chrome.android import Chrome
+    from apps.chrome.android import Chrome
     return Chrome(android_device).webview
