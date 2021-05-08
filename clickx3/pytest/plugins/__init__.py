@@ -7,6 +7,7 @@ from . import android_screenrecord_plugin  # noqa
 from . import android_screenshot_plugin  # noqa
 from . import ios_screenshot_plugin  # noqa
 from . import pytest_html_plugin  # noqa
+from . import web_screenrecord_plugin  # noqa
 from . import web_screenshot_plugin  # noqa
 
 __all__ = ['pytest_html_plugin']

@@ -8,6 +8,7 @@ import pytest
 from clickx3.pytest.plugins import android_screenrecord_plugin
 from clickx3.pytest.plugins import android_screenshot_plugin
 from clickx3.pytest.plugins import pytest_html_plugin
+from clickx3.pytest.plugins import web_screenrecord_plugin
 from clickx3.pytest.plugins import web_screenshot_plugin
 
 
@@ -20,7 +21,9 @@ def pytest_configure(config):
 
 def pytest_runtest_call(item):
     # Android重跑时录屏
-    android_screenrecord_plugin.pytest_runtest_setup(item)
+    android_screenrecord_plugin.pytest_runtest_call(item)
+    # Web重跑时录屏
+    web_screenrecord_plugin.pytest_runtest_call(item)
 
 
 @pytest.mark.hookwrapper
@@ -33,8 +36,10 @@ def pytest_runtest_makereport(item):
 
     # Android失败时截图
     android_screenshot_plugin.pytest_runtest_makereport(item, result)
-    # Android重跑还是失败时添加录屏
+    # Android失败重跑时添加录屏
     android_screenrecord_plugin.pytest_runtest_makereport(item, result)
 
     # Web失败时截图
     web_screenshot_plugin.pytest_runtest_makereport(item, result)
+    # Web失败重跑时添加录屏
+    web_screenrecord_plugin.pytest_runtest_makereport(item, result)
