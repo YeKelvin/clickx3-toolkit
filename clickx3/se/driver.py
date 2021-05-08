@@ -27,6 +27,7 @@ class Driver(WebDriver):
         # 直接把WebDriver的属性字典复制过来
         self.__dict__ = web_driver.__dict__
         self.wait_until = DriverWait(self)
+        self.screenrecord = Screenrecord(self)
 
     @staticmethod
     def chrome(**kwargs):
@@ -230,15 +231,39 @@ class Screenrecord:
         self._stop_event = threading.Event()
         self._done_event = threading.Event()
         self._filename = None
-        self._fps = 20
+        self._fps = 10
 
     def __call__(self, *args, **kwargs):
         self._start(*args, **kwargs)
         return self
 
+    def _start(self, filename: str, fps: int = 10):
+        if self._running:
+            raise RuntimeError("screenrecord is already started")
+
+        assert isinstance(fps, int)
+        self._filename = filename
+        self._fps = fps
+
+        self._running = True
+        th = threading.Thread(name="image2video", target=self._run)
+        th.daemon = True
+        th.start()
+
+    def _run(self):
+        pipelines = [self._pipe_limit, self._pipe_convert, self._pipe_resize]
+        _iter = self._iter_capture()
+        for p in pipelines:
+            _iter = p(_iter)
+
+        with imageio.get_writer(self._filename, fps=self._fps) as wr:
+            for im in _iter:
+                wr.append_data(im)
+        self._done_event.set()
+
     def _iter_capture(self):
         while not self._stop_event.is_set():
-            yield self._driver.get_screenshot_as_base64()
+            yield self._driver.get_screenshot_as_png()
 
     def _resize_to(self, im, framesize):
         vh, vw = framesize
@@ -276,30 +301,6 @@ class Screenrecord:
             for _ in range(fcount - findex):
                 yield raw
             findex = fcount
-
-    def _run(self):
-        pipelines = [self._pipe_limit, self._pipe_convert, self._pipe_resize]
-        _iter = self._iter_capture()
-        for p in pipelines:
-            _iter = p(_iter)
-
-        with imageio.get_writer(self._filename, fps=self._fps) as wr:
-            for im in _iter:
-                wr.append_data(im)
-        self._done_event.set()
-
-    def _start(self, filename: str, fps: int = 20):
-        if self._running:
-            raise RuntimeError("screenrecord is already started")
-
-        assert isinstance(fps, int)
-        self._filename = filename
-        self._fps = fps
-
-        self._running = True
-        th = threading.Thread(name="image2video", target=self._run)
-        th.daemon = True
-        th.start()
 
     def stop(self):
         if not self._running:
