@@ -81,22 +81,20 @@ class Element(UiObject):
 
     def __init__(self,
                  ui_object: UiObject = None,
+                 scrollable_view: Locator = None,
                  delay: float = 0.5,
                  timeout: float = 10,
                  interval: float = 0.5,
-                 child: dict = None,
-                 sibling: dict = None,
                  **kwargs):
 
         if ui_object:
             # 直接把UiObject的属性字典复制过来
             self.__dict__.update(ui_object.__dict__)
 
+        self._scrollable_view = scrollable_view  # TODO: 添加scrollable_view逻辑
         self._delay = delay
         self._timeout = timeout
         self._interval = interval
-        self._child = child  # TODO: 添加child逻辑
-        self._sibling = sibling  # TODO: 添加sibling逻辑
         self._kwargs = kwargs
         self.wait_until = ElementWait(self)
 
