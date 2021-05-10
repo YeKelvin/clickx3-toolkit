@@ -137,9 +137,9 @@ class Element(UiObject):
             method='Element.__retry_find')  # yapf: disable
 
     def __scroll_find(self, method, **kwargs):
-        allow_scroll_find = kwargs.pop('allow_scroll_find', True)
+        scroll_find = kwargs.pop('scroll_find', True)
 
-        if allow_scroll_find and self.info['scrollable']:
+        if scroll_find and self.info['scrollable']:
             log.info(f'滚动至目标元素，locator:[ {kwargs} ]')
             if self.scroll.to(**kwargs):
                 return method(**kwargs)
@@ -150,7 +150,7 @@ class Element(UiObject):
                         'message': 'scrool to target element failed',
                         'data': str(kwargs)
                     },
-                    method='Element.__scroll_to_find')
+                    method='Element.__scroll_find')
         else:
             return method(**kwargs)
 
@@ -162,7 +162,7 @@ class Element(UiObject):
             delay (float, 0.5): 延迟查找等待时间
             timeout (float, 10): 重试查找超时时间
             interval (float, 0.5): 重试查找间隔时间
-            allow_scroll_find (bool, True): 是否允许滚动至目标元素
+            scroll_find (bool, True): 是否允许滚动至目标元素
 
         Returns:
             Element
