@@ -6,7 +6,7 @@
 import os
 import platform
 
-from clickx3.utils.config import resources_path
+from clickx3.utils import project
 
 
 def executable_driver_name(driver_name):
@@ -25,7 +25,7 @@ def last_version(driver_name):
     Returns:
         None | str
     """
-    driver_dir = os.path.join(resources_path(), 'webdrive', driver_name)
+    driver_dir = os.path.join(project.resources_path(), 'webdrive', driver_name)
     if not os.path.exists(driver_dir):
         raise FileExistsError(f'驱动目录不存在，路径:[ {driver_dir} ]')
     verisons = [ver for ver in os.listdir(driver_dir) if os.path.isdir(os.path.join(driver_dir, ver))]
@@ -35,7 +35,7 @@ def last_version(driver_name):
 
 def get_version(driver_name, version):
     """根据driver名称和版本号获取driver所在目录的绝对路径"""
-    driver_dir = os.path.join(resources_path(), 'webdrive', driver_name, version)
+    driver_dir = os.path.join(project.resources_path(), 'webdrive', driver_name, version)
     if not os.path.exists(driver_dir):
         raise FileExistsError(f'驱动版本目录不存在，路径:[ {driver_dir} ]')
     return driver_dir
@@ -53,7 +53,7 @@ def chromedriver_last_version_path():
 
 def chromedriver_log_path():
     """获取chromedriver.log的绝对路径"""
-    log_dir = os.path.join(resources_path(), 'webdrive', 'chrome')
+    log_dir = os.path.join(project.resources_path(), 'webdrive', 'chrome')
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     return os.path.join(log_dir, 'chromedriver.log')
@@ -66,7 +66,7 @@ def gecodriver_last_version_path():
 
 def gecodriver_log_path():
     """获取geckodriver.log的绝对路径"""
-    log_dir = os.path.join(resources_path(), 'webdrive', 'firefox')
+    log_dir = os.path.join(project.resources_path(), 'webdrive', 'firefox')
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     return os.path.join(log_dir, 'geckodriver.log')
@@ -79,7 +79,7 @@ def msedgedriver_last_version_path():
 
 def msedgedriver_log_path():
     """获取msedgedriver.log的绝对路径"""
-    log_dir = os.path.join(resources_path(), 'webdrive', 'edge')
+    log_dir = os.path.join(project.resources_path(), 'webdrive', 'edge')
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     return os.path.join(log_dir, 'msedgedriver.log')

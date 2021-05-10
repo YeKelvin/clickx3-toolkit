@@ -7,7 +7,7 @@ import configparser
 import os
 
 
-def get(section, key, config_path=None):
+def get(config_path, section, key, default=configparser._UNSET):
     """从ini配置文件中获取配置
 
     Args:
@@ -24,10 +24,11 @@ def get(section, key, config_path=None):
 
     config = configparser.ConfigParser()
     config.read(config_path)
-    return config.get(section, key)
+    return config.get(section, key, fallback=default)
 
 
 class IniConfig:
+
     def __init__(self, path):
         if not os.path.exists(path):
             raise FileExistsError(f'ini配置文件不存在，path:[ {path} ]')
@@ -36,5 +37,5 @@ class IniConfig:
         self.config = configparser.ConfigParser()
         self.config.read(path)
 
-    def get(self, section, key):
-        return self.config.get(section, key)
+    def get(self, section, key, default=configparser._UNSET):
+        return self.config.get(section, key, fallback=default)

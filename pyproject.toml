@@ -3,7 +3,7 @@ name = "clickx3-toolkit"
 version = "0.1.0"
 description = "测试点点点"
 authors = ["Kelvin.Ye <testmankelvin@163.com>"]
-readme = 'README.md'
+readme = "README.md"
 
 packages = [
     { include = "clickx3" },
@@ -33,12 +33,10 @@ paddlepaddle = "2.0.2"
 paddleocr = "^2.0.3"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.4"
+pytest = "*"
 pytest-cov = "*"
 pytest-html = "*"
-pytest-order = "*"
 pytest-sugar = "*"
-pytest-rerunfailures = "*"
 flake8 = "*"
 yapf = "*"
 isort = "*"
