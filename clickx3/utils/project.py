@@ -59,5 +59,5 @@ def screenshot_path():
 @lru_cache
 def default_image_path():
     """默认图片路径"""
-    default_image = os.path.normpath(config.get('path', 'default_image'))
+    default_image = os.path.normpath(config.get('path', 'default.image'))
     return os.path.join(root_path(), default_image)
