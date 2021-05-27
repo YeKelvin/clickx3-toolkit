@@ -3,11 +3,11 @@
 # @File    : watcher.py
 # @Time    : 2021/4/21 11:21
 # @Author  : Kelvin.Ye
-from collections import OrderedDict
 import inspect
 import threading
 import time
 import typing
+from collections import OrderedDict
 from typing import Callable
 from typing import Optional
 
@@ -15,6 +15,7 @@ import uiautomator2
 from uiautomator2.xpath import XPath
 
 from clickx3.utils.log_util import get_logger
+
 
 log = get_logger(__name__)
 

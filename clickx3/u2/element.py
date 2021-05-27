@@ -19,6 +19,7 @@ from clickx3.u2.support import expected_conditions as EC
 from clickx3.u2.support.wait import U2DeviceWait
 from clickx3.utils.log_util import get_logger
 
+
 log = get_logger(__name__)
 
 

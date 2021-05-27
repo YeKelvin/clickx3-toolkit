@@ -3,8 +3,12 @@
 # @File    : popen_util
 # @Time    : 2020/10/23 15:01
 # @Author  : Kelvin.Ye
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import PIPE
+from subprocess import STDOUT
+from subprocess import Popen
+
 from clickx3.utils.log_util import get_logger
+
 
 log = get_logger(__name__)
 

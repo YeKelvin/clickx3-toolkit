@@ -11,6 +11,7 @@ from uiautomator2.exceptions import XPathElementNotFoundError
 from clickx3.common.exceptions import TimeoutException
 from clickx3.utils.log_util import get_logger
 
+
 log = get_logger(__name__)
 
 # 轮询频率（间隔等待时间）

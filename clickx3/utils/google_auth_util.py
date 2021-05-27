@@ -13,7 +13,9 @@ import hashlib
 import hmac
 import struct
 import time
+
 from clickx3.utils.log_util import get_logger
+
 
 log = get_logger(__name__)
 

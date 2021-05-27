@@ -4,11 +4,11 @@
 # @Time    : 2019/8/27 13:48
 # @Author  : Kelvin.Ye
 import logging
-
 from logging.config import dictConfig
 
 from clickx3.utils import project
 from clickx3.utils.convert_util import str_to_bool
+
 
 # 日志格式
 LOG_FORMAT = '[%(asctime)s][%(levelname)s][%(name)s.%(funcName)s %(lineno)d] %(message)s'

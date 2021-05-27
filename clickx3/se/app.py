@@ -7,6 +7,7 @@ from clickx3.common.exceptions import AppException
 from clickx3.se.driver import Driver
 from clickx3.utils.log_util import get_logger
 
+
 log = get_logger(__name__)
 
 

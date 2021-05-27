@@ -12,6 +12,7 @@ from wda.exceptions import WDAElementNotFoundError
 from clickx3.common.exceptions import ElementException
 from clickx3.utils.log_util import get_logger
 
+
 log = get_logger(__name__)
 
 

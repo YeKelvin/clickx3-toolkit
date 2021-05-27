@@ -4,8 +4,9 @@
 # @Time    : 2020/9/8 15:20
 # @Author  : Kelvin.Ye
 from clickx3.utils.dict_util import sort_dict
+from clickx3.utils.encryption.md5_util import md5
 from clickx3.utils.log_util import get_logger
-from clickx3.utils.md5_util import md5
+
 
 log = get_logger(__name__)
 

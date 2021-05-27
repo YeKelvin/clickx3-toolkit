@@ -4,7 +4,6 @@
 # @Time    : 2019/9/7 18:05
 # @Author  : Kelvin.Ye
 import orjson
-
 from jsonpath import jsonpath
 
 

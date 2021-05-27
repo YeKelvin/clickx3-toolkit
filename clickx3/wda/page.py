@@ -8,6 +8,7 @@ from clickx3.utils.log_util import get_logger
 from clickx3.wda.app import IOSApp
 from clickx3.wda.device import Device
 
+
 log = get_logger(__name__)
 
 

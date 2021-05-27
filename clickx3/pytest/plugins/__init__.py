@@ -10,4 +10,5 @@ from . import pytest_html_plugin  # noqa
 from . import web_screenrecord_plugin  # noqa
 from . import web_screenshot_plugin  # noqa
 
+
 __all__ = ['pytest_html_plugin']

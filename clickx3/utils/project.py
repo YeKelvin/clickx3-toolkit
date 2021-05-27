@@ -3,11 +3,12 @@
 # @File    : project.py
 # @Time    : 2021/5/2 19:04
 # @Author  : Kelvin.Ye
-from functools import lru_cache
 import os
+from functools import lru_cache
 
 from clickx3.utils.ini_reader import IniConfig
 from clickx3.utils.path_util import find_invoker_project_root
+
 
 # 项目名称
 name = None

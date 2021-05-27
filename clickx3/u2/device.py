@@ -3,15 +3,17 @@
 # @File    : device.py
 # @Time    : 2020/4/3 10:46
 # @Author  : Kelvin.Ye
-from datetime import datetime
 import time
-from typing import List, Union
+from datetime import datetime
+from typing import List
+from typing import Union
 
 import uiautomator2 as u2
 from uiautomator2.exceptions import UiObjectNotFoundError
 from uiautomator2.exceptions import XPathElementNotFoundError
 
 from clickx3.utils.log_util import get_logger
+
 
 log = get_logger(__name__)
 

@@ -8,6 +8,7 @@ import pytest
 from clickx3.utils.log_util import get_logger
 from clickx3.utils.yaml_util import load_env_config
 
+
 log = get_logger(__name__)
 
 

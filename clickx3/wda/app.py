@@ -7,6 +7,7 @@ from clickx3.common.exceptions import AppException
 from clickx3.utils.log_util import get_logger
 from clickx3.wda.device import Device
 
+
 log = get_logger(__name__)
 
 

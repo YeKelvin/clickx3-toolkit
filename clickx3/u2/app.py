@@ -8,6 +8,7 @@ from selenium import webdriver
 from clickx3.u2.device import Device
 from clickx3.utils.log_util import get_logger
 
+
 log = get_logger(__name__)
 
 

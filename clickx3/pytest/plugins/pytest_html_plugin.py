@@ -3,8 +3,8 @@
 # @File    : pytest_html_plugin.py
 # @Time    : 2021/5/1 11:24
 # @Author  : Kelvin.Ye
-from py._xmlgen import html
 import pytest
+from py._xmlgen import html
 
 
 @pytest.mark.optionalhook

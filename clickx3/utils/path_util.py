@@ -8,6 +8,7 @@ import sys
 
 from clickx3.common.exceptions import ProjectBaseDirectoryNotFoundException
 
+
 # 项目构建文件列表
 __CONFIG_FILE_LIST__ = ['pyproject.toml', 'tox.ini', 'setup.cfg', 'setup.py']
 

@@ -4,13 +4,15 @@
 # @Time    : 2019/10/15 14:46
 # @Author  : Kelvin.Ye
 from queue import Queue
-from typing import Dict, List
+from typing import Dict
+from typing import List
 
-from adbutils import adb
 from adbutils import AdbDevice
+from adbutils import adb
 
 from clickx3.utils.design_patterns import Singleton
 from clickx3.utils.log_util import get_logger
+
 
 log = get_logger(__name__)
 

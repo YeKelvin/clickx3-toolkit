@@ -11,6 +11,7 @@ from clickx3.se.support.driver_util import gecodriver_last_version_path
 from clickx3.se.support.driver_util import gecodriver_log_path
 from clickx3.utils.log_util import get_logger
 
+
 log = get_logger(__name__)
 
 IPHONE_X_UA = (

@@ -3,12 +3,12 @@
 # @File    : randoms.py
 # @Time    : 2019/8/30 15:13
 # @Author  : Kelvin.Ye
+import random
+import time
 from datetime import date
 from datetime import timedelta
-import random
 from random import choice
 from random import randint
-import time
 
 from clickx3.utils.constants.idcard import AREA_CODE
 from clickx3.utils.constants.idcard import CHECK_CODE
