@@ -21,13 +21,15 @@ class Locator(dict):
 
 
 class Element(WDAElement):
-    def __init__(self,
-                 selector: Selector = None,
-                 element: WDAElement = None,
-                 delay: float = 0.5,
-                 timeout: float = 10,
-                 interval: float = 0.5,
-                 **kwargs):
+    def __init__(
+        self,
+        selector: Selector = None,
+        element: WDAElement = None,
+        delay: float = 0.5,
+        timeout: float = 10,
+        interval: float = 0.5,
+        **kwargs
+    ):
 
         if element:
             # 直接把Element的属性字典复制过来
@@ -114,12 +116,15 @@ class Elements(list):
     def count(self):
         return len(self)
 
-    def __init__(self,
-                 selector: Selector = None,
-                 elements: list = None,
-                 delay: float = 0.5,
-                 timeout: float = 10,
-                 interval: float = 0.5):
+    def __init__(
+        self,
+        selector: Selector = None,
+        elements: list = None,
+        delay: float = 0.5,
+        timeout: float = 10,
+        interval: float = 0.5
+    ):
+
         if selector:
             self.selector = selector
 

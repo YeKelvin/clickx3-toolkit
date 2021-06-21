@@ -118,15 +118,17 @@ def retry_find_webelements(func):
 
 
 class Element(WebElement):
-    def __init__(self,
-                 by: By = None,
-                 value: str = None,
-                 visible: bool = True,
-                 driver: Driver = None,
-                 web_element: WebElement = None,
-                 delay: float = 0.5,
-                 timeout: float = 10,
-                 interval: float = 0.5):
+    def __init__(
+        self,
+        by: By = None,
+        value: str = None,
+        visible: bool = True,
+        driver: Driver = None,
+        web_element: WebElement = None,
+        delay: float = 0.5,
+        timeout: float = 10,
+        interval: float = 0.5
+    ):
 
         if web_element:
             # 直接把WebElement的属性字典复制过来
@@ -218,11 +220,11 @@ class Element(WebElement):
         return super().find_elements(by, value)
 
     def get_value(self):
-        """多用于获取<textarea>元素的值"""
+        """获取元素的value属性值"""
         return self.get_attribute('value')
 
     def set_value(self, value):
-        """多用于<textarea>元素的赋值"""
+        """修改元素的value属性值"""
         self.driver.execute_script(f'arguments[0].value="{value}";', self)
 
     def save_image(self, image_path):
@@ -388,14 +390,16 @@ class Elements(list):
     def count(self):
         return len(self)
 
-    def __init__(self,
-                 by: By = None,
-                 value: str = None,
-                 driver: Driver = None,
-                 web_elements: list = None,
-                 delay: float = 0.5,
-                 timeout: float = 10,
-                 interval: float = 0.5):
+    def __init__(
+        self,
+        by: By = None,
+        value: str = None,
+        driver: Driver = None,
+        web_elements: list = None,
+        delay: float = 0.5,
+        timeout: float = 10,
+        interval: float = 0.5
+    ):
 
         if web_elements:
             self.extend(web_elements)

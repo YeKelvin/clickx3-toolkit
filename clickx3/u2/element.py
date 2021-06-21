@@ -80,13 +80,15 @@ def retry_find_u2element(func):
 
 class Element(UiObject):
 
-    def __init__(self,
-                 ui_object: UiObject = None,
-                 scrollable_view: Locator = None,
-                 delay: float = 0.5,
-                 timeout: float = 10,
-                 interval: float = 0.5,
-                 **kwargs):
+    def __init__(
+        self,
+        ui_object: UiObject = None,
+        scrollable_view: Locator = None,
+        delay: float = 0.5,
+        timeout: float = 10,
+        interval: float = 0.5,
+        **kwargs
+    ):
 
         if ui_object:
             # 直接把UiObject的属性字典复制过来
@@ -209,15 +211,17 @@ U2 XPath规则： https://github.com/openatx/uiautomator2/blob/master/XPATH.md
 
 class XPathElement(XMLElement):
 
-    def __init__(self,
-                 xpath,
-                 xpath_selector: XPathSelector = None,
-                 xml_element: XMLElement = None,
-                 scroll_find: bool = False,
-                 scrollable_view: Locator = None,
-                 delay: float = 0.5,
-                 timeout: float = 10,
-                 interval: float = 0.5):
+    def __init__(
+        self,
+        xpath,
+        xpath_selector: XPathSelector = None,
+        xml_element: XMLElement = None,
+        scroll_find: bool = False,
+        scrollable_view: Locator = None,
+        delay: float = 0.5,
+        timeout: float = 10,
+        interval: float = 0.5
+    ):
 
         if not xpath:
             raise ValueError('xpath不允许为空')
@@ -330,13 +334,15 @@ class XPathElements(list):
     def count(self):
         return len(self)
 
-    def __init__(self,
-                 xpath,
-                 xpath_selector: XPathSelector = None,
-                 xml_elements: list = None,
-                 delay: float = 0.5,
-                 timeout: float = 10,
-                 interval: float = 0.5):
+    def __init__(
+        self,
+        xpath,
+        xpath_selector: XPathSelector = None,
+        xml_elements: list = None,
+        delay: float = 0.5,
+        timeout: float = 10,
+        interval: float = 0.5
+    ):
 
         if not xpath:
             raise ValueError('xpath不允许为空')
