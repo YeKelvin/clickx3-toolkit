@@ -17,7 +17,7 @@ def executable_driver_name(driver_name):
 
 
 def last_version(driver_name):
-    """根据driver名称获取resources/webdrive/目录下最新版本driver的绝对路径
+    """根据driver名称获取resources/webdriver/目录下最新版本driver的绝对路径
 
     Args:
         driver_name (str): chrome | firefox
@@ -25,7 +25,7 @@ def last_version(driver_name):
     Returns:
         None | str
     """
-    driver_dir = os.path.join(project.resources_path(), 'webdrive', driver_name)
+    driver_dir = os.path.join(project.resources_path(), 'webdriver', driver_name)
     if not os.path.exists(driver_dir):
         raise FileExistsError(f'驱动目录不存在，路径:[ {driver_dir} ]')
     verisons = [ver for ver in os.listdir(driver_dir) if os.path.isdir(os.path.join(driver_dir, ver))]
@@ -35,7 +35,7 @@ def last_version(driver_name):
 
 def get_version(driver_name, version):
     """根据driver名称和版本号获取driver所在目录的绝对路径"""
-    driver_dir = os.path.join(project.resources_path(), 'webdrive', driver_name, version)
+    driver_dir = os.path.join(project.resources_path(), 'webdriver', driver_name, version)
     if not os.path.exists(driver_dir):
         raise FileExistsError(f'驱动版本目录不存在，路径:[ {driver_dir} ]')
     return driver_dir
@@ -47,39 +47,39 @@ def get_chromedriver_path(version):
 
 
 def chromedriver_last_version_path():
-    """获取resources/webdrive/chrome目录下版本号最新driver的绝对路径"""
+    """获取resources/webdriver/chrome目录下版本号最新driver的绝对路径"""
     return os.path.join(last_version('chrome'), executable_driver_name('chromedriver'))
 
 
 def chromedriver_log_path():
     """获取chromedriver.log的绝对路径"""
-    log_dir = os.path.join(project.resources_path(), 'webdrive', 'chrome')
+    log_dir = os.path.join(project.resources_path(), 'webdriver', 'chrome')
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     return os.path.join(log_dir, 'chromedriver.log')
 
 
 def gecodriver_last_version_path():
-    """获取resources/webdrive/firefox目录下版本号最新driver的绝对路径"""
+    """获取resources/webdriver/firefox目录下版本号最新driver的绝对路径"""
     return os.path.join(last_version('firefox'), executable_driver_name('geckodriver'))
 
 
 def gecodriver_log_path():
     """获取geckodriver.log的绝对路径"""
-    log_dir = os.path.join(project.resources_path(), 'webdrive', 'firefox')
+    log_dir = os.path.join(project.resources_path(), 'webdriver', 'firefox')
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     return os.path.join(log_dir, 'geckodriver.log')
 
 
 def msedgedriver_last_version_path():
-    """获取resources/webdrive/edge目录下版本号最新driver的绝对路径"""
+    """获取resources/webdriver/edge目录下版本号最新driver的绝对路径"""
     return os.path.join(last_version('edge'), executable_driver_name('msedgedriver'))
 
 
 def msedgedriver_log_path():
     """获取msedgedriver.log的绝对路径"""
-    log_dir = os.path.join(project.resources_path(), 'webdrive', 'edge')
+    log_dir = os.path.join(project.resources_path(), 'webdriver', 'edge')
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     return os.path.join(log_dir, 'msedgedriver.log')
